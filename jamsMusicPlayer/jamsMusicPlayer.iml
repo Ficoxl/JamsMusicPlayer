@@ -63,6 +63,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="universal-image-loader-1.9.0-with-sources" level="project" />
     <orderEntry type="library" exported="" name="prime-0.6.1" level="project" />
+    <orderEntry type="library" exported="" name="play-services-5.0.77" level="project" />
     <orderEntry type="library" exported="" name="google-http-client-1.16.0-rc" level="project" />
     <orderEntry type="library" exported="" name="jaudiotagger-2.0.4-20111207.115108-15" level="project" />
     <orderEntry type="library" exported="" name="support-v4-20.0.0" level="project" />
@@ -70,7 +71,6 @@
     <orderEntry type="library" exported="" name="disklrucache-2.0.2" level="project" />
     <orderEntry type="library" exported="" name="Android-BitmapCache-2.3" level="project" />
     <orderEntry type="library" exported="" name="cardview-v7-21.0.0-rc1-sources" level="project" />
-    <orderEntry type="library" exported="" name="play-services-4.4.52" level="project" />
     <orderEntry type="library" exported="" name="recyclerview-v7-21.0.0-rc1-sources" level="project" />
     <orderEntry type="library" exported="" name="dashclock-api-r2.0" level="project" />
     <orderEntry type="library" exported="" name="commons-logging" level="project" />

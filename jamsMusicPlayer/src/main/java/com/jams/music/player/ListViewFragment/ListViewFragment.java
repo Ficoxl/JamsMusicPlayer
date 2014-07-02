@@ -30,9 +30,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.andraskindler.quickscroll.QuickScroll;
+import com.jams.music.player.Helpers.PauseOnScrollHelper;
 import com.jams.music.player.R;
 import com.jams.music.player.DBHelpers.DBAccessHelper;
-import com.jams.music.player.Helpers.PauseOnScrollHelper;
 import com.jams.music.player.Helpers.TypefaceHelper;
 import com.jams.music.player.Helpers.UIElementsHelper;
 import com.jams.music.player.Utils.Common;
@@ -51,8 +51,8 @@ public class ListViewFragment extends Fragment {
 	private int mFragmentId;
 	
 	private QuickScroll mQuickScroll;
-	private BaseAdapter mListViewAdapter;
-	private HashMap<Integer, String> mDBColumnsMap;
+	private ListViewCardsAdapter mListViewAdapter;
+    private HashMap<Integer, String> mDBColumnsMap;
 	private ListView mListView;
 	private TextView mEmptyTextView;
 	
@@ -333,16 +333,17 @@ public class ListViewFragment extends Fragment {
 	        animationAdapter.setShouldAnimateFromPosition(0);
 	        animationAdapter.setAbsListView(mListView);
 	        mListView.setAdapter(animationAdapter);*/
-	        
+
+            PauseOnScrollHelper pauseOnScrollHelper = new PauseOnScrollHelper(mApp.getImageLoader(),
+                                                                              true, true, 500);
+            mListView.setOnScrollListener(pauseOnScrollHelper);
 	        mListView.setOnItemClickListener(onItemClickListener);
-	        PauseOnScrollHelper pauseScroll = new PauseOnScrollHelper(mApp.getImageLoader(), true, true, 500);
-	        mListView.setOnScrollListener(pauseScroll);
 	        
 	        //Init the quick scroll widget.
 	        mQuickScroll.init(QuickScroll.TYPE_INDICATOR_WITH_HANDLE, 
-	        				 	 	  mListView, 
-	        				 	 	  (ListViewCardsAdapter) mListViewAdapter, 
-	        				 	 	  QuickScroll.STYLE_HOLO);
+	        				  mListView,
+	        				  (ListViewCardsAdapter) mListViewAdapter,
+	        				  QuickScroll.STYLE_HOLO);
 	        
 	        int[] quickScrollColors = UIElementsHelper.getQuickScrollColors(mContext);
 	        mQuickScroll.setHandlebarColor(quickScrollColors[0], quickScrollColors[0], quickScrollColors[1]);

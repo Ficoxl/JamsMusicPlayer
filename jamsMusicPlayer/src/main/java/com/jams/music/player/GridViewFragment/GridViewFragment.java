@@ -36,7 +36,6 @@ import com.andraskindler.quickscroll.QuickScrollGridView;
 import com.jams.music.player.R;
 import com.jams.music.player.ArtistsFlippedActivity.ArtistsFlippedActivity;
 import com.jams.music.player.DBHelpers.DBAccessHelper;
-import com.jams.music.player.Helpers.PauseOnScrollHelper;
 import com.jams.music.player.Helpers.TypefaceHelper;
 import com.jams.music.player.Helpers.UIElementsHelper;
 import com.jams.music.player.Utils.Common;
@@ -261,7 +260,7 @@ public class GridViewFragment extends Fragment {
 
 		@Override
 		public void onItemClick(AdapterView<?> arg0, View view, int index, long id) {
-		    
+
 			String currentArtist = (String) view.getTag(R.string.artist);
 			
 			//If the artist has artwork from Google Play Music, use that as header image path.

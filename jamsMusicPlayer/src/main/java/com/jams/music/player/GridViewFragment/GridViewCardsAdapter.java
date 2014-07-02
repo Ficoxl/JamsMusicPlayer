@@ -267,7 +267,7 @@ public class GridViewCardsAdapter extends SimpleCursorAdapter implements Scrolla
 
 		@Override
 		public Bitmap decode(Uri uri) throws IOException {
-			
+
 			MediaMetadataRetriever mmdr = new MediaMetadataRetriever();
             byte[] imageData = null;
             try {

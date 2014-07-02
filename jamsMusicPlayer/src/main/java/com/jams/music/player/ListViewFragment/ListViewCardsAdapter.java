@@ -175,7 +175,7 @@ public class ListViewCardsAdapter extends SimpleCursorAdapter implements Scrolla
 		convertView.setTag(R.string.field_4, field4);
 		convertView.setTag(R.string.field_5, field5);
 		
-		//Set the tags for this grid item's overflow button.
+		//Set the tags for this list item's overflow button.
 		mHolder.overflowButton.setTag(R.string.title_text, titleText);
 		mHolder.overflowButton.setTag(R.string.source, source);
 		mHolder.overflowButton.setTag(R.string.file_path, filePath);
@@ -190,14 +190,14 @@ public class ListViewCardsAdapter extends SimpleCursorAdapter implements Scrolla
 		mHolder.artist.setText(field2);
 		
 		try {
-			//mHolder.duration.setText(convertMillisToMinsSecs(Long.parseLong(field1)));
+			mHolder.duration.setText(convertMillisToMinsSecs(Long.parseLong(field1)));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
 		//Load the album art.
-		mApp.getImageLoader().displayImage(artworkPath, mHolder.image, mApp.getDisplayImageOptions());
-/*        Picasso.with(mContext)
+        mApp.getImageLoader().displayImage(artworkPath, mHolder.image, mApp.getDisplayImageOptions());
+        /*Picasso.with(mContext)
         	   .load(Uri.parse("custom.resource://" + artworkPath))
         	   .placeholder(R.drawable.transparent_drawable)
         	   .withDelay(400)
@@ -214,7 +214,7 @@ public class ListViewCardsAdapter extends SimpleCursorAdapter implements Scrolla
 
 		@Override
 		public Bitmap decode(Uri uri) throws IOException {
-			
+
 			MediaMetadataRetriever mmdr = new MediaMetadataRetriever();
             byte[] imageData = null;
             try {

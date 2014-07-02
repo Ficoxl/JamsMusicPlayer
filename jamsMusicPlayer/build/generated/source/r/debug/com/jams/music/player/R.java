@@ -2855,8 +2855,8 @@ containing a value of this type.
  All customizations that are NOT specific to a particular API-level can go here. 
          */
         public static final int AppThemeNoActionBarLight=0x7f0e000c;
-        public static final int AppThemeNoTranslucentNav=0x7f0e0029;
-        public static final int AppThemeNoTranslucentNavLight=0x7f0e002a;
+        public static final int AppThemeNoTranslucentNav=0x7f0e002a;
+        public static final int AppThemeNoTranslucentNavLight=0x7f0e002b;
         public static final int AppThemeTransparent=0x7f0e000d;
         public static final int AppThemeTransparentLight=0x7f0e000e;
         public static final int DropDownListView_Apptheme=0x7f0e000f;
@@ -2873,18 +2873,19 @@ containing a value of this type.
         public static final int PopupMenu_Appthemelight=0x7f0e001a;
         public static final int ProgressBar_Apptheme=0x7f0e001b;
         public static final int ProgressBar_Appthemelight=0x7f0e001c;
-        public static final int RoundedOverflow=0x7f0e0028;
+        public static final int RoundedOverflow=0x7f0e0029;
         public static final int TextAppearance_TabPageIndicator=0x7f0e001d;
         public static final int Theme_Apptheme_Widget=0x7f0e001e;
         public static final int Theme_Appthemelight_Widget=0x7f0e001f;
-        public static final int Theme_PageIndicatorDefaults=0x7f0e0020;
-        public static final int WalletFragmentDefaultButtonTextAppearance=0x7f0e0021;
-        public static final int WalletFragmentDefaultDetailsHeaderTextAppearance=0x7f0e0022;
-        public static final int WalletFragmentDefaultDetailsTextAppearance=0x7f0e0023;
-        public static final int WalletFragmentDefaultStyle=0x7f0e0024;
-        public static final int Widget=0x7f0e0025;
-        public static final int Widget_IconPageIndicator=0x7f0e0026;
-        public static final int Widget_TabPageIndicator=0x7f0e0027;
+        public static final int Theme_IAPTheme=0x7f0e0020;
+        public static final int Theme_PageIndicatorDefaults=0x7f0e0021;
+        public static final int WalletFragmentDefaultButtonTextAppearance=0x7f0e0022;
+        public static final int WalletFragmentDefaultDetailsHeaderTextAppearance=0x7f0e0023;
+        public static final int WalletFragmentDefaultDetailsTextAppearance=0x7f0e0024;
+        public static final int WalletFragmentDefaultStyle=0x7f0e0025;
+        public static final int Widget=0x7f0e0026;
+        public static final int Widget_IconPageIndicator=0x7f0e0027;
+        public static final int Widget_TabPageIndicator=0x7f0e0028;
     }
     public static final class xml {
         public static final int album_art_widget_info=0x7f050000;

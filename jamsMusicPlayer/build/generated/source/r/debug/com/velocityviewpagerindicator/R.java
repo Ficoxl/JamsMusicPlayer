@@ -114,10 +114,10 @@ public final class R {
 		public static final int AppBaseTheme = 0x7f0e0008;
 		public static final int AppTheme = 0x7f0e0009;
 		public static final int TextAppearance_TabPageIndicator = 0x7f0e001d;
-		public static final int Theme_PageIndicatorDefaults = 0x7f0e0020;
-		public static final int Widget = 0x7f0e0025;
-		public static final int Widget_IconPageIndicator = 0x7f0e0026;
-		public static final int Widget_TabPageIndicator = 0x7f0e0027;
+		public static final int Theme_PageIndicatorDefaults = 0x7f0e0021;
+		public static final int Widget = 0x7f0e0026;
+		public static final int Widget_IconPageIndicator = 0x7f0e0027;
+		public static final int Widget_TabPageIndicator = 0x7f0e0028;
 	}
 	public static final class styleable {
 		public static final int[] VelocityCirclePageIndicator = { 0x010100c4, 0x010100d4, 0x7f010000, 0x7f010002, 0x7f010031, 0x7f010032, 0x7f010033, 0x7f010034, 0x7f010035 };

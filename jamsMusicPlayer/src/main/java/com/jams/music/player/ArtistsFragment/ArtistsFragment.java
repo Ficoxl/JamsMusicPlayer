@@ -1,7 +1,6 @@
 package com.jams.music.player.ArtistsFragment;
 
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.graphics.Paint;
@@ -31,11 +30,9 @@ import android.widget.TextView;
 
 import com.andraskindler.quickscroll.QuickScroll;
 import com.andraskindler.quickscroll.QuickScrollGridView;
-import com.jams.music.player.R;
-import com.jams.music.player.ArtistsFlippedActivity.ArtistsFlippedActivity;
-import com.jams.music.player.DBHelpers.DBAccessHelper;
 import com.jams.music.player.Helpers.TypefaceHelper;
 import com.jams.music.player.Helpers.UIElementsHelper;
+import com.jams.music.player.R;
 import com.jams.music.player.Utils.Common;
 import com.nostra13.universalimageloader.core.assist.PauseOnScrollListener;
 
@@ -98,6 +95,7 @@ public class ArtistsFragment extends Fragment {
 	    //Initialize the layout based on the user's mQuerySelection.
         mQuickScrollGridView = (QuickScrollGridView) mRootView.findViewById(R.id.quickscrollgrid);
         mQuickScrollListView = (QuickScroll) mRootView.findViewById(R.id.quickscroll);
+
 	    if (mSelectedLayout==0) {
  		    //Set the adapter for the outer gridview.
 	        mGridView = (GridView) mRootView.findViewById(R.id.artistsGridView);
@@ -246,7 +244,7 @@ public class ArtistsFragment extends Fragment {
 			new AsyncRunQuery().execute();
 			
 		}
-    	
+
     };
     
     /**
@@ -329,8 +327,13 @@ public class ArtistsFragment extends Fragment {
 
 		@Override
 		public void onItemClick(AdapterView<?> arg0, View view, int index, long id) {
-		    
-			String currentArtist = (String) view.getTag(R.string.artist);
+
+            com.jams.music.player.Animations.TranslateAnimation animation = new com.jams.music.player.Animations.TranslateAnimation(view, 1000, null, View.GONE, Animation.RELATIVE_TO_SELF,
+                    0.0f, Animation.RELATIVE_TO_SELF, 2.0f, Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, 0.0f);
+
+            animation.animate();
+
+			/*String currentArtist = (String) view.getTag(R.string.artist);
 			
 			//If the artist has artwork from Google Play Music, use that as header image path.
 			String dataURI = "";
@@ -348,10 +351,10 @@ public class ArtistsFragment extends Fragment {
 			intent.putExtra("ART_SOURCE", artSource);
 			
 			startActivity(intent);
-			getActivity().overridePendingTransition(R.anim.fade_in, R.anim.scale_and_fade_out);
+			getActivity().overridePendingTransition(R.anim.fade_in, R.anim.scale_and_fade_out);*/
 			
 		}
-    	
+
     };
     
     @Override
