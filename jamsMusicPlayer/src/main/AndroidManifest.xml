@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.jams.music.player"
+    android:hardwareAccelerated="true"
+    android:versionCode="46"
+    android:versionName="3.0" >
+
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission android:name="com.android.vending.BILLING" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <uses-sdk
+        android:minSdkVersion="14"
+        android:targetSdkVersion="20" />
+
+    <application
+        android:name="com.jams.music.player.Utils.Common"
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:largeHeap="true" >
+        
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        
+        <meta-data 
+            android:name="com.facebook.sdk.ApplicationId" 
+            android:value="@string/fb_app_id" />
+
+        <!-- Used for Google Play Store Campaign Measurement -->;
+		<service android:name="com.google.analytics.tracking.android.CampaignTrackingService" />
+		<receiver android:name="com.google.analytics.tracking.android.CampaignTrackingReceiver" 
+		          android:exported="true" >
+  			<intent-filter>
+    			<action android:name="com.android.vending.INSTALL_REFERRER" />
+  			</intent-filter>
+		</receiver>
+        
+        <!-- Facebook Login Activity -->
+        
+        <activity android:name="com.facebook.LoginActivity"/>
+        
+        <!-- Now Playing Activity -->
+
+        <activity
+            android:name="com.jams.music.player.NowPlayingActivity.NowPlayingActivity"
+            android:label="@string/app_name"
+            android:exported="true" >
+        </activity>
+
+        <!-- Launcher Activity -->
+
+        <activity
+            android:name="com.jams.music.player.LauncherActivity.LauncherActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Welcome Activity -->
+
+        <activity
+            android:name="com.jams.music.player.WelcomeActivity.WelcomeActivity"
+            android:label="@string/app_name" >
+        </activity>
+
+        <!-- Main Activity -->
+
+        <activity
+            android:name="com.jams.music.player.MainActivity.MainActivity"
+            android:theme="@style/AppTheme"
+            android:label="@string/app_name" >
+        </activity>
+
+        <!-- Artists Flipped Activity -->
+
+        <activity
+            android:name="com.jams.music.player.ArtistsFlippedActivity.ArtistsFlippedActivity"
+            android:label="@string/title_activity_artists_flipped" >
+        </activity>
+
+        <!-- Artists Flipped Songs Activity -->
+
+        <activity
+            android:name="com.jams.music.player.ArtistsFlippedSongsActivity.ArtistsFlippedSongsActivity"
+            android:label="@string/title_activity_artists_flipped_songs" >
+        </activity>
+  
+        <!-- Album Artists Flipped Activity -->
+        <activity
+            android:name="com.jams.music.player.AlbumArtistsFlippedActivity.AlbumArtistsFlippedActivity"
+            android:label="@string/title_activity_artists_flipped" >
+        </activity>
+        
+        <!-- Album Artists Flipped Songs Activity -->
+        <activity
+            android:name="com.jams.music.player.AlbumArtistsFlippedSongsActivity.AlbumArtistsFlippedSongsActivity"
+            android:label="@string/title_activity_artists_flipped" >
+        </activity>
+
+        <!-- Services -->
+
+        <service android:name=".Services.AudioPlaybackService" />
+        <service android:name="com.jams.music.player.Services.AutoFetchAlbumArtService" />
+        <service android:name="com.jams.music.player.Services.PinGMusicSongsService" />
+        <service
+            android:name="com.jams.music.player.Services.LargeWidgetAdapterService"
+            android:exported="false"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
+        <service
+            android:name="com.jams.music.player.Services.BuildMusicLibraryService"
+            android:exported="false" />
+
+        <service android:name="com.jams.music.player.Services.DashClockExtensionService"
+     		android:icon="@drawable/dashclock_icon"
+     		android:label="@string/app_full_name"
+     		android:permission="com.google.android.apps.dashclock.permission.READ_EXTENSION_DATA">
+            
+     		<intent-filter>
+         		<action android:name="com.google.android.apps.dashclock.Extension" />
+     		</intent-filter>
+     		
+     		<meta-data 
+     		    android:name="protocolVersion" 
+     		    android:value="2" />
+     		<meta-data 
+     		    android:name="worldReadable" 
+     		    android:value="true" />
+     		<meta-data 
+     		    android:name="description"
+         		android:value="@string/dashclock_description" />
+     
+ 		</service>
+        
+        <!-- Albums Flipped Activity -->
+
+        <activity
+            android:name="com.jams.music.player.AlbumsFlippedActivity.AlbumsFlippedActivity"
+            android:label="@string/title_activity_albums_flipped" >
+        </activity>
+
+        <!-- Large Widget -->
+
+        <receiver
+            android:name="com.jams.music.player.WidgetProviders.LargeWidgetProvider"
+            android:label="Jams Large Widget" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/large_widget_info" />
+        </receiver>
+        
+        <!-- Blurred Widget -->
+
+        <receiver
+            android:name="com.jams.music.player.WidgetProviders.BlurredWidgetProvider"
+            android:label="Jams Blurred Album Art Widget" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/blurred_widget_info" />
+        </receiver>
+        
+        <!-- Album Art Widget -->
+
+        <receiver
+            android:name="com.jams.music.player.WidgetProviders.AlbumArtWidgetProvider"
+            android:label="Jams Album Art Widget" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/album_art_widget_info" />
+        </receiver>
+        
+        <!-- Listens for media playback buttons (headphone buttons, bluetooth buttons, etc.) -->
+        
+        <receiver android:name="com.jams.music.player.BroadcastReceivers.HeadsetButtonsReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Small Widget -->
+
+        <receiver
+            android:name="com.jams.music.player.WidgetProviders.SmallWidgetProvider"
+            android:label="Jams Small Widget" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/small_widget_info" />
+        </receiver>
+        
+        <!-- Large widget configuration activity -->
+
+        <activity android:name="com.jams.music.player.WidgetProviders.LargeWidgetConfigActivity" >
+    		<intent-filter>
+        		<action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+    		</intent-filter>
+		</activity>
+		
+        <!-- Small widget configuration activity -->
+
+        <activity android:name="com.jams.music.player.WidgetProviders.SmallWidgetConfigActivity" >
+    		<intent-filter>
+        		<action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+    		</intent-filter>
+		</activity>
+        
+        <!-- Widget/Notification Play/Pause Broadcast Receiver -->
+
+        <receiver android:name="com.jams.music.player.BroadcastReceivers.PlayPauseBroadcastReceiver" >
+            <intent-filter>
+                <action android:name="com.jams.music.player.PLAY_PAUSE_ACTION" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Widget/Notification Previous Broadcast Receiver -->
+
+        <receiver android:name="com.jams.music.player.BroadcastReceivers.PreviousBroadcastReceiver" >
+            <intent-filter>
+                <action android:name="com.jams.music.player.PREVIOUS_ACTION" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Widget/Notification Next Broadcast Receiver -->
+
+        <receiver android:name="com.jams.music.player.BroadcastReceivers.NextBroadcastReceiver" >
+            <intent-filter>
+                <action android:name="com.jams.music.player.NEXT_ACTION" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Stop Service Broadcast Receiver -->
+
+        <receiver android:name="com.jams.music.player.BroadcastReceivers.StopServiceBroadcastReceiver" >
+            <intent-filter>
+                <action android:name="com.jams.music.player.STOP_SERVICE" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Receiver that gets called when the user changes songs from the Large Widget -->
+
+        <receiver android:name="com.jams.music.player.BroadcastReceivers.ChangeTrackBroadcastReceiver" >
+            <intent-filter>
+                <action android:name="com.jams.music.player.WIDGET_CHANGE_TRACK" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Main Settings Activity -->
+
+        <activity android:name="com.jams.music.player.SettingsActivity.SettingsActivity" >
+        </activity>
+
+        <!-- Dummy activity that launches Fragment dialogs from the Main Settings Activity -->
+
+        <activity
+            android:name="com.jams.music.player.SettingsActivity.PreferenceDialogLauncherActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppThemeTransparent" >
+        </activity>
+
+        <!-- PlaylistsFlipped Activity -->
+
+        <activity
+            android:name="com.jams.music.player.PlaylistsFlippedActivity.PlaylistsFlippedActivity"
+            android:label="@string/title_activity_playlists_flipped" >
+        </activity>
+
+        <!-- GenresFlipped Activity -->
+
+        <activity
+            android:name="com.jams.music.player.GenresFlippedActivity.GenresFlippedActivity"
+            android:label="@string/genre" >
+        </activity>
+        
+        <!-- Genres Flipped Songs Activity -->
+
+        <activity
+            android:name="com.jams.music.player.GenresFlippedSongsActivity.GenresFlippedSongsActivity"
+            android:label="@string/genre" >
+        </activity>
+
+        <!-- Now Playing Queue Activity -->
+
+        <activity
+            android:name="com.jams.music.player.NowPlayingQueueActivity.NowPlayingQueueActivity"
+            android:label="@string/now_playing_queue" >
+        </activity>
+
+        <!-- Equalizer/Audio FX Activity -->
+
+        <activity
+            android:name="com.jams.music.player.EqualizerAudioFXActivity.EqualizerAudioFXActivity"
+            android:label="@string/equalizer_caps" >
+        </activity>
+
+        <!-- Blacklist Manager -->
+
+        <activity
+            android:name="com.jams.music.player.BlacklistManagerActivity.BlacklistManagerActivity"
+            android:label="@string/title_activity_blacklist_manager" >
+        </activity>
+
+        <!-- Music Libraries Editor Activity -->
+        <activity
+            android:name="com.jams.music.player.MusicLibraryEditorActivity.MusicLibraryEditorActivity"
+            android:label="@string/music_library_editor" >
+        </activity>
+        
+		<!-- Music Libraries Editor Activity -->
+        <activity
+            android:name="com.jams.music.player.PlaylistEditorActivity.PlaylistEditorActivity"
+            android:label="@string/playlists" >
+        </activity>        
+        
+        <activity
+			android:name="com.jams.music.player.Services.KitKatFixActivity"
+			android:theme="@android:style/Theme.NoDisplay"
+			android:enabled="true"
+			android:allowTaskReparenting="true"
+			android:noHistory="true"
+			android:excludeFromRecents="true"
+			android:alwaysRetainTaskState="false"
+			android:stateNotNeeded="true"
+			android:clearTaskOnLaunch="true"
+			android:finishOnTaskLaunch="true" /> 
+
+    </application>
+
+</manifest>

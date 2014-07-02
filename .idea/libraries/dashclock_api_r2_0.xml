@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="dashclock-api-r2.0">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/jamsMusicPlayer/libs/dashclock-api-r2.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

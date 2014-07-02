@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    
+    <RelativeLayout
+	    android:id="@+id/playlist_pager_container"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent" >
+	    
+	    <ImageView
+	        android:id="@+id/coverArt"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content" 
+	        android:layout_centerHorizontal="true"
+			android:layout_centerVertical="true"
+	        android:scaleType="centerCrop" />
+	    
+	    <RelativeLayout
+	        android:id="@+id/song_artist_album_layout"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentBottom="true"
+	        android:layout_alignParentLeft="true"
+	        android:background="@drawable/transparent_navy_patch" >
+	
+	        <TextView
+	            android:id="@+id/songName"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_alignParentLeft="true"
+	            android:layout_alignParentTop="true"
+	            android:layout_marginLeft="10dp"
+	            android:layout_marginTop="10dp"
+	            android:layout_marginRight="10dp"
+	            android:layout_toLeftOf="@+id/now_playing_overflow_icon"
+	            android:ellipsize="marquee"
+	            android:singleLine="true"
+	            android:text="Unknown Song Title"
+	            android:textStyle="bold"
+	            android:textColor="#FFFFFF"
+	            android:textSize="24sp" />
+	
+	        <TextView
+	            android:id="@+id/artistAlbumName"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_alignLeft="@+id/songName"
+	            android:layout_alignRight="@+id/songName"
+	            android:layout_below="@+id/songName"
+	            android:layout_marginBottom="5dp"
+	            android:ellipsize="marquee"
+	            android:focusable="true"
+	            android:focusableInTouchMode="true"
+	            android:singleLine="true"
+	            android:text="Unknown Artist - Unknown Album"
+	            android:textColor="#BBBFBE"
+	            android:textSize="16sp" />
+
+	        <ImageView
+	            android:id="@+id/now_playing_overflow_icon"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_alignParentRight="true"
+	            android:layout_centerVertical="true"
+	            android:layout_marginRight="15dp"
+	            android:background="?android:selectableItemBackground"
+	            android:src="@drawable/ic_action_overflow_light" />
+
+	    	</RelativeLayout>
+	  
+	  </RelativeLayout>
+	  
+      <RelativeLayout
+	  	android:id="@+id/playlist_pager_flipped_container"
+	  	android:layout_width="match_parent"
+	  	android:layout_height="match_parent"
+	  	android:visibility="gone" >
+
+      </RelativeLayout>
+ 
+</RelativeLayout>

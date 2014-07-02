@@ -1,0 +1,8 @@
+include ':circularImageView'
+include ':quickScroll'
+include ':dragsortlistviewlibrary'
+include ':licensesdialoglibrary'
+include ':picassolibrary'
+include ':velocityviewpagerlibrary'
+include ':viewpagerindicatorlibrary'
+include ':jamsMusicPlayer'

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >  
+	<item  
+	    android:id="@+id/show_songs_by_artist"  
+	    android:title="@string/show_songs_by_this_artist"/> 
+	<item  
+	    android:id="@+id/show_songs_by_album_artist"  
+	    android:title="@string/show_songs_by_this_album_artist"/> 
+	<item  
+	    android:id="@+id/show_songs_in_album"  
+	    android:title="@string/show_songs_in_this_album"/>    
+	<item
+	    android:id="@+id/show_songs_in_genre"
+	    android:title="@string/show_songs_in_this_genre" />
+</menu>

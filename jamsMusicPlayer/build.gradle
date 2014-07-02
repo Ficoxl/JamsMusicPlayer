@@ -1,0 +1,55 @@
+apply plugin: 'android'
+
+android {
+    compileSdkVersion 19
+    buildToolsVersion "20.0.0"
+
+    defaultConfig {
+        applicationId "com.jams.music.player"
+        minSdkVersion 14
+        targetSdkVersion 19
+    }
+
+    buildTypes {
+        release {
+            runProguard true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
+        }
+    }
+
+    /**
+     * Bug in Gradle v0.7.1. The LICENSE and NOTICE files in the Apache Commons
+     * library jars need to be excluded or the project won't compile/build.
+     */
+    packagingOptions {
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+    }
+}
+
+dependencies {
+    compile project(':licensesdialoglibrary')
+    compile project(':quickScroll')
+    compile project(':velocityviewpagerlibrary')
+    compile project(':dragsortlistviewlibrary')
+    compile project(':viewpagerindicatorlibrary')
+    compile project(':circularImageView')
+    compile project(':picassolibrary')
+    compile 'com.android.support:support-v4:+'
+    compile 'com.google.android.gms:play-services:+'
+    compile files('libs/android-async-http-1.4.2-66-g4b6eb97.jar')
+    compile files('libs/Android-BitmapCache-2.3.jar')
+    compile files('libs/cardview-v7-21.0.0-rc1-sources.jar')
+    compile files('libs/commons-io-2.4.jar')
+    compile files('libs/commons-lang3-3.1.jar')
+    compile files('libs/commons-logging.jar')
+    compile files('libs/dashclock-api-r2.0.jar')
+    compile files('libs/disklrucache-2.0.2.jar')
+    compile files('libs/google-http-client-1.16.0-rc.jar')
+    compile files('libs/google-http-client-android-1.16.0-rc.jar')
+    compile files('libs/jaudiotagger-2.0.4-20111207.115108-15.jar')
+    compile files('libs/libGoogleAnalyticsServices.jar')
+    compile files('libs/prime-0.6.1.jar')
+    compile files('libs/recyclerview-v7-21.0.0-rc1-sources.jar')
+    compile files('libs/universal-image-loader-1.9.0-with-sources.jar')
+}

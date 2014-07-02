@@ -1,0 +1,41 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item 
+        android:id="@+id/action_search"
+        android:title="@string/search"
+        android:icon="@drawable/search_light"
+        android:showAsAction="always"
+        android:orderInCategory="95" />
+    
+    <item 
+        android:id="@+id/action_queue_drawer"
+        android:title="@string/current_queue"
+        android:icon="@drawable/queue_drawer_light"
+        android:showAsAction="always"
+        android:orderInCategory="96" />
+    
+    <item 
+        android:id="@+id/action_play_all"
+        android:title="@string/play_all"
+        android:showAsAction="never"
+        android:orderInCategory="97" />
+    
+    <item 
+        android:id="@+id/action_shuffle_all"
+        android:title="@string/shuffle_all"
+        android:showAsAction="never"
+        android:orderInCategory="98" />
+    
+    <item 
+        android:id="@+id/action_resume_last_queue"
+        android:title="@string/resume_last_queue"
+        android:showAsAction="never"
+        android:orderInCategory="99" />
+    
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:icon="@drawable/action_settings_light"
+        android:title="@string/action_settings"/>
+
+</menu>
