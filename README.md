@@ -1,7 +1,7 @@
 Jams Music Player
 ===============
 
-Jams is powerful and elegant music player for Android.
+Jams is powerful and elegant music player for Android. TESTING!
 
 Previous Changelogs
 ===============
