@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.jams.music.player"
     android:hardwareAccelerated="true"
-    android:versionCode="46"
+    android:versionCode="47"
     android:versionName="3.0" >
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -41,10 +41,6 @@
     			<action android:name="com.android.vending.INSTALL_REFERRER" />
   			</intent-filter>
 		</receiver>
-        
-        <!-- Facebook Login Activity -->
-        
-        <activity android:name="com.facebook.LoginActivity"/>
         
         <!-- Now Playing Activity -->
 
@@ -306,13 +302,6 @@
         <activity
             android:name="com.jams.music.player.NowPlayingQueueActivity.NowPlayingQueueActivity"
             android:label="@string/now_playing_queue" >
-        </activity>
-
-        <!-- Equalizer/Audio FX Activity -->
-
-        <activity
-            android:name="com.jams.music.player.EqualizerAudioFXActivity.EqualizerAudioFXActivity"
-            android:label="@string/equalizer_caps" >
         </activity>
 
         <!-- Blacklist Manager -->
