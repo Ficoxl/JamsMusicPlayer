@@ -5,6 +5,9 @@ Jams is powerful and elegant music player for Android.
 
 Previous Changelogs
 ===============
+<b>Note: </b> Changelogs will no longer be updated in this README file. Check the individual commit comments for all further update descriptions.
+
+
 Beta 0.9.1 (12/20/2013)
 -------------------------
 
