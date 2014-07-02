@@ -3,14 +3,10 @@ Jams Music Player
 
 Jams is powerful and elegant music player for Android.
 
-Current Version
-===============
-
-v2.3 on Google Play.
-
 Previous Changelogs
 ===============
-======================================BETA 0.9.1 (12/20/2013)======================================
+Beta 0.9.1 (12/20/2013)
+-------------------------
 
 * Fixed crashes when trying to rebuild music library.
 * Pinning songs now checks for local audio files and skips them.
@@ -32,7 +28,8 @@ Previous Changelogs
 * All Access songs are now excluded when building the music library.
 * Simplifed Google Play Music options in Settings.
 
-======================================BETA 0.9.2 (12/21/2013)======================================
+Beta 0.9.2 (12/21/2013)
+-------------------------
 
 * Removed streaming progressbar for local audio files.
 * Empty fields for GMusic songs are now repalced with "Unknown xxx".
@@ -44,7 +41,8 @@ Previous Changelogs
 * Notification updates are now executed asynchronously.
 * Fixed issue where controlling playback from the notification wouldn't update controls in NowPlayingActivity.
 
-======================================BETA 0.9.3 (12/22/2013)======================================
+Beta 0.9.3 (12/22/2013)
+-------------------------
 
 * FLAC support (with album art).
 * Support for fetching folder art.
@@ -56,7 +54,8 @@ Previous Changelogs
 * Fixed issues with enqueuing folder tracks and regular library tracks.
 * Fixed issues with headset buttons.
 
-======================================BETA 0.9.4 (12/25/2013)=======================================
+Beta 0.9.4 (12/25/2013)
+-------------------------
 
 * Fixed crashes when the current queue is accessed while the cursor is still being built (folder view).
 * Fixed seekbar crashes.
@@ -83,7 +82,8 @@ Previous Changelogs
 * Lyrics are now larger and more legible.
 * Fixed "Reset Blacklist" option in Settings.
 
-===================================RELEASE 1.0 (12/27/2013)==========================================
+Release 1.0 (12/27/2013)
+-------------------------
 
 * Added scrobbling support via Simple LastFM Scrobbler and ScrobbleDroid.
 * Added lockscreen controls/fixed AudioFocus issues.
@@ -91,7 +91,8 @@ Previous Changelogs
 * Fixed equalizer issues.
 * The trial dialog is only shown every 5 startups now.
 
-==================================RELEASE 1.1 (12/28/2013)===========================================
+Release 1.1 (12/28/2013)
+-------------------------
 
 * Current song in queue is now highlighted.
 * Fixed issue with shuffle.
@@ -100,7 +101,8 @@ Previous Changelogs
 * Fixed issues where .midi and .m4a weren't being added to the library.
 * Notification is no longer cut off when collapsed.
 
-==================================RELEASE 1.2 (12/28/2013)===========================================
+Release 1.2 (12/28/2013)
+-------------------------
 
 * Temporary KitKat scrollbar fix.
 * Fixed Welcome screen crash (when picking folders).
@@ -115,7 +117,8 @@ Previous Changelogs
 * Fixed random track skips when streaming from Google Play Music.
 * Fixed playlist pinning.
 
-==================================RELEASE 1.3 (12/29/2013)===========================================
+Release 1.3 (12/29/2013)
+-------------------------
 
 * Added new "On This Device" library. 
 * Fixed library scan crashes.
@@ -128,17 +131,20 @@ Previous Changelogs
 * Fixed crash when trying to get all pinned songs from official GMusic app.
 * Fixed small widget.
 
-=================================RELEASE 1.3.1 (12/30/2013)===========================================
+Release 1.3.1 (12/30/2013)
+-------------------------
 
 * Fixed crash when trying to play a song (4.0.x devices).
 
-=================================RELEASE 1.3.2 (12/30/2013)============================================
+Release 1.3.2 (12/30/2013)
+-------------------------
 
 * Fixed issue where music playback would start again after a notification came in.
 * Fixed widget play/pause button issues.
 * Fixed small widget's issue where tapping album wouldn't open up the app.
 
-=================================RELEASE 1.4 (12/30/2013)=============================================
+Release 1.4 (12/30/2013)
+-------------------------
 
 * New "Show more by/in this artist/album artist/album/genre" in player screen.
 * Fixed crashes in Folders view.
@@ -147,19 +153,22 @@ Previous Changelogs
 * Improved overal app performance.
 * New layout for inner browsers.
 
-=================================RELEASE 1.4.1 (12/31/2013)=============================================
+Release 1.4.1 (12/31/2013)
+-------------------------
 
 * Bug fixes.
 * Fixed v1.4 startup crash.
 * Playlists from other music players can now be imported (Settings > Rebuild Music Library).
 
-=================================RELEASE 1.4.2 (12/31/2013)=============================================
+Release 1.4.2 (12/31/2013)
+-------------------------
 
 * Added option to select default startup screen (Settings > Default Startup Screen).
 * Added option to pick between a grid or a list for artist, album artists, and albums.
 * Minor bug fixes.
 
-=================================RELEASE 1.5 (1/2/2014)=============================================
+Release 1.5 (1/2/2014)
+-------------------------
 
 * New layout for tablets and phones.
 * Transitioned from context menus to popup menus.
@@ -168,7 +177,8 @@ Previous Changelogs
 * Fixed background color issues with "Light Theme" and "Dark Theme".
 * Fixed bugs that were reported.
 
-=================================RELEASE 1.5.1 (1/3/2014)=============================================
+Release 1.5.1 (1/3/2014)
+-------------------------
 
 * Fixed crash when batch editing album tags.
 * Improved tag editing performance.
@@ -176,20 +186,23 @@ Previous Changelogs
 * Trial engine redesigned.
 * Library building process is more stable.
 
-=================================RELEASE 1.6 (1/6/2014)===============================================
+Release 1.6 (1/6/2014)
+-------------------------
 
 * Local playlists are now synced with Android's MediaStore database.
 * Added option to edit genre in tag editor dialogs.
 * Bug fixes.
 
-=================================RELEASE 1.7 (1/12/2014)==============================================
+Release 1.7 (1/12/2014)
+-------------------------
 
 * Added new "Play Next" feature.
 * "Show lyrics" option added to player screen overflow menu.
 * Bug fixes.
 * Minor visual tweaks.
 
-=================================RELEASE 2.0 (1/20/2014)==============================================
+Release 2.0 (1/20/2014)
+-------------------------
 
 * NEW! Save current position for any track. Useful for audiobooks/podcasts (Player overflow menu > Save current position/Clear saved position).
 * NEW! DashClock extension added.
@@ -199,25 +212,29 @@ Previous Changelogs
 * Fixed issues with current queue not updating after resuming player screen.
 * Other miscellaneous bug fixes.
 
-=================================RELEASE 2.0.1 (1/21/2014)==============================================
+Release 2.0.1 (1/21/2014)
+-------------------------
 
 * Fixed a couple of crashes when trying to play songs.
 * Fixed issue where some songs' album art wouldn't be detected/displayed.
 * Fixed issues with songs not playing when they have apostrophes in their file names.
 * Other bug fixes with a whole bunch of technical lingo, so I'll leave out the details.
 
-=================================RELEASE 2.0.2 (1/22/2014)==============================================
+Release 2.0.2 (1/22/2014)
+-------------------------
 
 * Minor UI tweaks.
 * Bug fixes for crash reports that were sent to me in the past 1-2 days.
 
-=================================RELEASE 2.0.3 (1/23/2014)==============================================
+Release 2.0.3 (1/23/2014)
+-------------------------
 
 * Hidden files are no longer included during scanning process.
 * Minor UI tweaks.
 * Bug fixes.
 
-=================================RELEASE 2.1 (1/24/2014)========================================
+Release 2.1 (1/24/2014)
+-------------------------
 
 * New player screen layout with access to current queue.
 * New "Color Accent" option in Settings. Replaces old "Player Color Scheme" option.
@@ -226,29 +243,34 @@ Previous Changelogs
 * Better touch feedback on player screen controls.
 * Bug fixes.
 
-================================RELEASE 2.1.1 (1/26/2014)===========================================
+Release 2.1.1 (1/26/2014)
+-------------------------
 
 * NEW! Share Jams with your friends on Facebook and you could get 50% off your upgrade price! Check app for more details.
 * Updating the color accent reflects the new changes across the whole app.
 * Fixed folder view crash.
 * Fixed equalizer issue with bass boost/virtualizer.
 
-================================RELEASE 2.1.2 (1/28/2014)===========================================
+Release 2.1.2 (1/28/2014)
+-------------------------
 
 * Integrated Google Analytics.
 * Updated Facebook promo: Everyone gets 30% off when they share the app with their Facebook friends. No more lottery system.
 * Fixed issues with songs not playing if they have weird characters in their file names (#, %, ^, &, @, etc).
 * Moah bug fixes.
 
-================================RELEASE 2.1.3 (1/29/2014)===========================================
+Release 2.1.3 (1/29/2014)
+-------------------------
 
 * Added service tracking for GAnalytics.
 
-================================RELEASE 2.1.2 (1/29/2014)===========================================
+Release 2.1.2 (1/29/2014)
+-------------------------
 
 * Added campaign tracking for GAnalytics (Facebook, 30% off campaign).
 
-================================RELEASE 2.2 (2/23/2014)=============================================
+Release 2.2 (2/23/2014)
+-------------------------
 
 * Removed Now Playing footer and added playback controls to current queue drawer.
 * Transparent navigation bar and status bar for KitKat users (Android 4.4+).
@@ -258,12 +280,4 @@ Previous Changelogs
 * Added "Play All" and "Shuffle All" options to main screen overflow menu.
 * Equalizer no longer locked to landscape mode.
 * Bug fixes.
-
-================================RELEASE 2.3 (4/xx/2014)=============================================
-
-* Removed trial time limit for developer (yours truly).
-* Current song/queue is saved across app startups/shutdowns. New "Resume Last Queue" option.
-* Fixed issues with editing song/album/artist tags.
-* KitKat support for tag editing.
-* More bug fixes.
 
