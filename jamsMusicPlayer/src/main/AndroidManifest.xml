@@ -19,41 +19,41 @@
         android:targetSdkVersion="20" />
 
     <application
-        android:name="com.jams.music.player.Utils.Common"
+        android:name=".Utils.Common"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:largeHeap="true" >
-        
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-        
-        <meta-data 
-            android:name="com.facebook.sdk.ApplicationId" 
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/fb_app_id" />
 
-        <!-- Used for Google Play Store Campaign Measurement -->;
-		<service android:name="com.google.analytics.tracking.android.CampaignTrackingService" />
-		<receiver android:name="com.google.analytics.tracking.android.CampaignTrackingReceiver" 
-		          android:exported="true" >
-  			<intent-filter>
-    			<action android:name="com.android.vending.INSTALL_REFERRER" />
-  			</intent-filter>
-		</receiver>
-        
+        <!-- Used for Google Play Store Campaign Measurement -->
+;
+        <service android:name="com.google.analytics.tracking.android.CampaignTrackingService" />
+
+        <receiver
+            android:name="com.google.analytics.tracking.android.CampaignTrackingReceiver"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="com.android.vending.INSTALL_REFERRER" />
+            </intent-filter>
+        </receiver>
+
         <!-- Now Playing Activity -->
 
         <activity
-            android:name="com.jams.music.player.NowPlayingActivity.NowPlayingActivity"
-            android:label="@string/app_name"
-            android:exported="true" >
+            android:name=".NowPlayingActivity.NowPlayingActivity"
+            android:exported="true"
+            android:label="@string/app_name" >
         </activity>
 
         <!-- Launcher Activity -->
 
-        <activity
-            android:name="com.jams.music.player.LauncherActivity.LauncherActivity" >
+        <activity android:name=".LauncherActivity.LauncherActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -64,89 +64,87 @@
         <!-- Welcome Activity -->
 
         <activity
-            android:name="com.jams.music.player.WelcomeActivity.WelcomeActivity"
+            android:name=".WelcomeActivity.WelcomeActivity"
             android:label="@string/app_name" >
         </activity>
 
         <!-- Main Activity -->
 
         <activity
-            android:name="com.jams.music.player.MainActivity.MainActivity"
-            android:theme="@style/AppTheme"
-            android:label="@string/app_name" >
+            android:name=".MainActivity.MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme" >
         </activity>
 
         <!-- Artists Flipped Activity -->
 
         <activity
-            android:name="com.jams.music.player.ArtistsFlippedActivity.ArtistsFlippedActivity"
+            android:name=".ArtistsFlippedActivity.ArtistsFlippedActivity"
             android:label="@string/title_activity_artists_flipped" >
         </activity>
 
         <!-- Artists Flipped Songs Activity -->
 
         <activity
-            android:name="com.jams.music.player.ArtistsFlippedSongsActivity.ArtistsFlippedSongsActivity"
+            android:name=".ArtistsFlippedSongsActivity.ArtistsFlippedSongsActivity"
             android:label="@string/title_activity_artists_flipped_songs" >
         </activity>
-  
+
         <!-- Album Artists Flipped Activity -->
         <activity
-            android:name="com.jams.music.player.AlbumArtistsFlippedActivity.AlbumArtistsFlippedActivity"
+            android:name=".AlbumArtistsFlippedActivity.AlbumArtistsFlippedActivity"
             android:label="@string/title_activity_artists_flipped" >
         </activity>
-        
+
         <!-- Album Artists Flipped Songs Activity -->
         <activity
-            android:name="com.jams.music.player.AlbumArtistsFlippedSongsActivity.AlbumArtistsFlippedSongsActivity"
+            android:name=".AlbumArtistsFlippedSongsActivity.AlbumArtistsFlippedSongsActivity"
             android:label="@string/title_activity_artists_flipped" >
         </activity>
 
         <!-- Services -->
 
         <service android:name=".Services.AudioPlaybackService" />
-        <service android:name="com.jams.music.player.Services.AutoFetchAlbumArtService" />
-        <service android:name="com.jams.music.player.Services.PinGMusicSongsService" />
+        <service android:name=".Services.AutoFetchAlbumArtService" />
+        <service android:name=".Services.PinGMusicSongsService" />
         <service
-            android:name="com.jams.music.player.Services.LargeWidgetAdapterService"
+            android:name=".Services.LargeWidgetAdapterService"
             android:exported="false"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
         <service
-            android:name="com.jams.music.player.Services.BuildMusicLibraryService"
+            android:name=".Services.BuildMusicLibraryService"
             android:exported="false" />
+        <service
+            android:name=".Services.DashClockExtensionService"
+            android:icon="@drawable/dashclock_icon"
+            android:label="@string/app_full_name"
+            android:permission="com.google.android.apps.dashclock.permission.READ_EXTENSION_DATA" >
+            <intent-filter>
+                <action android:name="com.google.android.apps.dashclock.Extension" />
+            </intent-filter>
 
-        <service android:name="com.jams.music.player.Services.DashClockExtensionService"
-     		android:icon="@drawable/dashclock_icon"
-     		android:label="@string/app_full_name"
-     		android:permission="com.google.android.apps.dashclock.permission.READ_EXTENSION_DATA">
-            
-     		<intent-filter>
-         		<action android:name="com.google.android.apps.dashclock.Extension" />
-     		</intent-filter>
-     		
-     		<meta-data 
-     		    android:name="protocolVersion" 
-     		    android:value="2" />
-     		<meta-data 
-     		    android:name="worldReadable" 
-     		    android:value="true" />
-     		<meta-data 
-     		    android:name="description"
-         		android:value="@string/dashclock_description" />
-     
- 		</service>
-        
+            <meta-data
+                android:name="protocolVersion"
+                android:value="2" />
+            <meta-data
+                android:name="worldReadable"
+                android:value="true" />
+            <meta-data
+                android:name="description"
+                android:value="@string/dashclock_description" />
+        </service>
+
         <!-- Albums Flipped Activity -->
 
         <activity
-            android:name="com.jams.music.player.AlbumsFlippedActivity.AlbumsFlippedActivity"
+            android:name=".AlbumsFlippedActivity.AlbumsFlippedActivity"
             android:label="@string/title_activity_albums_flipped" >
         </activity>
 
         <!-- Large Widget -->
 
         <receiver
-            android:name="com.jams.music.player.WidgetProviders.LargeWidgetProvider"
+            android:name=".WidgetProviders.LargeWidgetProvider"
             android:label="Jams Large Widget" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -156,11 +154,11 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/large_widget_info" />
         </receiver>
-        
+
         <!-- Blurred Widget -->
 
         <receiver
-            android:name="com.jams.music.player.WidgetProviders.BlurredWidgetProvider"
+            android:name=".WidgetProviders.BlurredWidgetProvider"
             android:label="Jams Blurred Album Art Widget" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -170,11 +168,11 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/blurred_widget_info" />
         </receiver>
-        
+
         <!-- Album Art Widget -->
 
         <receiver
-            android:name="com.jams.music.player.WidgetProviders.AlbumArtWidgetProvider"
+            android:name=".WidgetProviders.AlbumArtWidgetProvider"
             android:label="Jams Album Art Widget" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -184,10 +182,10 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/album_art_widget_info" />
         </receiver>
-        
+
         <!-- Listens for media playback buttons (headphone buttons, bluetooth buttons, etc.) -->
-        
-        <receiver android:name="com.jams.music.player.BroadcastReceivers.HeadsetButtonsReceiver" >
+
+        <receiver android:name=".BroadcastReceivers.HeadsetButtonsReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
@@ -196,7 +194,7 @@
         <!-- Small Widget -->
 
         <receiver
-            android:name="com.jams.music.player.WidgetProviders.SmallWidgetProvider"
+            android:name=".WidgetProviders.SmallWidgetProvider"
             android:label="Jams Small Widget" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -206,26 +204,26 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/small_widget_info" />
         </receiver>
-        
+
         <!-- Large widget configuration activity -->
 
-        <activity android:name="com.jams.music.player.WidgetProviders.LargeWidgetConfigActivity" >
-    		<intent-filter>
-        		<action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
-    		</intent-filter>
-		</activity>
-		
+        <activity android:name=".WidgetProviders.LargeWidgetConfigActivity" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+
         <!-- Small widget configuration activity -->
 
-        <activity android:name="com.jams.music.player.WidgetProviders.SmallWidgetConfigActivity" >
-    		<intent-filter>
-        		<action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
-    		</intent-filter>
-		</activity>
-        
+        <activity android:name=".WidgetProviders.SmallWidgetConfigActivity" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+
         <!-- Widget/Notification Play/Pause Broadcast Receiver -->
 
-        <receiver android:name="com.jams.music.player.BroadcastReceivers.PlayPauseBroadcastReceiver" >
+        <receiver android:name=".BroadcastReceivers.PlayPauseBroadcastReceiver" >
             <intent-filter>
                 <action android:name="com.jams.music.player.PLAY_PAUSE_ACTION" />
             </intent-filter>
@@ -233,7 +231,7 @@
 
         <!-- Widget/Notification Previous Broadcast Receiver -->
 
-        <receiver android:name="com.jams.music.player.BroadcastReceivers.PreviousBroadcastReceiver" >
+        <receiver android:name=".BroadcastReceivers.PreviousBroadcastReceiver" >
             <intent-filter>
                 <action android:name="com.jams.music.player.PREVIOUS_ACTION" />
             </intent-filter>
@@ -241,7 +239,7 @@
 
         <!-- Widget/Notification Next Broadcast Receiver -->
 
-        <receiver android:name="com.jams.music.player.BroadcastReceivers.NextBroadcastReceiver" >
+        <receiver android:name=".BroadcastReceivers.NextBroadcastReceiver" >
             <intent-filter>
                 <action android:name="com.jams.music.player.NEXT_ACTION" />
             </intent-filter>
@@ -249,7 +247,7 @@
 
         <!-- Stop Service Broadcast Receiver -->
 
-        <receiver android:name="com.jams.music.player.BroadcastReceivers.StopServiceBroadcastReceiver" >
+        <receiver android:name=".BroadcastReceivers.StopServiceBroadcastReceiver" >
             <intent-filter>
                 <action android:name="com.jams.music.player.STOP_SERVICE" />
             </intent-filter>
@@ -257,7 +255,7 @@
 
         <!-- Receiver that gets called when the user changes songs from the Large Widget -->
 
-        <receiver android:name="com.jams.music.player.BroadcastReceivers.ChangeTrackBroadcastReceiver" >
+        <receiver android:name=".BroadcastReceivers.ChangeTrackBroadcastReceiver" >
             <intent-filter>
                 <action android:name="com.jams.music.player.WIDGET_CHANGE_TRACK" />
             </intent-filter>
@@ -265,13 +263,13 @@
 
         <!-- Main Settings Activity -->
 
-        <activity android:name="com.jams.music.player.SettingsActivity.SettingsActivity" >
+        <activity android:name=".SettingsActivity.SettingsActivity" >
         </activity>
 
         <!-- Dummy activity that launches Fragment dialogs from the Main Settings Activity -->
 
         <activity
-            android:name="com.jams.music.player.SettingsActivity.PreferenceDialogLauncherActivity"
+            android:name=".SettingsActivity.PreferenceDialogLauncherActivity"
             android:label="@string/app_name"
             android:theme="@style/AppThemeTransparent" >
         </activity>
@@ -279,62 +277,60 @@
         <!-- PlaylistsFlipped Activity -->
 
         <activity
-            android:name="com.jams.music.player.PlaylistsFlippedActivity.PlaylistsFlippedActivity"
+            android:name=".PlaylistsFlippedActivity.PlaylistsFlippedActivity"
             android:label="@string/title_activity_playlists_flipped" >
         </activity>
 
         <!-- GenresFlipped Activity -->
 
         <activity
-            android:name="com.jams.music.player.GenresFlippedActivity.GenresFlippedActivity"
+            android:name=".GenresFlippedActivity.GenresFlippedActivity"
             android:label="@string/genre" >
         </activity>
-        
+
         <!-- Genres Flipped Songs Activity -->
 
         <activity
-            android:name="com.jams.music.player.GenresFlippedSongsActivity.GenresFlippedSongsActivity"
+            android:name=".GenresFlippedSongsActivity.GenresFlippedSongsActivity"
             android:label="@string/genre" >
         </activity>
 
         <!-- Now Playing Queue Activity -->
 
         <activity
-            android:name="com.jams.music.player.NowPlayingQueueActivity.NowPlayingQueueActivity"
+            android:name=".NowPlayingQueueActivity.NowPlayingQueueActivity"
             android:label="@string/now_playing_queue" >
         </activity>
 
         <!-- Blacklist Manager -->
 
         <activity
-            android:name="com.jams.music.player.BlacklistManagerActivity.BlacklistManagerActivity"
+            android:name=".BlacklistManagerActivity.BlacklistManagerActivity"
             android:label="@string/title_activity_blacklist_manager" >
         </activity>
 
         <!-- Music Libraries Editor Activity -->
         <activity
-            android:name="com.jams.music.player.MusicLibraryEditorActivity.MusicLibraryEditorActivity"
+            android:name=".MusicLibraryEditorActivity.MusicLibraryEditorActivity"
             android:label="@string/music_library_editor" >
         </activity>
-        
-		<!-- Music Libraries Editor Activity -->
-        <activity
-            android:name="com.jams.music.player.PlaylistEditorActivity.PlaylistEditorActivity"
-            android:label="@string/playlists" >
-        </activity>        
-        
-        <activity
-			android:name="com.jams.music.player.Services.KitKatFixActivity"
-			android:theme="@android:style/Theme.NoDisplay"
-			android:enabled="true"
-			android:allowTaskReparenting="true"
-			android:noHistory="true"
-			android:excludeFromRecents="true"
-			android:alwaysRetainTaskState="false"
-			android:stateNotNeeded="true"
-			android:clearTaskOnLaunch="true"
-			android:finishOnTaskLaunch="true" /> 
 
+        <!-- Music Libraries Editor Activity -->
+        <activity
+            android:name=".PlaylistEditorActivity.PlaylistEditorActivity"
+            android:label="@string/playlists" >
+        </activity>
+        <activity
+            android:name=".Services.KitKatFixActivity"
+            android:allowTaskReparenting="true"
+            android:alwaysRetainTaskState="false"
+            android:clearTaskOnLaunch="true"
+            android:enabled="true"
+            android:excludeFromRecents="true"
+            android:finishOnTaskLaunch="true"
+            android:noHistory="true"
+            android:stateNotNeeded="true"
+            android:theme="@android:style/Theme.NoDisplay" />
     </application>
 
 </manifest>

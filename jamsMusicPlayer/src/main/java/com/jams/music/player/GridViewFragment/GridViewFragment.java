@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +34,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.andraskindler.quickscroll.QuickScrollGridView;
+import com.jams.music.player.HorizontalListSubFragment.HorizontalListSubFragment;
 import com.jams.music.player.R;
 import com.jams.music.player.ArtistsFlippedActivity.ArtistsFlippedActivity;
 import com.jams.music.player.DBHelpers.DBAccessHelper;
@@ -261,25 +263,30 @@ public class GridViewFragment extends Fragment {
 		@Override
 		public void onItemClick(AdapterView<?> arg0, View view, int index, long id) {
 
-			String currentArtist = (String) view.getTag(R.string.artist);
-			
+			/*String currentArtist = (String) view.getTag(R.string.artist);
+
 			//If the artist has artwork from Google Play Music, use that as header image path.
 			String dataURI = "";
 			String artSource = (String) view.getTag(R.string.song_source);
-			
+
 			if (artSource.equals(DBAccessHelper.GMUSIC)) {
 				dataURI = (String) view.getTag(R.string.artist_art_path);
 			} else {
 				dataURI = (String) view.getTag(R.string.album_art);
 			}
-			
+
 			Intent intent = new Intent(mContext, ArtistsFlippedActivity.class);
 			intent.putExtra("ARTIST_NAME", currentArtist);
 			intent.putExtra("HEADER_IMAGE_PATH", dataURI);
 			intent.putExtra("ART_SOURCE", artSource);
-			
+
 			startActivity(intent);
-			getActivity().overridePendingTransition(R.anim.fade_in, R.anim.scale_and_fade_out);
+			getActivity().overridePendingTransition(R.anim.fade_in, R.anim.scale_and_fade_out);*/
+
+            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                           .replace(R.id.mainActivityContainer, new HorizontalListSubFragment())
+                           .commit();
 			
 		}
     	

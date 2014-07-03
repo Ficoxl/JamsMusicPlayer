@@ -53,7 +53,6 @@
         <item>Licenses</item>
         <item>Contact Us</item>
     </string-array>
-    
     <string-array name="settings_descriptions">
         <item>Choose a light or dark base theme for the entire application.</item>
         <item>Choose a color scheme for the Now Playing screen and playback controls.</item>
@@ -389,7 +388,7 @@
     <string name="destination_location_invalid">The destination location is invalid.</string>
     <string name="source_file_could_not_be_read">The source file could not be read.</string>
     <string name="file_could_not_be_written_new_location">The file(s) could not be written to the new location.</string>
-    <string name="copy_instructions">To finish this copy operation, long press the destination folder and tap \&quot;Paste\&quot;.</string>
+    <string name="copy_instructions">To finish this copy operation, long press the destination folder and tap \"Paste\".</string>
     <string name="copy">Copy</string>
     <string name="copy_here">Copy Here</string>
     <string name="done_copy">Done copying file(s).</string>
@@ -401,7 +400,7 @@
     <string name="delete_folder_confirmation">Are you sure you want to delete this folder? This operation cannot be undone.</string>
     <string name="move">Move</string>
     <string name="moving_file">Moving file.</string>
-    <string name="move_instructions">To finish this move operation, long press the destination folder and tap \&quot;Move Here\&quot;.</string>
+    <string name="move_instructions">To finish this move operation, long press the destination folder and tap \"Move Here\".</string>
     <string name="deleting_files">Deleting file(s).</string>
     <string name="file_deleted">Done deleting file(s).</string>
     <string name="file_could_not_be_deleted">The file(s) could not be deleted.</string>
@@ -697,7 +696,7 @@
     <string name="default_folder_does_not_exist">You default folder does not exist. Falling back to root.</string>
     <string name="is_now_default_folder">is now your default folder for Folders view.</string>
     <string name="htc_devices">HTC Devices</string>
-    <string name="htc_devices_equalizer_issue">If you are using an HTC device and your volume controls are stuck at max, go to Settings &gt; Equalizer and tap \&quot;Disable\&quot;. This is a known issue with the API and is currently being fixed by Google.</string>
+    <string name="htc_devices_equalizer_issue">If you are using an HTC device and your volume controls are stuck at max, go to Settings > Equalizer and tap \"Disable\". This is a known issue with the API and is currently being fixed by Google.</string>
     <string name="jams_is_building_library">Jams is building your library.</string>
     <string name="jams_is_building_library_info">Feel free to close the app during this process. Swipe down your notification drawer at any time to check the current progress.</string>
     <string name="jams_is_caching_artwork">Jams is caching album art.</string>
@@ -710,19 +709,21 @@
     <string name="artists_layout">Artists Layout</string>
     <string name="album_artists_layout">Album Artists Layout</string>
     <string name="albums_layout">Albums Layout</string>
+
     <string-array name="startup_screen_items">
-        <item >Artists</item>
-        <item >Album Artists</item>
-        <item >Albums</item>
-        <item >Songs</item>
-        <item >Playlists</item>
-        <item >Genres</item>
-        <item >Folders</item>
+        <item>Artists</item>
+        <item>Album Artists</item>
+        <item>Albums</item>
+        <item>Songs</item>
+        <item>Playlists</item>
+        <item>Genres</item>
+        <item>Folders</item>
     </string-array>
     <string-array name="layout_preference_items">
-        <item >Grid</item>
-        <item >List</item>
+        <item>Grid</item>
+        <item>List</item>
     </string-array>
+
     <string name="queue_is_empty">No music is playing.</string>
     <string name="size_colon">Size:</string>
     <string name="items_colon">Items:</string>
@@ -763,14 +764,14 @@
     <string name="days_remaining">days remaining.</string>
     <string name="day_remaining">day remaining.</string>
     <string name="congratulations">Congratulations!</string>
-    <string name="promo_upgrade_winner">Congratulations! You\'ve won 50&#37; off the upgrade price! Tap \&quot;Upgrade\&quot; to continue.</string>
-    <string name="promo_upgrade_didnt_win">Sorry, you didn\'t win this time. You can still upgrade to the full version though. Tap \&quot;Upgrade\&quot; to continue.</string>
+    <string name="promo_upgrade_winner">Congratulations! You\'ve won 50% off the upgrade price! Tap \"Upgrade\" to continue.</string>
+    <string name="promo_upgrade_didnt_win">Sorry, you didn\'t win this time. You can still upgrade to the full version though. Tap \"Upgrade\" to continue.</string>
     <string name="aw_snap">Aw snap.</string>
     <string name="you_won">You won!</string>
     <string name="just_a_sec">Just a sec...</string>
     <string name="facebook_not_installed">You must have the Facebook app installed to participate in this promotion.</string>
     <string name="couldnt_share_fb">Oops, your Facebook share post didn\'t go through. Please try again later.</string>
-    <string name="thanks_for_sharing">Thanks for sharing! Enjoy your 30&#37; off.</string>
+    <string name="thanks_for_sharing">Thanks for sharing! Enjoy your 30% off.</string>
     <string name="special_offer_details" formatted="false">Share Jams Music Player on Facebook and get 30% off your upgrade price!\n \nJust sign in to Facebook, share Jams with your friends using the Facebook Share dialog, and you\'ll instantly get the 30% discount applied to your purchase.</string>
     <string name="shuffle_all">Shuffle all</string>
     <string name="no_songs_to_play">No songs to play.</string>
@@ -809,5 +810,6 @@
     <string name="field_3">field3</string>
     <string name="field_4">field4</string>
     <string name="field_5">field5</string>
-    
+    <string name="title_activity_horizontal_list_sub">HorizontalListSubActivity</string>
+
 </resources>

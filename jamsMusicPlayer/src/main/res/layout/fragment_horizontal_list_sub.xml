@@ -1,0 +1,60 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/horiz_list_sub_activity_linear"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/horiz_list_sub_activity_header"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_weight="1" >
+
+        <ImageView
+            android:id="@+id/horiz_list_sub_activity_header_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="50dp" />
+
+        <TextView
+            android:id="@+id/horiz_list_sub_activity_header_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="The Wanted"
+            android:textColor="@android:color/white"
+            android:textSize="28sp"
+            android:layout_toLeftOf="@+id/horiz_list_sub_activity_header_profile"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="50dp"
+            android:singleLine="true"
+            android:ellipsize="marquee" />
+
+
+        <com.mikhaellopez.circularimageview.CircularImageView
+            android:id="@+id/horiz_list_sub_activity_header_profile"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:src="@drawable/test"
+            android:scaleType="centerCrop"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="25dp"
+            android:layout_marginRight="25dp" />
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/horiz_list_sub_activity_content"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_weight="1" >
+
+
+
+    </RelativeLayout>
+
+</LinearLayout>
