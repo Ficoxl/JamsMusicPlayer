@@ -5,14 +5,17 @@ import java.util.HashMap;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,11 +32,14 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.andraskindler.quickscroll.QuickScrollGridView;
+import com.jams.music.player.Helpers.ImageViewCoordHelper;
+import com.jams.music.player.HorizListSubActivity.HorizListSubActivity;
 import com.jams.music.player.HorizontalListSubFragment.HorizontalListSubFragment;
 import com.jams.music.player.R;
 import com.jams.music.player.ArtistsFlippedActivity.ArtistsFlippedActivity;
@@ -58,6 +64,7 @@ public class GridViewFragment extends Fragment {
 	private QuickScrollGridView mQuickScroll;
 	private BaseAdapter mGridViewAdapter;
 	private HashMap<Integer, String> mDBColumnsMap;
+    private HashMap<ImageView, ImageViewCoordHelper> mPicturesData;
 	private GridView mGridView;
 	private ListView mListView;
 	private TextView mEmptyTextView;
@@ -79,6 +86,7 @@ public class GridViewFragment extends Fragment {
         //Grab the fragment. This will determine which data to load into the cursor.
         mFragmentId = getArguments().getInt(Common.FRAGMENT_ID);
         mDBColumnsMap = new HashMap<Integer, String>();
+        mPicturesData = new HashMap<ImageView, ImageViewCoordHelper>();
         
 	    //Init the search fields.
 	    mSearchLayout = (RelativeLayout) mRootView.findViewById(R.id.search_layout);
@@ -263,6 +271,30 @@ public class GridViewFragment extends Fragment {
 		@Override
 		public void onItemClick(AdapterView<?> arg0, View view, int index, long id) {
 
+            //Grab a handle on the album art ImageView within the grid.
+            ImageView albumArt = (ImageView) view.findViewById(R.id.artistsGridViewImage);
+
+            //Grab the album art image data.
+            int[] screenLocation = new int[2];
+            albumArt.getLocationOnScreen(screenLocation);
+            String albumArtPath = (String) view.getTag(R.string.album_art);
+            Bitmap thumbnail = ((BitmapDrawable) albumArt.getDrawable()).getBitmap();
+            ImageViewCoordHelper info = new ImageViewCoordHelper(albumArtPath, thumbnail);
+
+            //Pass on the album art view info to the new activity.
+            Intent intent = new Intent(mContext, HorizListSubActivity.class);
+            int orientation = getResources().getConfiguration().orientation;
+
+            intent.putExtra("orientation", orientation);
+            intent.putExtra("albumArtPath", info.mAlbumArtPath);
+            intent.putExtra("left", screenLocation[0]);
+            intent.putExtra("top", screenLocation[1]);
+            intent.putExtra("width", albumArt.getWidth());
+            intent.putExtra("height", albumArt.getHeight());
+
+            startActivity(intent);
+            getActivity().overridePendingTransition(0, 0);
+
 			/*String currentArtist = (String) view.getTag(R.string.artist);
 
 			//If the artist has artwork from Google Play Music, use that as header image path.
@@ -283,10 +315,10 @@ public class GridViewFragment extends Fragment {
 			startActivity(intent);
 			getActivity().overridePendingTransition(R.anim.fade_in, R.anim.scale_and_fade_out);*/
 
-            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+            /*FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
             fragmentManager.beginTransaction()
                            .replace(R.id.mainActivityContainer, new HorizontalListSubFragment())
-                           .commit();
+                           .commit();*/
 			
 		}
     	

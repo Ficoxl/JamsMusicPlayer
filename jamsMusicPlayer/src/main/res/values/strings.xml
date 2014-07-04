@@ -811,5 +811,6 @@
     <string name="field_4">field4</string>
     <string name="field_5">field5</string>
     <string name="title_activity_horizontal_list_sub">HorizontalListSubActivity</string>
+    <string name="horiz_list_sub_activity">HorizListSubActivity</string>
 
 </resources>

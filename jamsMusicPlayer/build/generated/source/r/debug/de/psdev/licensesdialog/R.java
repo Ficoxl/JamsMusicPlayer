@@ -20,8 +20,8 @@ public final class R {
 		public static final int notices = 0x7f060009;
 	}
 	public static final class string {
-		public static final int notices_close = 0x7f0d0179;
-		public static final int notices_default_style = 0x7f0d017a;
-		public static final int notices_title = 0x7f0d017b;
+		public static final int notices_close = 0x7f0d017a;
+		public static final int notices_default_style = 0x7f0d017b;
+		public static final int notices_title = 0x7f0d017c;
 	}
 }

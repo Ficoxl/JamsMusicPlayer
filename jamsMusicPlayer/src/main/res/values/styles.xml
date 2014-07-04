@@ -199,5 +199,10 @@
         <item name="android:fadingEdge">horizontal</item>
         <item name="android:singleLine">true</item>
     </style>
+
+    <style name="Transparent" parent="android:Theme.Holo.Light" >
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
   	
 </resources>

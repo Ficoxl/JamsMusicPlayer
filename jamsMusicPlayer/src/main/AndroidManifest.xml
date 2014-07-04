@@ -310,16 +310,21 @@
         </activity>
 
         <!-- Music Libraries Editor Activity -->
+
         <activity
             android:name=".MusicLibraryEditorActivity.MusicLibraryEditorActivity"
             android:label="@string/music_library_editor" >
         </activity>
 
         <!-- Music Libraries Editor Activity -->
+        
         <activity
             android:name=".PlaylistEditorActivity.PlaylistEditorActivity"
             android:label="@string/playlists" >
         </activity>
+
+        <!-- KitKat Fix Activity -->
+
         <activity
             android:name=".Services.KitKatFixActivity"
             android:allowTaskReparenting="true"
@@ -331,6 +336,15 @@
             android:noHistory="true"
             android:stateNotNeeded="true"
             android:theme="@android:style/Theme.NoDisplay" />
+
+        <!-- Horizontal List Sub Activity -->
+
+        <activity
+            android:name=".HorizListSubActivity.HorizListSubActivity"
+            android:label="@string/horiz_list_sub_activity"
+            android:theme="@style/Transparent" >
+        </activity>
+
     </application>
 
 </manifest>

@@ -229,7 +229,7 @@ public class GridViewCardsAdapter extends SimpleCursorAdapter implements Scrolla
 		convertView.setTag(R.string.title_text, titleText);
 		convertView.setTag(R.string.song_source, source);
 		convertView.setTag(R.string.song_file_path, filePath);
-		convertView.setTag(R.string.artist_art_path, artworkPath);
+		convertView.setTag(R.string.album_art, artworkPath);
 		convertView.setTag(R.string.field_1, field1);
 		convertView.setTag(R.string.field_2, field2);
 		convertView.setTag(R.string.field_3, field3);
@@ -250,13 +250,23 @@ public class GridViewCardsAdapter extends SimpleCursorAdapter implements Scrolla
 		mHolder.title.setText(titleText);
 		
 		//Load the album art.
-        Picasso.with(mContext)
-        	   .load(Uri.parse("custom.resource://" + artworkPath))
-        	   .placeholder(R.drawable.transparent_drawable)
-        	   .withDelay(100)
-        	   .withGenerator(generator)
-        	   .into(mHolder.gridViewArt);
-		
+        if (artworkPath.startsWith("byte://")) {
+            Picasso.with(mContext)
+                   .load(Uri.parse("custom.resource://" + artworkPath))
+                   .placeholder(R.drawable.transparent_drawable)
+                   .withDelay(100)
+                   .withGenerator(generator)
+                   .into(mHolder.gridViewArt);
+
+        } else {
+            Picasso.with(mContext)
+                   .load(Uri.parse(artworkPath))
+                   .placeholder(R.drawable.transparent_drawable)
+                   .withDelay(100)
+                   .into(mHolder.gridViewArt);
+
+        }
+
 		return convertView;
 	}
     
