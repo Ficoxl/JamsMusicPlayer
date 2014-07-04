@@ -15,7 +15,7 @@
         android:id="@+id/horiz_list_sub_activity_content"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:layout_below="@+id/horiz_list_sub_activity_header"
+        android:layout_below="@+id/horiz_list_sub_activity_header_image"
         android:visibility="invisible"
         android:background="@android:color/white" >
 
@@ -32,41 +32,20 @@
     <ImageView
         android:id="@+id/horiz_list_sub_activity_header_image"
         android:layout_width="match_parent"
-        android:layout_height="230dp"
+        android:layout_height="360dp"
         android:scaleType="centerCrop"
         android:adjustViewBounds="true" />
 
-    <RelativeLayout
-        android:id="@+id/horiz_list_sub_activity_header"
-        android:layout_height="230dp"
-        android:layout_width="match_parent"
-        android:layout_alignParentTop="true" >
-
-        <TextView
-            android:id="@+id/horiz_list_sub_activity_header_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Title Text"
-            android:textColor="@android:color/white"
-            android:textSize="28sp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="10dp"
-            android:layout_marginBottom="10dp"
-            android:singleLine="true"
-            android:ellipsize="marquee" />
-
-    </RelativeLayout>
-
     <com.mikhaellopez.circularimageview.CircularImageView
-        android:id="@+id/horiz_list_sub_activity_header_profile"
-        android:layout_width="96dp"
-        android:layout_height="96dp"
+        android:id="@+id/horiz_list_sub_activity_circular_action"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
         android:scaleType="centerCrop"
         android:adjustViewBounds="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
-        android:layout_marginTop="182dp"
-        android:layout_marginRight="25dp" />
+        android:layout_marginTop="320dp"
+        android:layout_marginRight="25dp"
+        android:visibility="invisible" />
 
 </RelativeLayout>

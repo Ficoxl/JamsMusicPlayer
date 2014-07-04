@@ -342,7 +342,7 @@
         <activity
             android:name=".HorizListSubActivity.HorizListSubActivity"
             android:label="@string/horiz_list_sub_activity"
-            android:theme="@style/Transparent" >
+            android:theme="@style/HoloTransparent" >
         </activity>
 
     </application>

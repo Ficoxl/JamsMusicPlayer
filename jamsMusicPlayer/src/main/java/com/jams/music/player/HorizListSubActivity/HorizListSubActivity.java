@@ -14,13 +14,17 @@ import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewPropertyAnimator;
 import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
+import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -51,21 +55,28 @@ import it.sephiroth.android.library.picasso.Picasso;
  */
 public class HorizListSubActivity extends Activity {
 
+    //Context and common objects.
     private Context mContext;
     private Common mApp;
 
-    private TextView mHeaderText;
-    private CircularImageView mProfileImage;
+    //UI elements.
+    private CircularImageView mCircularActionButton;
     private ImageView mHeaderImage;
     private RelativeLayout mContentLayout;
     private RelativeLayout mBackgroundLayout;
 
-    private static final int ANIM_DURATION = 300;
+    //Image scale/translate parameters.
+    private static final int ANIM_DURATION = 225;
     private int mLeftDelta;
     private int mTopDelta;
     private float mWidthScale;
     private float mHeightScale;
     private int mOriginalOrientation;
+
+    //Animation interpolators.
+    private EaseInOutInterpolator easeInInterpolator;
+    private EaseInOutInterpolator easeOutInterpolator;
+    private EaseInOutInterpolator easeInOutInterpolator;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -73,24 +84,22 @@ public class HorizListSubActivity extends Activity {
         mContext = getApplicationContext();
         mApp = (Common) mContext;
 
-        //setTheme();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_horizontal_list_sub);
 
-        mHeaderText = (TextView) findViewById(R.id.horiz_list_sub_activity_header_text);
-        mProfileImage = (CircularImageView) findViewById(R.id.horiz_list_sub_activity_header_profile);
+        mCircularActionButton = (CircularImageView) findViewById(R.id.horiz_list_sub_activity_circular_action);
         mHeaderImage = (ImageView) findViewById(R.id.horiz_list_sub_activity_header_image);
         mContentLayout = (RelativeLayout) findViewById(R.id.horiz_list_sub_activity_content);
         mBackgroundLayout = (RelativeLayout) findViewById(R.id.horiz_list_sub_activity_background);
 
-        mHeaderText.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Light"));
-        mHeaderText.setPaintFlags(mHeaderText.getPaintFlags()
-                                  | Paint.ANTI_ALIAS_FLAG
-                                  | Paint.SUBPIXEL_TEXT_FLAG);
+        //Apply a subtle shadow to the circular action button.
+        mCircularActionButton.setBorderWidth(0);
+        mCircularActionButton.addShadow();
 
-        //Apply a subtle shadow to the circular profile image.
-        mProfileImage.setBorderWidth(0);
-        mProfileImage.addShadow();
+        //Init the interpolators.
+        easeInInterpolator = new EaseInOutInterpolator(EaseInOutInterpolator.EasingType.Type.IN);
+        easeOutInterpolator = new EaseInOutInterpolator(EaseInOutInterpolator.EasingType.Type.OUT);
+        easeInOutInterpolator = new EaseInOutInterpolator(EaseInOutInterpolator.EasingType.Type.INOUT);
 
        /*
         * Retrieve the data we need for the picture to display
@@ -119,7 +128,7 @@ public class HorizListSubActivity extends Activity {
             @Override
             public void onLoadingComplete(String s, View view, Bitmap bitmap) {
                 mHeaderImage.setImageBitmap(bitmap);
-                mProfileImage.setImageBitmap(bitmap);
+                mCircularActionButton.setImageBitmap(bitmap);
 
                 /*
                  * Only run the animation if we're coming from the parent activity and not if
@@ -161,7 +170,7 @@ public class HorizListSubActivity extends Activity {
 
         });
 
-    }
+}
 
     /**
      * The enter animation scales the picture in from its previous thumbnail
@@ -173,7 +182,7 @@ public class HorizListSubActivity extends Activity {
          * Set starting values for properties we're going to animate. These
          * values scale and position the full size version down to the thumbnail
          * size/location, from which we'll animate it back up.
-         */
+        */
         mHeaderImage.setPivotX(0);
         mHeaderImage.setPivotY(0);
         mHeaderImage.setScaleX(mWidthScale);
@@ -185,11 +194,10 @@ public class HorizListSubActivity extends Activity {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
             mHeaderImage.animate()
                         .setDuration(ANIM_DURATION)
+                        .translationX(0)
                         .scaleX(1)
                         .scaleY(1)
-                        .translationX(0)
-                        .translationY(0)
-                        .setInterpolator(new EaseInOutInterpolator(EaseInOutInterpolator.EasingType.Type.INOUT))
+                        .setInterpolator(easeInOutInterpolator)
                         .setListener(new Animator.AnimatorListener() {
 
                             @Override
@@ -199,7 +207,7 @@ public class HorizListSubActivity extends Activity {
 
                             @Override
                             public void onAnimationEnd(Animator animation) {
-                                slideDownContentLayout();
+                                animateContent();
                             }
 
                             @Override
@@ -217,19 +225,31 @@ public class HorizListSubActivity extends Activity {
         } else {
             mHeaderImage.animate()
                         .setDuration(ANIM_DURATION)
+                        .translationX(0)
                         .scaleX(1)
                         .scaleY(1)
-                        .translationX(0)
-                        .translationY(0)
-                        .setInterpolator(new EaseInOutInterpolator(EaseInOutInterpolator.EasingType.Type.INOUT))
+                        .setInterpolator(easeInOutInterpolator)
                         .withEndAction(new Runnable() {
 
                             @Override
                             public void run() {
-                                slideDownContentLayout();
+                                animateContent();
+
                             }
 
                         });
+
+            new Handler().postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    mHeaderImage.animate()
+                                .setDuration(300)
+                                .translationY(0)
+                                .setInterpolator(easeInOutInterpolator);
+                }
+
+            }, 100);
 
         }
 
@@ -237,19 +257,6 @@ public class HorizListSubActivity extends Activity {
         FadeAnimation fadeIn = new FadeAnimation(mBackgroundLayout, 400, 0.0f, 0.8f,
                                                  new DecelerateInterpolator());
         fadeIn.animate();
-
-    }
-
-    /**
-     * Sets the entire activity-wide theme.
-     */
-    private void setTheme() {
-        if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_THEME") ||
-            mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME")) {
-            setTheme(R.style.AppThemeTransparent);
-        } else {
-            setTheme(R.style.AppThemeTransparentLight);
-        }
 
     }
 
@@ -262,7 +269,7 @@ public class HorizListSubActivity extends Activity {
         public Bitmap decode(Uri uri) throws IOException {
 
             MediaMetadataRetriever mmdr = new MediaMetadataRetriever();
-            byte[] imageData = null;
+            byte[] imageData;
             try {
                 String prefix = "custom.resource://byte://";
                 mmdr.setDataSource(uri.toString().substring(prefix.length()));
@@ -277,14 +284,25 @@ public class HorizListSubActivity extends Activity {
     };
 
     /**
-     * Slides down the content layout as a part of the transitional
-     * animation sequence. Called right after the header image has
-     * been scaled into place.
+     * Scales in the main action button. Also slides down the
+     * content layout as a part of the transitional animation
+     * sequence. Called right after the header image has been
+     * scaled into place.
      */
-    private void slideDownContentLayout() {
+    private void animateContent() {
+        //Scale in the action button.
+        int pivotX = mCircularActionButton.getWidth()/2;
+        int pivotY = mCircularActionButton.getHeight()/2;
+        ScaleAnimation scaleIn = new ScaleAnimation(0.0f, 1.0f, 0.0f, 1.0f,
+                                                    pivotX, pivotY);
+        scaleIn.setDuration(300);
+        scaleIn.setAnimationListener(scaleInListener);
+        scaleIn.setInterpolator(easeOutInterpolator);
+        mCircularActionButton.setAnimation(scaleIn);
 
+        //Slide down the content view.
         TranslateAnimation slideDown = new TranslateAnimation(mContentLayout, 300,
-                                                              new EaseInOutInterpolator(EaseInOutInterpolator.EasingType.Type.OUT),
+                                                              easeOutInterpolator,
                                                               View.VISIBLE,
                                                               Animation.RELATIVE_TO_SELF, 0.0f,
                                                               Animation.RELATIVE_TO_SELF, 0.0f,
@@ -293,6 +311,40 @@ public class HorizListSubActivity extends Activity {
 
         slideDown.animate();
 
+    }
+
+    /**
+     * Action button scale animation listener.
+     */
+    private Animation.AnimationListener scaleInListener = new Animation.AnimationListener() {
+
+        @Override
+        public void onAnimationStart(Animation animation) {
+
+        }
+
+        @Override
+        public void onAnimationEnd(Animation animation) {
+            mCircularActionButton.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        public void onAnimationRepeat(Animation animation) {
+
+        }
+
+    };
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        //Inflate the menu.
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_activity, menu);
+
+        //Set the ActionBar drawable.
+        getActionBar().setBackgroundDrawable(UIElementsHelper.getGeneralActionBarBackground(getApplicationContext()));
+
+        return super.onCreateOptionsMenu(menu);
     }
 
 }

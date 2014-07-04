@@ -40,7 +40,6 @@ import android.widget.TextView;
 import com.andraskindler.quickscroll.QuickScrollGridView;
 import com.jams.music.player.Helpers.ImageViewCoordHelper;
 import com.jams.music.player.HorizListSubActivity.HorizListSubActivity;
-import com.jams.music.player.HorizontalListSubFragment.HorizontalListSubFragment;
 import com.jams.music.player.R;
 import com.jams.music.player.ArtistsFlippedActivity.ArtistsFlippedActivity;
 import com.jams.music.player.DBHelpers.DBAccessHelper;
@@ -64,7 +63,6 @@ public class GridViewFragment extends Fragment {
 	private QuickScrollGridView mQuickScroll;
 	private BaseAdapter mGridViewAdapter;
 	private HashMap<Integer, String> mDBColumnsMap;
-    private HashMap<ImageView, ImageViewCoordHelper> mPicturesData;
 	private GridView mGridView;
 	private ListView mListView;
 	private TextView mEmptyTextView;
@@ -86,7 +84,6 @@ public class GridViewFragment extends Fragment {
         //Grab the fragment. This will determine which data to load into the cursor.
         mFragmentId = getArguments().getInt(Common.FRAGMENT_ID);
         mDBColumnsMap = new HashMap<Integer, String>();
-        mPicturesData = new HashMap<ImageView, ImageViewCoordHelper>();
         
 	    //Init the search fields.
 	    mSearchLayout = (RelativeLayout) mRootView.findViewById(R.id.search_layout);
