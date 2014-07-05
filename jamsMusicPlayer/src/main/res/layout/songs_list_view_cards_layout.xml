@@ -16,17 +16,20 @@
       	android:ellipsize="end" 
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
-    <com.jams.music.player.Utils.RoundedImageView
+    <com.mikhaellopez.circularimageview.CircularImageView
         android:id="@+id/songsListAlbumThumbnail"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:layout_alignParentLeft="true"
-		android:layout_centerVertical="true" />
+		android:layout_centerVertical="true"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"/>
     
     <LinearLayout
         android:id="@+id/songCardContent"
         android:layout_width="match_parent"
-        android:layout_height="75dp"
+        android:layout_height="80dp"
         android:layout_centerVertical="true"
         android:layout_toRightOf="@+id/songsListAlbumThumbnail"
         android:layout_toLeftOf="@+id/songDurationListView"

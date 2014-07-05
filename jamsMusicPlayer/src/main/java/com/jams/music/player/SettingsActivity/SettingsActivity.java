@@ -1168,7 +1168,6 @@ public class SettingsActivity extends PreferenceActivity {
     				Toast.makeText(mSettingsActivity, R.string.unable_to_reach_google_play, Toast.LENGTH_LONG).show();
     			} else {             
     				//In-app billing was initialized successfully.
-    				Log.e("DEBUG", ">>>>SUCCESSFULLY INITIALIZED IN-APP BILLING");
     				try {
     					mHelper.launchPurchaseFlow(mSettingsActivity, ITEM_SKU, 10001, mPurchaseFinishedListener, "");
     				} catch (Exception e) {

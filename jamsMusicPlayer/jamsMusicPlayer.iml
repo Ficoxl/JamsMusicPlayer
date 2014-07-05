@@ -84,7 +84,6 @@
     <orderEntry type="module" module-name="circularImageView" exported="" />
     <orderEntry type="module" module-name="quickScroll" exported="" />
     <orderEntry type="module" module-name="licensesdialoglibrary" exported="" />
-    <orderEntry type="module" module-name="picassolibrary" exported="" />
     <orderEntry type="module" module-name="velocityviewpagerlibrary" exported="" />
     <orderEntry type="module" module-name="viewpagerindicatorlibrary" exported="" />
   </component>

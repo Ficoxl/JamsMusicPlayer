@@ -1,11 +1,5 @@
 package com.jams.music.player.GridViewFragment;
 
-import it.sephiroth.android.library.picasso.Generator;
-import it.sephiroth.android.library.picasso.Picasso;
-
-import java.io.IOException;
-import java.util.HashMap;
-
 import android.content.Context;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -34,15 +28,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.andraskindler.quickscroll.Scrollable;
-import com.jams.music.player.R;
 import com.jams.music.player.AsyncTasks.AsyncAddToQueueTask;
-import com.jams.music.player.DBHelpers.DBAccessHelper;
 import com.jams.music.player.Dialogs.AddToPlaylistDialog;
 import com.jams.music.player.Dialogs.CautionEditArtistsDialog;
 import com.jams.music.player.Dialogs.ID3sArtistEditorDialog;
 import com.jams.music.player.Helpers.TypefaceHelper;
 import com.jams.music.player.Helpers.UIElementsHelper;
+import com.jams.music.player.R;
 import com.jams.music.player.Utils.Common;
+
+import java.io.IOException;
+import java.util.HashMap;
 
 /**
  * Generic GridView adapter for GridViewFragment.
@@ -250,48 +246,10 @@ public class GridViewCardsAdapter extends SimpleCursorAdapter implements Scrolla
 		mHolder.title.setText(titleText);
 		
 		//Load the album art.
-        if (artworkPath.startsWith("byte://")) {
-            Picasso.with(mContext)
-                   .load(Uri.parse("custom.resource://" + artworkPath))
-                   .placeholder(R.drawable.transparent_drawable)
-                   .withDelay(100)
-                   .withGenerator(generator)
-                   .into(mHolder.gridViewArt);
-
-        } else {
-            Picasso.with(mContext)
-                   .load(Uri.parse(artworkPath))
-                   .placeholder(R.drawable.transparent_drawable)
-                   .withDelay(100)
-                   .into(mHolder.gridViewArt);
-
-        }
+        mApp.getImageLoader().displayImage(artworkPath, mHolder.gridViewArt, mApp.getDisplayImageOptions());
 
 		return convertView;
 	}
-    
-    /**
-     * Picasso custom generator for embedded artwork.
-     */
-    private Generator generator = new Generator() {
-
-		@Override
-		public Bitmap decode(Uri uri) throws IOException {
-
-			MediaMetadataRetriever mmdr = new MediaMetadataRetriever();
-            byte[] imageData = null;
-            try {
-            	String prefix = "custom.resource://byte://";
-            	mmdr.setDataSource(uri.toString().substring(prefix.length()));
-                imageData = mmdr.getEmbeddedPicture();
-            } catch (Exception e) {
-            	return null;
-            }
-			
-            return BitmapFactory.decodeByteArray(imageData , 0, imageData.length);
-		}
-		   
-	};
     
     /**
      * Click listener for overflow button.

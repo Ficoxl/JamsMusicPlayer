@@ -95,12 +95,12 @@ public final class R {
 		public static final int common_signin_btn_text_normal_light = 0x7f02008a;
 		public static final int common_signin_btn_text_pressed_dark = 0x7f02008b;
 		public static final int common_signin_btn_text_pressed_light = 0x7f02008c;
-		public static final int ic_plusone_medium_off_client = 0x7f0200e4;
-		public static final int ic_plusone_small_off_client = 0x7f0200e5;
-		public static final int ic_plusone_standard_off_client = 0x7f0200e6;
-		public static final int ic_plusone_tall_off_client = 0x7f0200e7;
-		public static final int powered_by_google_dark = 0x7f020139;
-		public static final int powered_by_google_light = 0x7f02013a;
+		public static final int ic_plusone_medium_off_client = 0x7f0200e6;
+		public static final int ic_plusone_small_off_client = 0x7f0200e7;
+		public static final int ic_plusone_standard_off_client = 0x7f0200e8;
+		public static final int ic_plusone_tall_off_client = 0x7f0200e9;
+		public static final int powered_by_google_dark = 0x7f02013c;
+		public static final int powered_by_google_light = 0x7f02013d;
 	}
 	public static final class id {
 		public static final int book_now = 0x7f0a0019;
@@ -162,11 +162,11 @@ public final class R {
 		public static final int wallet_buy_button_place_holder = 0x7f0d027e;
 	}
 	public static final class style {
-		public static final int Theme_IAPTheme = 0x7f0e0020;
-		public static final int WalletFragmentDefaultButtonTextAppearance = 0x7f0e0023;
-		public static final int WalletFragmentDefaultDetailsHeaderTextAppearance = 0x7f0e0024;
-		public static final int WalletFragmentDefaultDetailsTextAppearance = 0x7f0e0025;
-		public static final int WalletFragmentDefaultStyle = 0x7f0e0026;
+		public static final int Theme_IAPTheme = 0x7f0e0022;
+		public static final int WalletFragmentDefaultButtonTextAppearance = 0x7f0e0024;
+		public static final int WalletFragmentDefaultDetailsHeaderTextAppearance = 0x7f0e0025;
+		public static final int WalletFragmentDefaultDetailsTextAppearance = 0x7f0e0026;
+		public static final int WalletFragmentDefaultStyle = 0x7f0e0027;
 	}
 	public static final class styleable {
 		public static final int[] AdsAttrs = { 0x7f010004, 0x7f010005, 0x7f010006 };

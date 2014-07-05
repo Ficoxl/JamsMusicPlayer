@@ -15,7 +15,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
+import android.support.v4.app.FragmentTransaction;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,9 +39,8 @@ import android.widget.TextView;
 
 import com.andraskindler.quickscroll.QuickScrollGridView;
 import com.jams.music.player.Helpers.ImageViewCoordHelper;
-import com.jams.music.player.HorizListSubActivity.HorizListSubActivity;
+import com.jams.music.player.HorizListSubFragment.HorizListSubFragment;
 import com.jams.music.player.R;
-import com.jams.music.player.ArtistsFlippedActivity.ArtistsFlippedActivity;
 import com.jams.music.player.DBHelpers.DBAccessHelper;
 import com.jams.music.player.Helpers.TypefaceHelper;
 import com.jams.music.player.Helpers.UIElementsHelper;
@@ -278,44 +277,26 @@ public class GridViewFragment extends Fragment {
             Bitmap thumbnail = ((BitmapDrawable) albumArt.getDrawable()).getBitmap();
             ImageViewCoordHelper info = new ImageViewCoordHelper(albumArtPath, thumbnail);
 
-            //Pass on the album art view info to the new activity.
-            Intent intent = new Intent(mContext, HorizListSubActivity.class);
+            //Pass on the album art view info to the new fragment.
+            Bundle bundle = new Bundle();
             int orientation = getResources().getConfiguration().orientation;
 
-            intent.putExtra("orientation", orientation);
-            intent.putExtra("albumArtPath", info.mAlbumArtPath);
-            intent.putExtra("left", screenLocation[0]);
-            intent.putExtra("top", screenLocation[1]);
-            intent.putExtra("width", albumArt.getWidth());
-            intent.putExtra("height", albumArt.getHeight());
+            bundle.putInt("orientation", orientation);
+            bundle.putString("albumArtPath", info.mAlbumArtPath);
+            bundle.putInt("left", screenLocation[0]);
+            bundle.putInt("top", screenLocation[1]);
+            bundle.putInt("width", albumArt.getWidth());
+            bundle.putInt("height", albumArt.getHeight());
 
-            startActivity(intent);
-            getActivity().overridePendingTransition(0, 0);
+            //Fire up the new fragment.
+            HorizListSubFragment fragment = new HorizListSubFragment();
+            fragment.setArguments(bundle);
 
-			/*String currentArtist = (String) view.getTag(R.string.artist);
-
-			//If the artist has artwork from Google Play Music, use that as header image path.
-			String dataURI = "";
-			String artSource = (String) view.getTag(R.string.song_source);
-
-			if (artSource.equals(DBAccessHelper.GMUSIC)) {
-				dataURI = (String) view.getTag(R.string.artist_art_path);
-			} else {
-				dataURI = (String) view.getTag(R.string.album_art);
-			}
-
-			Intent intent = new Intent(mContext, ArtistsFlippedActivity.class);
-			intent.putExtra("ARTIST_NAME", currentArtist);
-			intent.putExtra("HEADER_IMAGE_PATH", dataURI);
-			intent.putExtra("ART_SOURCE", artSource);
-
-			startActivity(intent);
-			getActivity().overridePendingTransition(R.anim.fade_in, R.anim.scale_and_fade_out);*/
-
-            /*FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-            fragmentManager.beginTransaction()
-                           .replace(R.id.mainActivityContainer, new HorizontalListSubFragment())
-                           .commit();*/
+            FragmentManager manager = getActivity().getSupportFragmentManager();
+            FragmentTransaction transaction = manager.beginTransaction();
+            transaction.add(R.id.mainActivityContainer2, fragment, "horizListSubFragment")
+                       .addToBackStack("horizListSubFragment")
+                       .commit();
 			
 		}
     	

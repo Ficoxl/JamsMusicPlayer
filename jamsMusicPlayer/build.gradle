@@ -34,7 +34,6 @@ dependencies {
     compile project(':dragsortlistviewlibrary')
     compile project(':viewpagerindicatorlibrary')
     compile project(':circularImageView')
-    compile project(':picassolibrary')
     compile 'com.android.support:support-v4:+'
     compile 'com.google.android.gms:play-services:+'
     compile 'com.github.manuelpeinado.fadingactionbar:fadingactionbar:3.1.2'

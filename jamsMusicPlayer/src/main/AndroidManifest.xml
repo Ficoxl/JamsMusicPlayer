@@ -337,14 +337,6 @@
             android:stateNotNeeded="true"
             android:theme="@android:style/Theme.NoDisplay" />
 
-        <!-- Horizontal List Sub Activity -->
-
-        <activity
-            android:name=".HorizListSubActivity.HorizListSubActivity"
-            android:label="@string/horiz_list_sub_activity"
-            android:theme="@style/HoloTransparent" >
-        </activity>
-
     </application>
 
 </manifest>

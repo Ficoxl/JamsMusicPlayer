@@ -1,18 +1,8 @@
 package com.jams.music.player.ListViewFragment;
 
-import it.sephiroth.android.library.picasso.Generator;
-import it.sephiroth.android.library.picasso.Picasso;
-
-import java.io.IOException;
-import java.util.HashMap;
-
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Paint;
-import android.media.MediaMetadataRetriever;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SimpleCursorAdapter;
@@ -22,21 +12,23 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.andraskindler.quickscroll.Scrollable;
-import com.jams.music.player.R;
 import com.jams.music.player.AsyncTasks.AsyncAddToQueueTask;
 import com.jams.music.player.Dialogs.AddToPlaylistDialog;
 import com.jams.music.player.Dialogs.CautionEditArtistsDialog;
 import com.jams.music.player.Dialogs.ID3sArtistEditorDialog;
 import com.jams.music.player.Helpers.TypefaceHelper;
 import com.jams.music.player.Helpers.UIElementsHelper;
+import com.jams.music.player.R;
 import com.jams.music.player.Utils.Common;
+import com.mikhaellopez.circularimageview.CircularImageView;
+
+import java.util.HashMap;
 
 /**
  * Generic ListView adapter for ListViewFragment.
@@ -114,7 +106,8 @@ public class ListViewCardsAdapter extends SimpleCursorAdapter implements Scrolla
 				convertView.setBackgroundResource(R.drawable.card_gridview_dark);
 			
 			mHolder = new ListViewHolder();
-			mHolder.image = (ImageView) convertView.findViewById(R.id.songsListAlbumThumbnail);
+			mHolder.image = (CircularImageView) convertView.findViewById(R.id.songsListAlbumThumbnail);
+            mHolder.image.setBorderWidth(0);
 			mHolder.title = (TextView) convertView.findViewById(R.id.songNameListView);
 			mHolder.artist = (TextView) convertView.findViewById(R.id.artistNameSongListView);
 			mHolder.duration = (TextView) convertView.findViewById(R.id.songDurationListView);
@@ -197,38 +190,10 @@ public class ListViewCardsAdapter extends SimpleCursorAdapter implements Scrolla
 		
 		//Load the album art.
         mApp.getImageLoader().displayImage(artworkPath, mHolder.image, mApp.getDisplayImageOptions());
-        /*Picasso.with(mContext)
-        	   .load(Uri.parse("custom.resource://" + artworkPath))
-        	   .placeholder(R.drawable.transparent_drawable)
-        	   .withDelay(400)
-        	   .withGenerator(generator)
-        	   .into(mHolder.image);*/
 		
 		return convertView;
 	}
-    
-    /**
-     * Picasso custom generator for embedded artwork.
-     */
-    private Generator generator = new Generator() {
 
-		@Override
-		public Bitmap decode(Uri uri) throws IOException {
-
-			MediaMetadataRetriever mmdr = new MediaMetadataRetriever();
-            byte[] imageData = null;
-            try {
-            	String prefix = "custom.resource://byte://";
-            	mmdr.setDataSource(uri.toString().substring(prefix.length()));
-                imageData = mmdr.getEmbeddedPicture();
-            } catch (Exception e) {
-            	return null;
-            }
-			
-            return BitmapFactory.decodeByteArray(imageData , 0, imageData.length);
-		}
-		   
-	};
     
     /**
      * Click listener for overflow button.
@@ -376,7 +341,7 @@ public class ListViewCardsAdapter extends SimpleCursorAdapter implements Scrolla
      * @author Saravan Pantham
      */
 	static class ListViewHolder {
-	    public ImageView image;
+	    public CircularImageView image;
 	    public TextView title;
 	    public TextView artist;
 	    public TextView duration;

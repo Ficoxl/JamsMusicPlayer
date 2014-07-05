@@ -13,10 +13,12 @@ import android.support.v4.app.DialogFragment;
 
 import com.jams.music.player.R;
 import com.jams.music.player.SettingsActivity.PreferenceDialogLauncherActivity;
+import com.jams.music.player.Utils.Common;
 
 public class ApplicationThemeDialog extends DialogFragment {
 
 	private Activity parentActivity;
+    private Common mApp;
 	private int selectedThemeIndex;
 	
 	private static final String SELECTED_THEME = "SELECTED_THEME";
@@ -29,20 +31,17 @@ public class ApplicationThemeDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
 		parentActivity = getActivity();
-		
-		final SharedPreferences sharedPreferences = parentActivity.
-											  getSharedPreferences("com.jams.music.player", Context.MODE_PRIVATE);
-		
+        mApp = (Common) parentActivity.getApplicationContext();
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         
         //Check which theme is currently selected and set the appropriate flag.
-        if (sharedPreferences.getString(SELECTED_THEME, LIGHT_CARDS_THEME).equals(LIGHT_THEME)) {
+        if (mApp.getSharedPreferences().getString(SELECTED_THEME, LIGHT_CARDS_THEME).equals(LIGHT_THEME)) {
         	selectedThemeIndex = 0;
-        } else if (sharedPreferences.getString(SELECTED_THEME, LIGHT_CARDS_THEME).equals(DARK_THEME)) {
+        } else if (mApp.getSharedPreferences().getString(SELECTED_THEME, LIGHT_CARDS_THEME).equals(DARK_THEME)) {
         	selectedThemeIndex = 1;
-        } else if (sharedPreferences.getString(SELECTED_THEME, LIGHT_CARDS_THEME).equals(LIGHT_CARDS_THEME)) {
+        } else if (mApp.getSharedPreferences().getString(SELECTED_THEME, LIGHT_CARDS_THEME).equals(LIGHT_CARDS_THEME)) {
         	selectedThemeIndex = 2;
-        } else if (sharedPreferences.getString(SELECTED_THEME, LIGHT_CARDS_THEME).equals(DARK_CARDS_THEME)) {
+        } else if (mApp.getSharedPreferences().getString(SELECTED_THEME, LIGHT_CARDS_THEME).equals(DARK_CARDS_THEME)) {
         	selectedThemeIndex = 3;
         }
 
@@ -52,10 +51,11 @@ public class ApplicationThemeDialog extends DialogFragment {
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				
+
 				PreferenceDialogLauncherActivity activity = new PreferenceDialogLauncherActivity();
 				if (which==0) {
-					sharedPreferences.edit().putString(SELECTED_THEME, LIGHT_THEME).commit();
+					mApp.getSharedPreferences().edit().putString(SELECTED_THEME, LIGHT_THEME).commit();
+                    mApp.initDisplayImageOptions();
 					
 					Intent i = parentActivity.getBaseContext()
 											 .getPackageManager()
@@ -69,7 +69,8 @@ public class ApplicationThemeDialog extends DialogFragment {
 					startActivity(i);
 					
 				} else if (which==1) {
-					sharedPreferences.edit().putString(SELECTED_THEME, LIGHT_CARDS_THEME).commit();
+					mApp.getSharedPreferences().edit().putString(SELECTED_THEME, LIGHT_CARDS_THEME).commit();
+                    mApp.initDisplayImageOptions();
 					
 					Intent i = parentActivity.getBaseContext()
 											 .getPackageManager()
@@ -83,7 +84,8 @@ public class ApplicationThemeDialog extends DialogFragment {
 					startActivity(i);
 	
 				} else if (which==2) {
-					sharedPreferences.edit().putString(SELECTED_THEME, LIGHT_CARDS_THEME).commit();
+					mApp.getSharedPreferences().edit().putString(SELECTED_THEME, LIGHT_CARDS_THEME).commit();
+                    mApp.initDisplayImageOptions();
 
 					Intent i = parentActivity.getBaseContext()
 											 .getPackageManager()
@@ -97,7 +99,8 @@ public class ApplicationThemeDialog extends DialogFragment {
 					startActivity(i);
 					
 				} else if (which==3) {
-					sharedPreferences.edit().putString(SELECTED_THEME, DARK_CARDS_THEME).commit();
+					mApp.getSharedPreferences().edit().putString(SELECTED_THEME, DARK_CARDS_THEME).commit();
+                    mApp.initDisplayImageOptions();
 					
 					Intent i = parentActivity.getBaseContext()
 											 .getPackageManager()
