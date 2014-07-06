@@ -1,7 +1,5 @@
 package com.jams.music.player.ListViewFragment;
 
-import java.util.HashMap;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
@@ -23,19 +21,20 @@ import android.view.animation.LinearInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.andraskindler.quickscroll.QuickScroll;
-import com.jams.music.player.Helpers.PauseOnScrollHelper;
-import com.jams.music.player.R;
 import com.jams.music.player.DBHelpers.DBAccessHelper;
+import com.jams.music.player.Helpers.PauseOnScrollHelper;
 import com.jams.music.player.Helpers.TypefaceHelper;
 import com.jams.music.player.Helpers.UIElementsHelper;
+import com.jams.music.player.R;
 import com.jams.music.player.Utils.Common;
+
+import java.util.HashMap;
 
 /**
  * Generic, multipurpose ListView fragment.
@@ -334,9 +333,8 @@ public class ListViewFragment extends Fragment {
 	        animationAdapter.setAbsListView(mListView);
 	        mListView.setAdapter(animationAdapter);*/
 
-            PauseOnScrollHelper pauseOnScrollHelper = new PauseOnScrollHelper(mApp.getImageLoader(),
-                                                                              true, true, 500);
-            mListView.setOnScrollListener(pauseOnScrollHelper);
+            PauseOnScrollHelper scrollListener = new PauseOnScrollHelper(mApp.getPicasso(), 300);
+            mListView.setOnScrollListener(scrollListener);
 	        mListView.setOnItemClickListener(onItemClickListener);
 	        
 	        //Init the quick scroll widget.

@@ -39,7 +39,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jams.music.player.R;
-import com.jams.music.player.ArtistsFragment.ArtistsFragment;
 import com.jams.music.player.DBHelpers.DBAccessHelper;
 import com.jams.music.player.Helpers.TypefaceHelper;
 import com.jams.music.player.MainActivity.MainActivity;
@@ -1002,8 +1001,7 @@ public class ID3sArtistEditorDialog extends DialogFragment {
 			pd.dismiss();
 			
 			try {
-				MainActivity mainActivity_ = (MainActivity) mActivity;
-				mainActivity_.switchContent(new ArtistsFragment());
+
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

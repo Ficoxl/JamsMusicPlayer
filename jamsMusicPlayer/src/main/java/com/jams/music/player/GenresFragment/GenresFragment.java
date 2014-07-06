@@ -30,7 +30,7 @@ import com.jams.music.player.GenresFlippedActivity.GenresFlippedActivity;
 import com.jams.music.player.Helpers.TypefaceHelper;
 import com.jams.music.player.Helpers.UIElementsHelper;
 import com.jams.music.player.Utils.Common;
-import com.nostra13.universalimageloader.core.assist.PauseOnScrollListener;
+import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
 
 /**
  * GenresFragment. Contained within MainActivity.

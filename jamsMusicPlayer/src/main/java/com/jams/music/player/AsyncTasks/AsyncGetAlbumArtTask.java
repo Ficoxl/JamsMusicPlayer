@@ -32,7 +32,6 @@ import android.os.Environment;
 import android.view.View;
 import android.widget.Toast;
 
-import com.handlerexploit.prime.utils.ImageManager;
 import com.jams.music.player.R;
 import com.jams.music.player.DBHelpers.DBAccessHelper;
 import com.jams.music.player.Utils.Common;
@@ -243,8 +242,7 @@ public class AsyncGetAlbumArtTask extends AsyncTask<String, Void, Integer> {
 		cursor.close();
 		
 		if (URL_RETRIEVED==true) {
-			ImageManager imageManager = ImageManager.getInstance(mContext);
-    		artworkBitmap = imageManager.get(artworkURL);
+    		artworkBitmap = mApp.getImageLoader().loadImageSync(artworkURL);
 
 	    	File artworkFile = new File(Environment.getExternalStorageDirectory() + "/artwork.jpg");
     		

@@ -40,7 +40,6 @@ import android.widget.Toast;
 
 import com.jams.music.player.R;
 import com.jams.music.player.AlbumArtistsFlippedActivity.AlbumArtistsFlippedFragment;
-import com.jams.music.player.AlbumsFragment.AlbumsFragment;
 import com.jams.music.player.ArtistsFlippedActivity.ArtistsFlippedFragment;
 import com.jams.music.player.ArtistsFlippedActivity.ArtistsFlippedListViewAdapter;
 import com.jams.music.player.DBHelpers.DBAccessHelper;
@@ -1052,8 +1051,7 @@ public class ID3sAlbumEditorDialog extends DialogFragment {
 			pd.dismiss();
 			
 			if (CALLING_FRAGMENT.equals("ALBUMS_FRAGMENT")) {
-				MainActivity mainActivity = (MainActivity) mActivity;
-				mainActivity.switchContent(new AlbumsFragment());
+
 			} else if (CALLING_FRAGMENT.equals("ALBUM_ARTISTS_FLIPPED_FRAGMENT")) {
 				AlbumArtistsFlippedFragment.getCursor();
 				AlbumArtistsFlippedFragment.albumArtistsFlippedListViewAdapter.notifyDataSetChanged();

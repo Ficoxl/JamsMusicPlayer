@@ -2,7 +2,6 @@ package com.jams.music.player.HorizListSubFragment;
 
 import android.animation.Animator;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -23,8 +22,6 @@ import com.jams.music.player.R;
 import com.jams.music.player.Utils.Common;
 import com.jams.music.player.Utils.EaseInOutInterpolator;
 import com.mikhaellopez.circularimageview.CircularImageView;
-import com.nostra13.universalimageloader.core.assist.FailReason;
-import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
 
 /**
  * Used for inner/sub navigation screens such as browsing
@@ -91,63 +88,40 @@ public class HorizListSubFragment extends Fragment {
         final int thumbnailHeight = bundle.getInt("height");
         mOriginalOrientation = bundle.getInt("orientation");
 
-        mApp.getImageLoader().loadImage(artworkPath, mApp.getDisplayImageOptions(), new ImageLoadingListener() {
-
-            @Override
-            public void onLoadingStarted(String s, View view) {
-
-            }
-
-            @Override
-            public void onLoadingFailed(String s, View view, FailReason failReason) {
-
-            }
-
-            @Override
-            public void onLoadingComplete(String s, View view, Bitmap bitmap) {
-                mHeaderImage.setImageBitmap(bitmap);
-                mCircularActionButton.setImageBitmap(bitmap);
+        //mHeaderImage.setImageBitmap(bitmap);
+        //mCircularActionButton.setImageBitmap(bitmap);
 
                 /*
                  * Only run the animation if we're coming from the parent activity and not if
                  * we were recreated automatically by the window manager (e.g., device rotation).
                  */
-                if (savedInstanceState==null) {
-                    ViewTreeObserver observer = mHeaderImage.getViewTreeObserver();
-                    observer.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+        if (savedInstanceState==null) {
+            ViewTreeObserver observer = mHeaderImage.getViewTreeObserver();
+            observer.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
 
-                        @Override
-                        public boolean onPreDraw() {
-                            mHeaderImage.getViewTreeObserver().removeOnPreDrawListener(this);
+                @Override
+                public boolean onPreDraw() {
+                    mHeaderImage.getViewTreeObserver().removeOnPreDrawListener(this);
 
                             /* Figure out where the thumbnail and full size versions
                              * are, relative to the screen and each other.
                              */
-                            int[] screenLocation = new int[2];
-                            mHeaderImage.getLocationOnScreen(screenLocation);
-                            mLeftDelta = thumbnailLeft - screenLocation[0];
-                            mTopDelta = thumbnailTop - screenLocation[1];
+                    int[] screenLocation = new int[2];
+                    mHeaderImage.getLocationOnScreen(screenLocation);
+                    mLeftDelta = thumbnailLeft - screenLocation[0];
+                    mTopDelta = thumbnailTop - screenLocation[1];
 
-                            // Scale factors to make the large version the same size as the thumbnail
-                            mWidthScale = (float) thumbnailWidth / mHeaderImage.getWidth();
-                            mHeightScale = (float) thumbnailHeight / mHeaderImage.getHeight();
-                            runEnterAnimation();
+                    // Scale factors to make the large version the same size as the thumbnail
+                    mWidthScale = (float) thumbnailWidth / mHeaderImage.getWidth();
+                    mHeightScale = (float) thumbnailHeight / mHeaderImage.getHeight();
+                    runEnterAnimation();
 
-                            return true;
-                        }
-
-                    });
-
+                    return true;
                 }
 
-            }
+            });
 
-            @Override
-            public void onLoadingCancelled(String s, View view) {
-
-            }
-
-        });
+        }
 
         return mRootView;
     }

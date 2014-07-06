@@ -6,11 +6,11 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 
-import com.jams.music.player.R;
 import com.jams.music.player.DBHelpers.DBAccessHelper;
+import com.jams.music.player.R;
 import com.jams.music.player.Utils.Common;
 import com.nostra13.universalimageloader.core.assist.FailReason;
-import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
 /**
  * Helper class for the current song.

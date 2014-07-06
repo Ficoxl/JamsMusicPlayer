@@ -45,7 +45,7 @@
 	        android:visibility="visible"
 	        android:layout_alignParentRight="true"
 	        android:drawSelectorOnTop="true" >
-	
+
 	    </ListView>
 	    
 	    <com.andraskindler.quickscroll.QuickScroll

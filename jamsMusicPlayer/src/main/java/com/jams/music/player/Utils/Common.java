@@ -1,12 +1,5 @@
 package com.jams.music.player.Utils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
@@ -22,15 +15,15 @@ import android.view.View;
 import android.webkit.WebView;
 import android.widget.Toast;
 
-import com.handlerexploit.prime.utils.ImageManager;
-import com.jams.music.player.Helpers.UIElementsHelper;
-import com.jams.music.player.R;
+import com.google.android.gms.common.images.ImageManager;
 import com.jams.music.player.AsyncTasks.AsyncGoogleMusicAuthenticationTask;
 import com.jams.music.player.DBHelpers.DBAccessHelper;
 import com.jams.music.player.GMusicHelpers.GMusicClientCalls;
+import com.jams.music.player.Helpers.UIElementsHelper;
 import com.jams.music.player.NowPlayingActivity.NowPlayingActivity;
 import com.jams.music.player.NowPlayingActivity.PlaylistPagerFragment.AsyncPlaylistPagerFragmentTask;
 import com.jams.music.player.PlaybackKickstarter.PlaybackKickstarter;
+import com.jams.music.player.R;
 import com.jams.music.player.Services.AudioPlaybackService;
 import com.jams.music.player.Services.PinGMusicSongsService;
 import com.nostra13.universalimageloader.cache.memory.impl.WeakMemoryCache;
@@ -39,6 +32,14 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import com.squareup.picasso.Picasso;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 
 /**
  * Singleton class that provides access to common objects
@@ -66,6 +67,9 @@ public class Common extends Application {
 	
 	//Database access helper object.
 	private static DBAccessHelper mDBAccessHelper;
+
+    //Picasso instance.
+    private Picasso mPicasso;
 	
 	//Indicates if the library is currently being built.
 	private boolean mIsBuildingLibrary = false;
@@ -154,13 +158,13 @@ public class Common extends Application {
 		
 		//Init the database.
 		mDBAccessHelper = new DBAccessHelper(mContext);
-		
-		//ImageManager.
-    	mImageManager = ImageManager.getInstance(mContext);
     	
     	//Playback kickstarter.
     	mPlaybackKickstarter = new PlaybackKickstarter();
-    	
+
+        //Picasso.
+        mPicasso = new Picasso.Builder(mContext).build();
+
     	//ImageLoader.
     	mImageLoader = ImageLoader.getInstance();
     	mImageLoaderConfiguration = new ImageLoaderConfiguration.Builder(getApplicationContext())
@@ -631,6 +635,10 @@ public class Common extends Application {
 	public GMusicClientCalls getGMusicClientCalls() {
 		return mGMusicClientCalls;
 	}
+
+    public Picasso getPicasso() {
+        return mPicasso;
+    }
 	
 	public ImageManager getImageManager() {
 		return mImageManager;

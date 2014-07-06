@@ -3,11 +3,7 @@ package com.jams.music.player.GridViewFragment;
 import android.content.Context;
 import android.content.res.Resources;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Paint;
-import android.media.MediaMetadataRetriever;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SimpleCursorAdapter;
@@ -37,7 +33,6 @@ import com.jams.music.player.Helpers.UIElementsHelper;
 import com.jams.music.player.R;
 import com.jams.music.player.Utils.Common;
 
-import java.io.IOException;
 import java.util.HashMap;
 
 /**
@@ -246,7 +241,9 @@ public class GridViewCardsAdapter extends SimpleCursorAdapter implements Scrolla
 		mHolder.title.setText(titleText);
 		
 		//Load the album art.
-        mApp.getImageLoader().displayImage(artworkPath, mHolder.gridViewArt, mApp.getDisplayImageOptions());
+        mApp.getPicasso().load(artworkPath)
+                         .placeholder(UIElementsHelper.getEmptyColorPatch(mContext))
+                         .into(mHolder.gridViewArt);
 
 		return convertView;
 	}

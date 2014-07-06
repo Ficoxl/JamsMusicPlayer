@@ -40,10 +40,10 @@ import android.os.AsyncTask;
 import android.os.Environment;
 import android.widget.Toast;
 
-import com.handlerexploit.prime.utils.ImageManager;
 import com.jams.music.player.R;
 import com.jams.music.player.DBHelpers.DBAccessHelper;
 import com.jams.music.player.Services.AutoFetchAlbumArtService;
+import com.jams.music.player.Utils.Common;
 
 /*********************************************************************
  * This class is different from AsyncGetAlbumArtTask. It includes an 
@@ -53,6 +53,7 @@ import com.jams.music.player.Services.AutoFetchAlbumArtService;
 public class AsyncAutoGetAlbumArtTask extends AsyncTask<String, String, Void> {
 	
     private Context mContext;
+    private Common mApp;
     private Activity mActivity;
     private SharedPreferences sharedPreferences;
     private AsyncTask<String, String, Void> task;
@@ -73,6 +74,7 @@ public class AsyncAutoGetAlbumArtTask extends AsyncTask<String, String, Void> {
     
     public AsyncAutoGetAlbumArtTask(Context context, Activity activity) {
     	mContext = context;
+        mApp = (Common) context.getApplicationContext();
     	mActivity = activity;
     	sharedPreferences = mContext.getSharedPreferences("com.jams.music.player", Context.MODE_PRIVATE);
     	task = this;
@@ -332,8 +334,7 @@ public class AsyncAutoGetAlbumArtTask extends AsyncTask<String, String, Void> {
 	    			if (artworkURL!=null) {
 	    				
 	        			artworkBitmap = null;
-	        			ImageManager imageManager = ImageManager.getInstance(mContext);
-	        			artworkBitmap = imageManager.get(artworkURL);
+	        			artworkBitmap = mApp.getImageLoader().loadImageSync(artworkURL);
 	        			
 	    	    		File artworkFile = new File(Environment.getExternalStorageDirectory() + "/artwork.jpg");
 	        			

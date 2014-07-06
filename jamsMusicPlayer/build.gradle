@@ -2,7 +2,7 @@ apply plugin: 'android'
 
 android {
     compileSdkVersion 19
-    buildToolsVersion "20.0.0"
+    buildToolsVersion '20.0.0'
 
     defaultConfig {
         applicationId "com.jams.music.player"
@@ -34,22 +34,17 @@ dependencies {
     compile project(':dragsortlistviewlibrary')
     compile project(':viewpagerindicatorlibrary')
     compile project(':circularImageView')
+    compile project(':picasso')
     compile 'com.android.support:support-v4:+'
     compile 'com.google.android.gms:play-services:+'
-    compile 'com.github.manuelpeinado.fadingactionbar:fadingactionbar:3.1.2'
     compile files('libs/android-async-http-1.4.2-66-g4b6eb97.jar')
-    compile files('libs/Android-BitmapCache-2.3.jar')
-    compile files('libs/cardview-v7-21.0.0-rc1-sources.jar')
     compile files('libs/commons-io-2.4.jar')
     compile files('libs/commons-lang3-3.1.jar')
     compile files('libs/commons-logging.jar')
     compile files('libs/dashclock-api-r2.0.jar')
-    compile files('libs/disklrucache-2.0.2.jar')
     compile files('libs/google-http-client-1.16.0-rc.jar')
     compile files('libs/google-http-client-android-1.16.0-rc.jar')
     compile files('libs/jaudiotagger-2.0.4-20111207.115108-15.jar')
     compile files('libs/libGoogleAnalyticsServices.jar')
-    compile files('libs/prime-0.6.1.jar')
-    compile files('libs/recyclerview-v7-21.0.0-rc1-sources.jar')
-    compile files('libs/universal-image-loader-1.9.0-with-sources.jar')
+    compile files('libs/universal-image-loader-1.9.2-with-sources.jar')
 }

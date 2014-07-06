@@ -45,7 +45,7 @@ import com.jams.music.player.Utils.Common;
 import com.jams.music.player.Utils.TypefaceSpan;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
-import com.nostra13.universalimageloader.core.assist.PauseOnScrollListener;
+import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 
 public class GenresFlippedFragment extends Fragment {

@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.widget.TextView;
@@ -26,7 +27,7 @@ import com.jams.music.player.Helpers.TypefaceHelper;
 import com.jams.music.player.Helpers.UIElementsHelper;
 import com.jams.music.player.R;
 import com.jams.music.player.Utils.Common;
-import com.mikhaellopez.circularimageview.CircularImageView;
+import com.jams.music.player.Utils.PicassoCircularTransformation;
 
 import java.util.HashMap;
 
@@ -106,8 +107,8 @@ public class ListViewCardsAdapter extends SimpleCursorAdapter implements Scrolla
 				convertView.setBackgroundResource(R.drawable.card_gridview_dark);
 			
 			mHolder = new ListViewHolder();
-			mHolder.image = (CircularImageView) convertView.findViewById(R.id.songsListAlbumThumbnail);
-            mHolder.image.setBorderWidth(0);
+			mHolder.image = (ImageView) convertView.findViewById(R.id.songsListAlbumThumbnail);
+            //mHolder.image.setBorderWidth(0);
 			mHolder.title = (TextView) convertView.findViewById(R.id.songNameListView);
 			mHolder.artist = (TextView) convertView.findViewById(R.id.artistNameSongListView);
 			mHolder.duration = (TextView) convertView.findViewById(R.id.songDurationListView);
@@ -183,13 +184,16 @@ public class ListViewCardsAdapter extends SimpleCursorAdapter implements Scrolla
 		mHolder.artist.setText(field2);
 		
 		try {
-			mHolder.duration.setText(convertMillisToMinsSecs(Long.parseLong(field1)));
+			//mHolder.duration.setText(convertMillisToMinsSecs(Long.parseLong(field1)));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
 		//Load the album art.
-        mApp.getImageLoader().displayImage(artworkPath, mHolder.image, mApp.getDisplayImageOptions());
+        mApp.getPicasso().load(artworkPath)
+                         .transform(new PicassoCircularTransformation())
+                         .placeholder(UIElementsHelper.getEmptyColorPatch(mContext))
+                         .into(mHolder.image);
 		
 		return convertView;
 	}
@@ -295,45 +299,6 @@ public class ListViewCardsAdapter extends SimpleCursorAdapter implements Scrolla
 		}
     	
     };
-    
-	/**
-	 * Convert millisseconds to hh:mm:ss format.
-	 * 
-	 * @param milliseconds The input time in milliseconds to format.
-	 * @return The formatted time string.
-	 */
-    private String convertMillisToMinsSecs(long milliseconds) {
-    	
-    	int secondsValue = (int) (milliseconds / 1000) % 60;
-    	int minutesValue = (int) ((milliseconds / (1000*60)) % 60);
-    	int hoursValue  = (int) ((milliseconds / (1000*60*60)) % 24);
-    	
-    	String seconds = "";
-    	String minutes = "";
-    	String hours = "";
-    	
-    	if (secondsValue < 10) {
-    		seconds = "0" + secondsValue;
-    	} else {
-    		seconds = "" + secondsValue;
-    	}
-
-    	minutes = "" + minutesValue;
-    	hours = "" + hoursValue;
-    	
-    	String output = "";
-    	if (hoursValue!=0) {
-    		minutes = "0" + minutesValue;
-        	hours = "" + hoursValue;
-    		output = hours + ":" + minutes + ":" + seconds;
-    	} else {
-    		minutes = "" + minutesValue;
-        	hours = "" + hoursValue;
-    		output = minutes + ":" + seconds;
-    	}
-    	
-    	return output;
-    }
 
     /**
      * Holder subclass for ListViewCardsAdapter.
@@ -341,7 +306,7 @@ public class ListViewCardsAdapter extends SimpleCursorAdapter implements Scrolla
      * @author Saravan Pantham
      */
 	static class ListViewHolder {
-	    public CircularImageView image;
+	    public ImageView image;
 	    public TextView title;
 	    public TextView artist;
 	    public TextView duration;

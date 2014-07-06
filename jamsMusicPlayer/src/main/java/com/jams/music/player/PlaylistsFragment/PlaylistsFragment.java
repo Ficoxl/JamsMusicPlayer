@@ -27,7 +27,7 @@ import com.jams.music.player.R;
 import com.jams.music.player.Helpers.UIElementsHelper;
 import com.jams.music.player.PlaylistsFlippedActivity.PlaylistsFlippedActivity;
 import com.jams.music.player.Utils.Common;
-import com.nostra13.universalimageloader.core.assist.PauseOnScrollListener;
+import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
 
 /**
  * PlaylistsFragment. Contained within MainActivity.

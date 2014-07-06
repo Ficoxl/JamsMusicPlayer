@@ -2,70 +2,49 @@ package com.jams.music.player.Helpers;
 
 
 import android.os.Handler;
+import android.util.Log;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 
-import com.nostra13.universalimageloader.core.ImageLoader;
+import com.squareup.picasso.Picasso;
 
 /**
  * Pauses image loading for various scroll events.
  */
 public class PauseOnScrollHelper implements OnScrollListener {
 
-    private ImageLoader imageLoader;
+    private Picasso picasso;
     private long delay;
-    private final boolean pauseOnScroll;
-    private final boolean pauseOnFling;
     private final OnScrollListener externalListener;
     private Handler handler;
 
-    /**
-     * Constructor
-     *
-     * @param imageLoader   {@linkplain ImageLoader} instance for controlling
-     * @param pauseOnScroll Whether {@linkplain ImageLoader#pause() pause ImageLoader} during touch scrolling
-     * @param pauseOnFling  Whether {@linkplain ImageLoader#pause() pause ImageLoader} during fling
-     * @param delay			The delay, in milliseconds, after which image loading resumes after a scroll event.
-     */
-    public PauseOnScrollHelper(ImageLoader imageLoader, boolean pauseOnScroll,
-                               boolean pauseOnFling, long delay) {
-        this(imageLoader, pauseOnScroll, pauseOnFling, delay, null);
+    public PauseOnScrollHelper(Picasso picasso, long delay) {
+        this(picasso, delay, null);
     }
 
-    /**
-     * Constructor
-     *
-     * @param imageLoader    {@linkplain ImageLoader} instance for controlling
-     * @param pauseOnScroll  Whether {@linkplain ImageLoader#pause() pause ImageLoader} during touch scrolling
-     * @param pauseOnFling   Whether {@linkplain ImageLoader#pause() pause ImageLoader} during fling
-     * @param customListener Your custom {@link OnScrollListener} for {@linkplain AbsListView list view} which also will
-     *                       be get scroll events
-     * @param delay			 The delay, in milliseconds, after which image loading resumes after a scroll event.
-     */
-    public PauseOnScrollHelper(ImageLoader imageLoader, boolean pauseOnScroll,
-                               boolean pauseOnFling, long delay, OnScrollListener customListener) {
-        this.imageLoader = imageLoader;
-        this.pauseOnScroll = pauseOnScroll;
-        this.pauseOnFling = pauseOnFling;
+    public PauseOnScrollHelper(Picasso picasso, long delay, OnScrollListener customListener) {
+        this.picasso = picasso;
         this.delay = delay;
         handler = new Handler();
         externalListener = customListener;
+        Log.e("DEBUG", ">>>>INITING SCROLL LISTENER");
     }
 
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
+        Log.e("DEBUG", ">>>>SCROLL STATE CHANGED");
         switch (scrollState) {
             case OnScrollListener.SCROLL_STATE_IDLE:
-                //handler.postDelayed(resumeLoading, delay);
-                imageLoader.resume();
+                Log.e("DEBUG", ">>>>RESUMING!");
+                handler.postDelayed(resumeLoading, delay);
                 break;
             case OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
-                if (pauseOnScroll)
-                    imageLoader.pause();
+                Log.e("DEBUG", ">>>>SCROLLING");
+                picasso.interruptDispatching();
                 break;
             case OnScrollListener.SCROLL_STATE_FLING:
-                if (pauseOnFling)
-                    imageLoader.pause();
+                Log.e("DEBUG", ">>>>>FLINGING!");
+                picasso.interruptDispatching();
                 break;
         }
 
@@ -88,7 +67,7 @@ public class PauseOnScrollHelper implements OnScrollListener {
 
         @Override
         public void run() {
-            imageLoader.resume();
+            picasso.continueDispatching();
 
         }
 

@@ -42,7 +42,6 @@ import com.jams.music.player.DBHelpers.DBAccessHelper;
 import com.jams.music.player.GenresFlippedActivity.GenresFlippedFragment;
 import com.jams.music.player.Helpers.TypefaceHelper;
 import com.jams.music.player.MainActivity.MainActivity;
-import com.jams.music.player.SongsFragment.SongsFragment;
 
 public class ID3sSongEditorDialog extends DialogFragment {
 	
@@ -405,8 +404,8 @@ public class ID3sSongEditorDialog extends DialogFragment {
 					
 					//Reinitialize the calling fragment.
 					if (CALLING_FRAGMENT.equals("SONGS_FRAGMENT")) {
-						MainActivity mainActivity_ = (MainActivity) getActivity();
-						mainActivity_.switchContent(new SongsFragment());
+
+
 					} else if (CALLING_FRAGMENT.equals("ARTISTS_FLIPPED_SONGS_FRAGMENT")) {
 						//ArtistsFlippedSongsFragment.getCursor();
 						ArtistsFlippedSongsFragment.songsListViewAdapter.notifyDataSetChanged();

@@ -1,10 +1,5 @@
 package com.jams.music.player.AsyncTasks;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -15,11 +10,16 @@ import android.os.AsyncTask;
 import android.os.PowerManager;
 import android.provider.MediaStore;
 
-import com.jams.music.player.R;
 import com.jams.music.player.DBHelpers.DBAccessHelper;
 import com.jams.music.player.DBHelpers.MediaStoreAccessHelper;
 import com.jams.music.player.FoldersFragment.FileExtensionFilter;
+import com.jams.music.player.R;
 import com.jams.music.player.Utils.Common;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Date;
+import java.util.HashMap;
 
 /**
  * The Mother of all AsyncTasks in this app.
@@ -513,13 +513,20 @@ public class AsyncBuildLibraryTask extends AsyncTask<String, String, Void> {
         			}
                 	
             	}
+
+                long durationLong = 0;
+                try {
+                    durationLong = Long.parseLong(songDuration);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             	
             	ContentValues values = new ContentValues();
             	values.put(DBAccessHelper.SONG_TITLE, songTitle);
             	values.put(DBAccessHelper.SONG_ARTIST, songArtist);
             	values.put(DBAccessHelper.SONG_ALBUM, songAlbum);
             	values.put(DBAccessHelper.SONG_ALBUM_ARTIST, songAlbumArtist);
-            	values.put(DBAccessHelper.SONG_DURATION, songDuration);
+            	values.put(DBAccessHelper.SONG_DURATION, convertMillisToMinsSecs(durationLong));
             	values.put(DBAccessHelper.SONG_FILE_PATH, songFilePath);
             	values.put(DBAccessHelper.SONG_TRACK_NUMBER, songTrackNumber);
             	values.put(DBAccessHelper.SONG_GENRE, songGenre);
@@ -843,8 +850,8 @@ public class AsyncBuildLibraryTask extends AsyncTask<String, String, Void> {
 	}
 		
 	/**
-	 * Searchs for embedded art within the specified file. 
-	 * Returns a path string to the artwork if it exists. 
+	 * Searchs for embedded art within the specified file.
+	 * Returns a path string to the artwork if it exists.
 	 * Returns an empty string otherwise.
 	 */
 	public String getEmbeddedArtwork(String filePath) {
@@ -874,6 +881,45 @@ public class AsyncBuildLibraryTask extends AsyncTask<String, String, Void> {
 		}
 		
 	}
+
+    /**
+     * Convert millisseconds to hh:mm:ss format.
+     *
+     * @param milliseconds The input time in milliseconds to format.
+     * @return The formatted time string.
+     */
+    private String convertMillisToMinsSecs(long milliseconds) {
+
+    	int secondsValue = (int) (milliseconds / 1000) % 60;
+    	int minutesValue = (int) ((milliseconds / (1000*60)) % 60);
+    	int hoursValue  = (int) ((milliseconds / (1000*60*60)) % 24);
+
+    	String seconds = "";
+    	String minutes = "";
+    	String hours = "";
+
+    	if (secondsValue < 10) {
+    		seconds = "0" + secondsValue;
+    	} else {
+    		seconds = "" + secondsValue;
+    	}
+
+    	minutes = "" + minutesValue;
+    	hours = "" + hoursValue;
+
+    	String output = "";
+    	if (hoursValue!=0) {
+    		minutes = "0" + minutesValue;
+        	hours = "" + hoursValue;
+    		output = hours + ":" + minutes + ":" + seconds;
+    	} else {
+    		minutes = "" + minutesValue;
+        	hours = "" + hoursValue;
+    		output = minutes + ":" + seconds;
+    	}
+
+    	return output;
+    }
 	
 	@Override
 	protected void onProgressUpdate(String... progressParams) {

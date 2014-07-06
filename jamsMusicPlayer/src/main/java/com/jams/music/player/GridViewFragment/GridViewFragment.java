@@ -1,9 +1,6 @@
 package com.jams.music.player.GridViewFragment;
 
-import java.util.HashMap;
-
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -38,13 +35,16 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.andraskindler.quickscroll.QuickScrollGridView;
-import com.jams.music.player.Helpers.ImageViewCoordHelper;
-import com.jams.music.player.HorizListSubFragment.HorizListSubFragment;
-import com.jams.music.player.R;
 import com.jams.music.player.DBHelpers.DBAccessHelper;
+import com.jams.music.player.Helpers.ImageViewCoordHelper;
+import com.jams.music.player.Helpers.PauseOnScrollHelper;
 import com.jams.music.player.Helpers.TypefaceHelper;
 import com.jams.music.player.Helpers.UIElementsHelper;
+import com.jams.music.player.HorizListSubFragment.HorizListSubFragment;
+import com.jams.music.player.R;
 import com.jams.music.player.Utils.Common;
+
+import java.util.HashMap;
 
 /**
  * Generic, multipurpose GridView fragment.
@@ -388,6 +388,8 @@ public class GridViewFragment extends Fragment {
         										  		mDBColumnsMap);
         	
 	        mGridView.setAdapter(mGridViewAdapter);
+            PauseOnScrollHelper scrollListener = new PauseOnScrollHelper(mApp.getPicasso(), 300);
+            mGridView.setOnScrollListener(scrollListener);
 	        mGridView.setOnItemClickListener(onItemClickListener);
 	        
 	       /* SwingBottomInAnimationAdapter animationAdapter = new SwingBottomInAnimationAdapter(mGridViewAdapter);

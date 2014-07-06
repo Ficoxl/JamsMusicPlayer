@@ -21,15 +21,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.jams.music.player.R;
-import com.jams.music.player.AlbumArtistsFragment.AlbumArtistsFragment;
-import com.jams.music.player.AlbumsFragment.AlbumsFragment;
-import com.jams.music.player.ArtistsFragment.ArtistsFragment;
 import com.jams.music.player.FoldersFragment.FilesFoldersFragment;
 import com.jams.music.player.GenresFragment.GenresFragment;
 import com.jams.music.player.Helpers.TypefaceHelper;
 import com.jams.music.player.MainActivity.MainActivity;
 import com.jams.music.player.PlaylistsFragment.PlaylistsFragment;
-import com.jams.music.player.SongsFragment.SongsFragment;
 import com.jams.music.player.Utils.Common;
 
 public class NavigationDrawerFragment extends Fragment {

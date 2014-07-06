@@ -43,7 +43,7 @@ import com.jams.music.player.Utils.TypefaceSpan;
 import com.mobeta.android.dslv.DragSortListView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
-import com.nostra13.universalimageloader.core.assist.PauseOnScrollListener;
+import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 
 public class SmartPlaylistFragment extends Fragment {

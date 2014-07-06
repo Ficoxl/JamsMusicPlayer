@@ -3,6 +3,7 @@
 buildscript {
     repositories {
         jcenter()
+        maven { url 'https://github.com/sephiroth74/picasso' }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:0.12.+'
