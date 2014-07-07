@@ -1,14 +1,5 @@
 package com.jams.music.player.NowPlayingActivity;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-
-import org.jaudiotagger.audio.AudioFile;
-import org.jaudiotagger.audio.AudioFileIO;
-import org.jaudiotagger.tag.FieldKey;
-import org.jaudiotagger.tag.Tag;
-
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -16,16 +7,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.LinearGradient;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.PorterDuff.Mode;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Shader.TileMode;
-import android.media.MediaMetadataRetriever;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -39,27 +24,31 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.widget.ImageView;
-import android.widget.ImageView.ScaleType;
 import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.jams.music.player.R;
 import com.jams.music.player.AlbumArtistsFlippedActivity.AlbumArtistsFlippedActivity;
 import com.jams.music.player.AlbumsFlippedActivity.AlbumsFlippedActivity;
 import com.jams.music.player.Animations.TranslateAnimation;
 import com.jams.music.player.ArtistsFlippedActivity.ArtistsFlippedActivity;
 import com.jams.music.player.DBHelpers.DBAccessHelper;
-import com.jams.music.player.FoldersFragment.FileExtensionFilter;
 import com.jams.music.player.GenresFlippedActivity.GenresFlippedActivity;
 import com.jams.music.player.Helpers.SongHelper;
 import com.jams.music.player.Helpers.SongHelper.AlbumArtLoadedListener;
 import com.jams.music.player.Helpers.TypefaceHelper;
 import com.jams.music.player.Helpers.UIElementsHelper;
+import com.jams.music.player.R;
 import com.jams.music.player.Utils.Common;
-import com.nostra13.universalimageloader.core.assist.ImageSize;
+
+import org.jaudiotagger.audio.AudioFile;
+import org.jaudiotagger.audio.AudioFileIO;
+import org.jaudiotagger.tag.FieldKey;
+import org.jaudiotagger.tag.Tag;
+
+import java.io.File;
 
 public class PlaylistPagerFragment extends Fragment implements AlbumArtLoadedListener {
 
@@ -152,10 +141,10 @@ public class PlaylistPagerFragment extends Fragment implements AlbumArtLoadedLis
     	
     	songNameTextView.setTextColor(UIElementsHelper.getThemeBasedTextColor(mContext));
     	artistAlbumNameTextView.setTextColor(UIElementsHelper.getSmallTextColor(mContext));
-		
+
         mSongHelper = new SongHelper();
-        mSongHelper.populateSongData(mContext, mPosition);
         mSongHelper.setAlbumArtLoadedListener(this);
+        mSongHelper.populateSongData(mContext, mPosition);
         
 		overflowIcon.setImageResource(UIElementsHelper.getIcon(mContext, "ic_action_overflow"));
     	initOverflowMenu(mSongHelper.getSavedPosition(),
@@ -205,7 +194,7 @@ public class PlaylistPagerFragment extends Fragment implements AlbumArtLoadedLis
 		            				long currentPlaybackPosition = mApp.getService().getCurrentMediaPlayer().getCurrentPosition();
 		            				mApp.getDBAccessHelper().setLastPlaybackPosition(songId, currentPlaybackPosition);
 		            				String confirmationToast = getActivity().getResources().getString(R.string.track_will_resume_from)
-		            										 + " " + convertMillisToMinsSecs(currentPlaybackPosition) + " "
+		            										 + " " + mApp.convertMillisToMinsSecs(currentPlaybackPosition) + " "
 		            										 + getActivity().getResources().getString(R.string.next_time_you_play_it);
 		            				
 		            				//Rebuild the cursor to reflect the new changes.
@@ -344,164 +333,7 @@ public class PlaylistPagerFragment extends Fragment implements AlbumArtLoadedLis
     	});
     	
     }
-    
-    /**
-     * In order to save as much memory as possible, we'll be loading trivial bitmap data 
-     * (such as height and width) into temporary variables and nullifying the original 
-     * bitmaps along the way. 
-     */
-    public void createReflectedImage(Context context) {
-    	
-    	//If anything goes wrong during the decoding process, we'll just return an empty bitmap.
-    	try {
-    		//We don't need space between the actual bitmap and the reflected image.
-            final int reflectionGap = 0;
-            
-    	    int width = bm.getWidth();
-    	    int height = bm.getHeight();
-    	
-    	    //Flip the bitmap on the Y axis.
-    	    matrix = new Matrix();
-    	    matrix.preScale(1, -1);
-    	     
-    	    //Create a new bitmap using the flipped matrix. We only need half of the original bitmap for the reflection.
-    	    reflectionImage = Bitmap.createBitmap(bm, 0, height/2, width, height/2, matrix, false);
-    	     
-    	    //Create a new bitmap that will encompass the original bitmap and it's reflection.
-    	    bitmapWithReflection = Bitmap.createBitmap(width, (height + height/2), Config.ARGB_8888);
-            
-            //Create a new cavas that will encompass the new bitmap we just created above.
-            canvas = new Canvas(bitmapWithReflection);
-            //Draw in the original image.
-            canvas.drawBitmap(bm, 0, 0, null);
-            
-            //After this point, we only need the height attribute of originalImage.
-            int originalImageHeight = bm.getHeight();
-            bm = null;
-            
-            //Draw in the gap.
-            Paint defaultPaint = new Paint();
-            canvas.drawRect(0, height, width, height + reflectionGap, defaultPaint);
-            //Draw in the reflection.
-            canvas.drawBitmap(reflectionImage, 0, height + reflectionGap, null);
-             
-            //We're done with reflectionImage, so go ahead and nullify it.
-            reflectionImage = null;
-            
-            //Create a shader that is a linear gradient that covers the reflection
-            paint = new Paint();
-            shader = new LinearGradient(0, originalImageHeight, 0,
-            								bitmapWithReflection.getHeight() + reflectionGap, 0x70ffffff, 0x00ffffff,
-            								TileMode.CLAMP);
-            //Set the paint to use this shader (linear gradient)
-            paint.setShader(shader);
-            //Set the Transfer mode to be porter duff and destination in.
-            paint.setXfermode(new PorterDuffXfermode(Mode.DST_IN));
-            
-            //Draw a rectangle using the paint with the linear gradient.
-            canvas.drawRect(0, height, width, bitmapWithReflection.getHeight() + reflectionGap, paint);
-            
-    	} catch (Exception e) {
-    		bitmapWithReflection = null;
-    		return;
-    	}
 
-    }
-    
-    private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
-        final int height = options.outHeight;
-        final int width = options.outWidth;
-        int inSampleSize = 1;
-
-        if (height > reqHeight || width > reqWidth) {
-            if (width > height) {
-                inSampleSize = Math.round((float) height / (float) reqHeight);
-            } else {
-                inSampleSize = Math.round((float) width / (float) reqWidth);
-            }
-        }
-
-        return inSampleSize;
-    }
-    
-    //Resamples an input stream bitmap to avoid OOM errors.
-    public Bitmap decodeSampledBitmapFromInputStream(InputStream is, int reqWidth, int reqHeight) {
-        try {
-
-            final BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
-            options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-            options.inJustDecodeBounds = false;
-            options.inPurgeable = true;
-            
-            return BitmapFactory.decodeStream(is, null, options);
-        } catch (Exception e) {
-        	e.printStackTrace();
-        	return null;
-        } finally {
-            try {
-                is.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            
-        }
-        
-    }
-    
-    //Resamples a resource image to avoid OOM errors.
-    public Bitmap decodeSampledBitmapFromResource(int resID, int reqWidth, int reqHeight) {
-
-	    final BitmapFactory.Options options = new BitmapFactory.Options();
-	    options.inJustDecodeBounds = true;
-	    options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-	    options.inJustDecodeBounds = false;
-	    options.inPurgeable = true;
-	
-	    return BitmapFactory.decodeResource(mContext.getResources(), resID, options);
-    }
-    
-	//Convert millisseconds to hh:mm:ss format.
-    public static String convertMillisToMinsSecs(long milliseconds) {
-    	
-    	int secondsValue = (int) (milliseconds / 1000) % 60 ;
-    	int minutesValue = (int) ((milliseconds / (1000*60)) % 60);
-    	int hoursValue  = (int) ((milliseconds / (1000*60*60)) % 24);
-    	
-    	String seconds = "";
-    	String minutes = "";
-    	String hours = "";
-    	
-    	if (secondsValue < 10) {
-    		seconds = "0" + secondsValue;
-    	} else {
-    		seconds = "" + secondsValue;
-    	}
-
-    	if (minutesValue < 10) {
-    		minutes = "0" + minutesValue;
-    	} else {
-    		minutes = "" + minutesValue;
-    	}
-    	
-    	if (hoursValue < 10) {
-    		hours = "0" + hoursValue;
-    	} else {
-    		hours = "" + hoursValue;
-    	}
-    	
-    	
-    	String output = "";
-    	
-    	if (hoursValue!=0) {
-    		output = hours + ":" + minutes + ":" + seconds;
-    	} else {
-    		output = minutes + ":" + seconds;
-    	}
-    	
-    	return output;
-    }
-    
     @Override
     public void onPause() {
     	super.onPause();
@@ -555,175 +387,6 @@ public class PlaylistPagerFragment extends Fragment implements AlbumArtLoadedLis
 	    LocalBroadcastManager.getInstance(mContext).unregisterReceiver(receiver);
 	    super.onStop();
 	    
-	}
-	
-	public class AsyncPlaylistPagerFragmentTask extends AsyncTask<String, Integer, Boolean> {
-	    private Context mContext;
-	    String songTitle;
-	    String songArtist;
-	    String songAlbum;
-	    String artistAlbum;
-	    boolean mCancelled = false;
-	    
-	    public AsyncPlaylistPagerFragmentTask(Context context) {
-	    	mContext = context;
-	    	
-	    }
-	 
-	    @Override
-	    protected Boolean doInBackground(String... params) {
-	    	
-	    	/* We're gonna have to surround this entire method in a try/catch block because we can't
-	    	 * detect when the user closes the activity and potentially recycles the bitmaps used in
-	    	 * this method. Accessing these recycled bitmaps will cause the app to crash.
-	    	 */
-	    	ImageSize imageSize = new ImageSize((int) ((2)*(screenWidth/3)), (int) ((2)*(screenWidth/3)));
-	    	if (mCancelled) {
-	    		return false;
-	    	}
-	    	
-	    	if (mSongHelper.getAlbumArtPath()==null || mSongHelper.getAlbumArtPath().equals("") || mSongHelper.getAlbumArtPath().equals(" ")) {
-    	    	bm = decodeSampledBitmapFromResource(R.drawable.app_icon_xlarge, (int) screenWidth/2, (int) screenWidth/2);
-    	    } else {
-    	    	bm = mApp.getImageLoader().loadImageSync(mSongHelper.getAlbumArtPath(), imageSize, mApp.getDisplayImageOptions());
-    	    }
-	    	    
-    	    if (bm==null) {
-    	    	bm = decodeSampledBitmapFromResource(R.drawable.app_icon_xlarge, (int) screenWidth/2, (int) screenWidth/2);
-    	    }
- 
-    	    if (mApp.getSharedPreferences().getString("COVER_ART_STYLE", "FILL_SCREEN").equals("CARD_STYLE")) {
-				createReflectedImage(mContext);
-				publishProgress(new Integer[] {1});
-			} else {
-				publishProgress(new Integer[] {2});
-			}
-			
-			//Fade in the album art image.
-			publishProgress(new Integer[] {0});
-
-	    	return true;
-	    }
-	    
-	    public String getEmbeddedArtwork(String filePath) {
-			File file = new File(filePath);
-			if (!file.exists()) {
-				return getArtworkFromFolder(filePath);
-			} else {
-	        	MediaMetadataRetriever mmdr = new MediaMetadataRetriever();
-	        	mmdr.setDataSource(filePath);
-	        	byte[] embeddedArt = mmdr.getEmbeddedPicture();
-	        	
-	        	if (embeddedArt!=null) {
-	        		return "byte://" + filePath;
-	        	} else {
-	    			return getArtworkFromFolder(filePath);
-	        	}
-	        	
-			}
-			
-		}
-	    
-	    public String getArtworkFromFolder(String filePath) {
-			
-			File file = new File(filePath);
-			if (!file.exists()) {
-				return "";	
-			} else {
-				//Create a File that points to the parent directory of the album.
-				File directoryFile = file.getParentFile();
-				
-				//Get a list of images in the album's folder.
-				FileExtensionFilter IMAGES_FILTER = new FileExtensionFilter(new String[] {".jpg", ".jpeg", 
-																						  ".png", ".gif"});
-				File[] folderList = directoryFile.listFiles(IMAGES_FILTER);
-				
-				//Check if any image files were found in the folder.
-				if (folderList.length==0) {
-					//No images found.
-					return "";
-				} else {
-					
-					//Loop through the list of image files. Use the first jpeg file if it's found.
-					for (int i=0; i < folderList.length; i++) {
-						
-						try {
-							if (folderList[i].getCanonicalPath().contains("jpg") ||
-								folderList[i].getCanonicalPath().contains("jpeg")) {
-								return folderList[i].getCanonicalPath();
-							}
-							
-						} catch (Exception e) {
-							//Skip the file if it's corrupted or unreadable.
-							continue;
-						}
-						
-					}
-					
-					//If an image was not found, check for gif or png files (lower priority).
-					for (int i=0; i < folderList.length; i++) {
-	    				
-	    				try {
-							if (folderList[i].getCanonicalPath().contains("png") ||
-								folderList[i].getCanonicalPath().contains("gif")) {
-								return folderList[i].getCanonicalPath();
-							}
-							
-						} catch (Exception e) {
-							//Skip the file if it's corrupted or unreadable.
-							continue;
-						}
-	    				
-	    			}
-					
-					return "";
-				}
-	    		
-	    	}
-			
-		}
-	    
-	    @Override
-	    protected void onCancelled() {
-	    	super.onCancelled();
-	    	mCancelled = true;
-	    }
-	    
-	    @Override
-	    protected void onProgressUpdate(Integer... params) {
-	    	super.onProgressUpdate(params);
-	    	
-	    	//Perform the requested action on the UI thread.
-	    	switch(params[0]) {
-	    	case 0:
-	    		coverArt.setVisibility(View.VISIBLE);
-	    		break;
-	    	case 1:
-	    		coverArt.setImageBitmap(bitmapWithReflection);
-	    		break;
-	    	case 2:
-	    		coverArt.setImageBitmap(bm);
-	    		break;
-	    	case 3:
-				coverArt.setScaleX(0.5f);
-				coverArt.setScaleY(0.5f);
-				coverArt.setScaleType(ScaleType.FIT_CENTER);
-	    		break;
-	    	case 4:
-				coverArt.setScaleX(1.0f);
-				coverArt.setScaleY(1.0f);
-				coverArt.setScaleType(ScaleType.FIT_CENTER);
-	    		break;
-	    	}
-	    	
-	    }
-
-	    @Override
-		protected void onPostExecute(Boolean result) {
-			super.onPostExecute(result);
-			
-		}
-
 	}
 
 	@Override

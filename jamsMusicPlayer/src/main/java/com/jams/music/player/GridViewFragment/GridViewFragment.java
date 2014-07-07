@@ -40,7 +40,7 @@ import com.jams.music.player.Helpers.ImageViewCoordHelper;
 import com.jams.music.player.Helpers.PauseOnScrollHelper;
 import com.jams.music.player.Helpers.TypefaceHelper;
 import com.jams.music.player.Helpers.UIElementsHelper;
-import com.jams.music.player.HorizListSubFragment.HorizListSubFragment;
+import com.jams.music.player.BrowserInnerSubFragment.BrowserInnerSubFragment;
 import com.jams.music.player.R;
 import com.jams.music.player.Utils.Common;
 
@@ -289,7 +289,7 @@ public class GridViewFragment extends Fragment {
             bundle.putInt("height", albumArt.getHeight());
 
             //Fire up the new fragment.
-            HorizListSubFragment fragment = new HorizListSubFragment();
+            BrowserInnerSubFragment fragment = new BrowserInnerSubFragment();
             fragment.setArguments(bundle);
 
             FragmentManager manager = getActivity().getSupportFragmentManager();

@@ -1,7 +1,5 @@
 package com.jams.music.player.NowPlayingActivity;
 
-import java.util.HashMap;
-
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.content.BroadcastReceiver;
@@ -49,7 +47,6 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.jams.music.player.R;
 import com.jams.music.player.Animations.FadeAnimation;
 import com.jams.music.player.Animations.TranslateAnimation;
 import com.jams.music.player.AsyncTasks.AsyncRemovePinnedSongsTask;
@@ -58,12 +55,15 @@ import com.jams.music.player.Dialogs.RepeatSongRangeDialog;
 import com.jams.music.player.EqualizerAudioFXActivity.EqualizerFragment;
 import com.jams.music.player.Helpers.TypefaceHelper;
 import com.jams.music.player.Helpers.UIElementsHelper;
+import com.jams.music.player.R;
 import com.jams.music.player.Services.AudioPlaybackService;
 import com.jams.music.player.SettingsActivity.SettingsActivity;
 import com.jams.music.player.Utils.Common;
 import com.mobeta.android.dslv.DragSortListView;
 import com.mobeta.android.dslv.SimpleFloatViewManager;
 import com.velocity.view.pager.library.VelocityViewPager;
+
+import java.util.HashMap;
 
 public class NowPlayingActivity extends FragmentActivity {
 
@@ -180,54 +180,54 @@ public class NowPlayingActivity extends FragmentActivity {
     	
     	//Tablet layout specific code.
     	if (getResources().getBoolean(R.bool.tablet_in_landscape) || 
-            	mApp.getOrientation()==Common.ORIENTATION_LANDSCAPE) {
-            	tabletInLandscape = true;
-            } else {
-            	tabletInLandscape = false;
-            }
-            
-            if (tabletInLandscape) {
-            	landscapeRootContainer = (RelativeLayout) findViewById(R.id.nowPlayingRootContainer);
-            	currentQueueListView = (DragSortListView) findViewById(R.id.queue_list_view);
-            	currentQueueLayout = (RelativeLayout) findViewById(R.id.now_playing_tablet_queue_layout);
-            	loadingQueueProgress = (ProgressBar) findViewById(R.id.now_playing_land_loading);
-            	
-                //Set the drawer backgrounds based on the theme.
-                if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME") ||
-                	mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_THEME")) {
-                	currentQueueLayout.setBackgroundColor(0xFF191919);
-                } else {
-                	currentQueueLayout.setBackgroundColor(0xFFFFFFFF);
-                }
-                
-            } else {
-            	//Initialize the Current Queue drawer.
-            	mDrawerParentLayout = (FrameLayout) findViewById(R.id.now_playing_drawer_frame_root);
-            	currentQueueLayout = (RelativeLayout) findViewById(R.id.main_activity_queue_drawer);
-        		currentQueueListView = (DragSortListView) findViewById(R.id.queue_list_view);
-        		
-        		currentQueueLayout.setOnTouchListener(new OnTouchListener() {
+            mApp.getOrientation()==Common.ORIENTATION_LANDSCAPE) {
+            tabletInLandscape = true;
+        } else {
+            tabletInLandscape = false;
+        }
 
-        			@Override
-        			public boolean onTouch(View arg0, MotionEvent arg1) {
-        				//Don't let touch events pass through the drawer.
-        				return true;
-        			}
-        			
-        		});
-        		
-                //Set the drawer backgrounds based on the theme.
-                if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME") ||
-                	mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_THEME")) {
-                	currentQueueLayout.setBackgroundColor(0xFF191919);
-                	mDrawerLayout.setBackgroundColor(0xFF191919);
-                } else {
-                	currentQueueLayout.setBackgroundColor(0xFFFFFFFF);
-                	mDrawerLayout.setBackgroundColor(0xFFFFFFFF);
-                }
-                
-                initializeDrawer();
+        if (tabletInLandscape) {
+            landscapeRootContainer = (RelativeLayout) findViewById(R.id.nowPlayingRootContainer);
+            currentQueueListView = (DragSortListView) findViewById(R.id.queue_list_view);
+            currentQueueLayout = (RelativeLayout) findViewById(R.id.now_playing_tablet_queue_layout);
+            loadingQueueProgress = (ProgressBar) findViewById(R.id.now_playing_land_loading);
+
+            //Set the drawer backgrounds based on the theme.
+            if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME") ||
+                mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_THEME")) {
+                currentQueueLayout.setBackgroundColor(0xFF191919);
+            } else {
+                currentQueueLayout.setBackgroundColor(0xFFFFFFFF);
             }
+
+        } else {
+            //Initialize the Current Queue drawer.
+            mDrawerParentLayout = (FrameLayout) findViewById(R.id.now_playing_drawer_frame_root);
+            currentQueueLayout = (RelativeLayout) findViewById(R.id.main_activity_queue_drawer);
+            currentQueueListView = (DragSortListView) findViewById(R.id.queue_list_view);
+
+            currentQueueLayout.setOnTouchListener(new OnTouchListener() {
+
+                @Override
+                public boolean onTouch(View arg0, MotionEvent arg1) {
+                    //Don't let touch events pass through the drawer.
+                    return true;
+                }
+
+            });
+
+            //Set the drawer backgrounds based on the theme.
+            if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME") ||
+                mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_THEME")) {
+                currentQueueLayout.setBackgroundColor(0xFF191919);
+                mDrawerLayout.setBackgroundColor(0xFF191919);
+            } else {
+                currentQueueLayout.setBackgroundColor(0xFFFFFFFF);
+                mDrawerLayout.setBackgroundColor(0xFFFFFFFF);
+            }
+
+            initializeDrawer();
+        }
     	
         //Set the theme for the control headers and seekbar background.
         mControlsLayoutHeader.setBackgroundResource(UIElementsHelper.getNowPlayingControlsBackground(mContext));
@@ -403,29 +403,20 @@ public class NowPlayingActivity extends FragmentActivity {
     	mPlaylistViewPager.setOffscreenPageLimit(5);
     	mPlaylistViewPager.setOnPageChangeListener(mPageChangeListener);
     	mPlaylistViewPager.setCurrentItem(mApp.getService().getCurrentSongIndex(), false);
-    	
-    	/*FadeAnimation fadeAnimation = new FadeAnimation(mPlaylistViewPager, 600, 0.0f, 
-    													1.0f, new LinearInterpolator());
-    	
-    	fadeAnimation.animate();*/
-    	
+
     	//Show the pager after a .1sec delay (keeps the animation smooth).
     	mHandler.postDelayed(new Runnable() {
 
 			@Override
 			public void run() {
-				TranslateAnimation slideUpAnimation = new TranslateAnimation(mPlaylistViewPager, 400, new DecelerateInterpolator(), 
-																			 View.VISIBLE, 
-																			 Animation.RELATIVE_TO_SELF, 0.0f, 
-																			 Animation.RELATIVE_TO_SELF, 0.0f, 
-																			 Animation.RELATIVE_TO_SELF, 2.0f, 
-																			 Animation.RELATIVE_TO_SELF, 0.0f);
+                FadeAnimation fadeAnimation = new FadeAnimation(mPlaylistViewPager, 600, 0.0f,
+                                                                1.0f, new DecelerateInterpolator(2.0f));
 
-				slideUpAnimation.animate();
-				
+                fadeAnimation.animate();
+
 			}
-    		
-    	}, 100);
+
+    	}, 200);
 
     }
     
@@ -1268,7 +1259,7 @@ public class NowPlayingActivity extends FragmentActivity {
                 //Set the ViewPager's adapter and the current song.
                 mPlaylistPagerAdapter.notifyDataSetChanged();
                 mPlaylistViewPager.setAdapter(mPlaylistPagerAdapter);
-                mPlaylistViewPager.setOffscreenPageLimit(5);
+                mPlaylistViewPager.setOffscreenPageLimit(10);
             	mPlaylistViewPager.setCurrentItem(mApp.getService().getCurrentSongIndex(), false);
             }
            

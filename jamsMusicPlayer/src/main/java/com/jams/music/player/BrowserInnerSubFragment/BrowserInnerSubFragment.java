@@ -1,4 +1,4 @@
-package com.jams.music.player.HorizListSubFragment;
+package com.jams.music.player.BrowserInnerSubFragment;
 
 import android.animation.Animator;
 import android.content.Context;
@@ -18,6 +18,7 @@ import android.widget.RelativeLayout;
 
 import com.jams.music.player.Animations.FadeAnimation;
 import com.jams.music.player.Animations.TranslateAnimation;
+import com.jams.music.player.Helpers.UIElementsHelper;
 import com.jams.music.player.R;
 import com.jams.music.player.Utils.Common;
 import com.jams.music.player.Utils.EaseInOutInterpolator;
@@ -31,7 +32,7 @@ import com.mikhaellopez.circularimageview.CircularImageView;
  *
  * @author Saravan Pantham
  */
-public class HorizListSubFragment extends Fragment {
+public class BrowserInnerSubFragment extends Fragment {
 
     //Context and common objects.
     private Context mContext;
@@ -39,7 +40,9 @@ public class HorizListSubFragment extends Fragment {
 
     //UI elements
     private ViewGroup mRootView;
+    private RelativeLayout mCircularActionLayout;
     private CircularImageView mCircularActionButton;
+    private ImageView mCircularActionIcon;
     private ImageView mHeaderImage;
     private RelativeLayout mContentLayout;
     private RelativeLayout mBackgroundLayout;
@@ -63,18 +66,22 @@ public class HorizListSubFragment extends Fragment {
         mApp = (Common) mContext;
         mRootView = (ViewGroup) inflater.inflate(R.layout.fragment_horizontal_list_sub, null);
 
-        mCircularActionButton = (CircularImageView) mRootView.findViewById(R.id.horiz_list_sub_activity_circular_action);
-        mHeaderImage = (ImageView) mRootView.findViewById(R.id.horiz_list_sub_activity_header_image);
-        mContentLayout = (RelativeLayout) mRootView.findViewById(R.id.horiz_list_sub_activity_content);
-        mBackgroundLayout = (RelativeLayout) mRootView.findViewById(R.id.horiz_list_sub_activity_background);
-
-        //Apply a subtle shadow to the circular action button.
-        mCircularActionButton.setBorderWidth(0);
-        mCircularActionButton.addShadow();
+        mCircularActionLayout = (RelativeLayout) mRootView.findViewById(R.id.browser_inner_fragment_circular_action_layout);
+        mCircularActionButton = (CircularImageView) mRootView.findViewById(R.id.browser_inner_fragment_circular_action);
+        mCircularActionIcon = (ImageView) mRootView.findViewById(R.id.browser_inner_fragment_circular_action_icon);
+        mHeaderImage = (ImageView) mRootView.findViewById(R.id.browser_inner_fragment_header_image);
+        mContentLayout = (RelativeLayout) mRootView.findViewById(R.id.browser_inner_fragment_content);
+        mBackgroundLayout = (RelativeLayout) mRootView.findViewById(R.id.browser_inner_fragment_background);
 
         //Init the interpolators.
         easeOutInterpolator = new EaseInOutInterpolator(EaseInOutInterpolator.EasingType.Type.OUT);
         easeInOutInterpolator = new EaseInOutInterpolator(EaseInOutInterpolator.EasingType.Type.INOUT);
+
+        //Set the circular action button.
+        mCircularActionButton.setImageDrawable(UIElementsHelper.getGeneralActionBarBackground(mContext));
+        mCircularActionButton.setBorderWidth(0);
+        mCircularActionButton.addShadow();
+        mCircularActionIcon.setImageResource(UIElementsHelper.getIcon(mContext, "play_track_notification"));
 
        /*
         * Retrieve the data we need for the picture to display
@@ -88,13 +95,13 @@ public class HorizListSubFragment extends Fragment {
         final int thumbnailHeight = bundle.getInt("height");
         mOriginalOrientation = bundle.getInt("orientation");
 
-        //mHeaderImage.setImageBitmap(bitmap);
+        mApp.getPicasso().load(artworkPath).into(mHeaderImage);
         //mCircularActionButton.setImageBitmap(bitmap);
 
-                /*
-                 * Only run the animation if we're coming from the parent activity and not if
-                 * we were recreated automatically by the window manager (e.g., device rotation).
-                 */
+        /*
+         * Only run the animation if we're coming from the parent activity and not if
+         * we were recreated automatically by the window manager (e.g., device rotation).
+         */
         if (savedInstanceState==null) {
             ViewTreeObserver observer = mHeaderImage.getViewTreeObserver();
             observer.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
@@ -234,7 +241,7 @@ public class HorizListSubFragment extends Fragment {
 
             @Override
             public void run() {
-                mCircularActionButton.startAnimation(scaleIn);
+                mCircularActionLayout.startAnimation(scaleIn);
             }
 
         }, 500);
@@ -259,12 +266,12 @@ public class HorizListSubFragment extends Fragment {
 
         @Override
         public void onAnimationStart(Animation animation) {
-
+            mCircularActionLayout.setVisibility(View.VISIBLE);
         }
 
         @Override
         public void onAnimationEnd(Animation animation) {
-            mCircularActionButton.setVisibility(View.VISIBLE);
+            mCircularActionLayout.setVisibility(View.VISIBLE);
         }
 
         @Override

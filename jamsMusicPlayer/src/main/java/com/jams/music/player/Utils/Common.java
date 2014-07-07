@@ -21,7 +21,6 @@ import com.jams.music.player.DBHelpers.DBAccessHelper;
 import com.jams.music.player.GMusicHelpers.GMusicClientCalls;
 import com.jams.music.player.Helpers.UIElementsHelper;
 import com.jams.music.player.NowPlayingActivity.NowPlayingActivity;
-import com.jams.music.player.NowPlayingActivity.PlaylistPagerFragment.AsyncPlaylistPagerFragmentTask;
 import com.jams.music.player.PlaybackKickstarter.PlaybackKickstarter;
 import com.jams.music.player.R;
 import com.jams.music.player.Services.AudioPlaybackService;
@@ -81,9 +80,6 @@ public class Common extends Application {
 	
 	//ImageManager for asynchronous image downloading.
 	private ImageManager mImageManager;
-	
-	//References to the most recent playlistPagerFragment tasks.
-	private AsyncPlaylistPagerFragmentTask mLastPlaylistPagerFragmentTask;
 	
 	//ImageLoader/ImageLoaderConfiguration objects for ListViews and GridViews.
 	private ImageLoader mImageLoader;
@@ -615,6 +611,72 @@ public class Common extends Application {
         }     
         
     }
+
+    //Resamples an input stream bitmap to avoid OOM errors.
+    public Bitmap decodeSampledBitmapFromInputStream(InputStream is, int reqWidth, int reqHeight) {
+        try {
+
+            final BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+            options.inJustDecodeBounds = false;
+            options.inPurgeable = true;
+
+            return BitmapFactory.decodeStream(is, null, options);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            try {
+                is.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+    }
+
+    /**
+     * Converts milliseconds to hh:mm:ss format.
+     */
+    public String convertMillisToMinsSecs(long milliseconds) {
+
+        int secondsValue = (int) (milliseconds / 1000) % 60 ;
+        int minutesValue = (int) ((milliseconds / (1000*60)) % 60);
+        int hoursValue  = (int) ((milliseconds / (1000*60*60)) % 24);
+
+        String seconds = "";
+        String minutes = "";
+        String hours = "";
+
+        if (secondsValue < 10) {
+            seconds = "0" + secondsValue;
+        } else {
+            seconds = "" + secondsValue;
+        }
+
+        if (minutesValue < 10) {
+            minutes = "0" + minutesValue;
+        } else {
+            minutes = "" + minutesValue;
+        }
+
+        if (hoursValue < 10) {
+            hours = "0" + hoursValue;
+        } else {
+            hours = "" + hoursValue;
+        }
+
+        String output = "";
+        if (hoursValue!=0) {
+            output = hours + ":" + minutes + ":" + seconds;
+        } else {
+            output = minutes + ":" + seconds;
+        }
+
+        return output;
+    }
     
     /*
      * Getter methods.
@@ -642,10 +704,6 @@ public class Common extends Application {
 	
 	public ImageManager getImageManager() {
 		return mImageManager;
-	}
-	
-	public AsyncPlaylistPagerFragmentTask getLastPlaylistPagerFragmentTask() {
-		return mLastPlaylistPagerFragmentTask;
 	}
 	
 	public boolean isBuildingLibrary() {
@@ -716,10 +774,6 @@ public class Common extends Application {
 	/*
 	 * Setter methods.
 	 */
-	
-	public void setLastPlaylistPagerFragmentTask(AsyncPlaylistPagerFragmentTask task) {
-		mLastPlaylistPagerFragmentTask = task;
-	}
 	
 	public void setIsBuildingLibrary(boolean isBuildingLibrary) {
 		mIsBuildingLibrary = isBuildingLibrary;

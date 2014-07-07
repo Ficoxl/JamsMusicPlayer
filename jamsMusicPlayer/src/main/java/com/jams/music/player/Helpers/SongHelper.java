@@ -4,13 +4,12 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.view.View;
 
 import com.jams.music.player.DBHelpers.DBAccessHelper;
 import com.jams.music.player.R;
 import com.jams.music.player.Utils.Common;
-import com.nostra13.universalimageloader.core.assist.FailReason;
-import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 /**
  * Helper class for the current song.
@@ -84,8 +83,9 @@ public class SongHelper {
 			this.setSource(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_SOURCE)));
 			this.setLocalCopyPath(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.LOCAL_COPY_PATH)));	
 			this.setSavedPosition(mApp.getService().getCursor().getLong(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SAVED_POSITION)));
-			
-			mApp.getImageLoader().loadImage(this.getAlbumArtPath(), listener);
+
+            mApp.getPicasso().load(getAlbumArtPath()).into(imageLoadingTarget);
+			//mApp.getImageLoader().loadImage(this.getAlbumArtPath(), listener);
 		}
 
 	}
@@ -115,45 +115,39 @@ public class SongHelper {
 	/**
 	 * Image loading listener to store the current song's album art.
 	 */
-	ImageLoadingListener listener = new ImageLoadingListener() {
+    Target imageLoadingTarget = new Target() {
 
-		@Override
-		public void onLoadingStarted(String imageUri, View view) {
-			mIsAlbumArtLoaded = false;
-			
-		}
+        @Override
+        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+            mIsAlbumArtLoaded = true;
+            setAlbumArt(bitmap);
+            if (getAlbumArtLoadedListener()!=null)
+                getAlbumArtLoadedListener().albumArtLoaded();
 
-		@Override
-		public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-			Drawable defaultAlbumArtDrawable = mApp.getResources().getDrawable(R.drawable.default_album_art);
-			Bitmap defaultAlbumArt = ((BitmapDrawable) defaultAlbumArtDrawable).getBitmap();
-			setAlbumArt(defaultAlbumArt);
-			onLoadingComplete(imageUri, view, mAlbumArt);
-			
-		}
+            if (mIsCurrentSong) {
+                mApp.getService().updateNotification(mSongHelper);
+                mApp.getService().updateWidgets();
 
-		@Override
-		public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-			mIsAlbumArtLoaded = true;
-			setAlbumArt(loadedImage);
-			if (getAlbumArtLoadedListener()!=null)
-				getAlbumArtLoadedListener().albumArtLoaded();
+            }
 
-			if (mIsCurrentSong) {
-				mApp.getService().updateNotification(mSongHelper);
-				mApp.getService().updateWidgets();
-				
-			}
-			
-		}
+        }
 
-		@Override
-		public void onLoadingCancelled(String imageUri, View view) {
-			onLoadingFailed(imageUri, view, null);
-			
-		}
-		
-	};
+        @Override
+        public void onBitmapFailed(Drawable errorDrawable) {
+            Drawable defaultAlbumArtDrawable = mApp.getResources().getDrawable(R.drawable.default_album_art);
+            Bitmap defaultAlbumArt = ((BitmapDrawable) defaultAlbumArtDrawable).getBitmap();
+            setAlbumArt(defaultAlbumArt);
+            onBitmapLoaded(mAlbumArt, null);
+
+        }
+
+        @Override
+        public void onPrepareLoad(Drawable placeHolderDrawable) {
+            mIsAlbumArtLoaded = false;
+
+        }
+
+    };
 	
 	public String getTitle() {
 		return mTitle;

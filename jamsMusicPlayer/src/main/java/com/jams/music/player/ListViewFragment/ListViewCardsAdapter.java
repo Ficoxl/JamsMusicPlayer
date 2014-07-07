@@ -182,13 +182,8 @@ public class ListViewCardsAdapter extends SimpleCursorAdapter implements Scrolla
 		//Set the title text in the ListView.
 		mHolder.title.setText(titleText);
 		mHolder.artist.setText(field2);
-		
-		try {
-			//mHolder.duration.setText(convertMillisToMinsSecs(Long.parseLong(field1)));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
+		mHolder.duration.setText(field1);
+
 		//Load the album art.
         mApp.getPicasso().load(artworkPath)
                          .transform(new PicassoCircularTransformation())

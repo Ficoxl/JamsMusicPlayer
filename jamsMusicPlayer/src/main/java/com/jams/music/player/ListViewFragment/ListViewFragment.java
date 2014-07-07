@@ -229,7 +229,9 @@ public class ListViewFragment extends Fragment {
 		@Override
 		public void onItemClick(AdapterView<?> arg0, View view, int index, long id) {
 			mApp.getPlaybackKickstarter()
-				.initPlayback(mContext, mQuerySelection, Common.SONGS_FRAGMENT, index, true);	
+				.initPlayback(mContext, mQuerySelection, Common.SONGS_FRAGMENT, index, true);
+
+            getActivity().overridePendingTransition(R.anim.slide_in_from_right, R.anim.fade_out);
 			
 		}
     	

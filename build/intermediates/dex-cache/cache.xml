@@ -74,29 +74,29 @@
         revision="20.0.0"
         sha1="8a986f180b17e1bfda9dee6358a04bd1cefed5f3"/>
     <item
-        dex="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\commons-lang3-3.1-f22ca2bd9a460aed4fe489824f1ba8dc49abfab9.jar"
-        jar="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\libs\commons-lang3-3.1.jar"
-        jumboMode="false"
-        revision="20.0.0"
-        sha1="905075e6c80f206bbe6cf1e809d2caa69f420c76"/>
-    <item
         dex="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\okhttp-urlconnection-1.6.0-08b21f639bdff2262597e7edc41b1c0810604daa.jar"
         jar="C:\Users\Saravan\Android Workspace\Jams Music Player\build\intermediates\exploded-aar\Jams Music Player\picasso\unspecified\libs\okhttp-urlconnection-1.6.0.jar"
         jumboMode="false"
         revision="20.0.0"
         sha1="375c2206eb7e52976955d0f8737be5e0ec9cf667"/>
     <item
-        dex="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\google-http-client-android-1.16.0-rc-5508274923204a88f336b6fc17c3ff7249b1d44b.jar"
-        jar="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\libs\google-http-client-android-1.16.0-rc.jar"
+        dex="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\commons-lang3-3.1-f22ca2bd9a460aed4fe489824f1ba8dc49abfab9.jar"
+        jar="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\libs\commons-lang3-3.1.jar"
         jumboMode="false"
         revision="20.0.0"
-        sha1="c2e8114029469943699b390ce14f6c0ff4565807"/>
+        sha1="905075e6c80f206bbe6cf1e809d2caa69f420c76"/>
     <item
         dex="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\classes-c5707b20904cd5fc97c02a3dcaf87a99bd481595.jar"
         jar="C:\Users\Saravan\Android Workspace\Jams Music Player\build\intermediates\exploded-aar\Jams Music Player\viewpagerindicatorlibrary\unspecified\classes.jar"
         jumboMode="false"
         revision="20.0.0"
         sha1="93cc8d3a11c9bd38e65f6ecaa995d8675624e58b"/>
+    <item
+        dex="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\google-http-client-android-1.16.0-rc-5508274923204a88f336b6fc17c3ff7249b1d44b.jar"
+        jar="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\libs\google-http-client-android-1.16.0-rc.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="c2e8114029469943699b390ce14f6c0ff4565807"/>
     <item
         dex="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\android-async-http-1.4.2-66-g4b6eb97-5fe8483be8d3a4f1c1a64358cacaab7be843a74b.jar"
         jar="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\libs\android-async-http-1.4.2-66-g4b6eb97.jar"
@@ -126,7 +126,7 @@
         jar="C:\Users\Saravan\Android Workspace\Jams Music Player\build\intermediates\exploded-aar\Jams Music Player\picasso\unspecified\classes.jar"
         jumboMode="false"
         revision="20.0.0"
-        sha1="140af25ac1249a3620ec7ddfdd3926fcda115f1c"/>
+        sha1="84971765615d6253fe504087781c60b1264cbc0d"/>
     <item
         dex="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\okhttp-2.0.0-25ad818854b852b2693f602966329d6bc55e202b.jar"
         jar="C:\Users\Saravan\Android Workspace\Jams Music Player\build\intermediates\exploded-aar\Jams Music Player\picasso\unspecified\libs\okhttp-2.0.0.jar"

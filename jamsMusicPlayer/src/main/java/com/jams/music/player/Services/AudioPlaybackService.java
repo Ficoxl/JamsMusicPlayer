@@ -1,9 +1,5 @@
 package com.jams.music.player.Services;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-
 import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -34,7 +30,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
@@ -43,7 +38,6 @@ import com.google.analytics.tracking.android.Fields;
 import com.google.analytics.tracking.android.GoogleAnalytics;
 import com.google.analytics.tracking.android.MapBuilder;
 import com.google.analytics.tracking.android.Tracker;
-import com.jams.music.player.R;
 import com.jams.music.player.AsyncTasks.AsyncGetSongStreamURLTask;
 import com.jams.music.player.BroadcastReceivers.HeadsetButtonsReceiver;
 import com.jams.music.player.BroadcastReceivers.HeadsetPlugBroadcastReceiver;
@@ -53,6 +47,7 @@ import com.jams.music.player.Helpers.EqualizerHelper;
 import com.jams.music.player.Helpers.SongHelper;
 import com.jams.music.player.NowPlayingActivity.NowPlayingActivity;
 import com.jams.music.player.PlaybackKickstarter.PlaybackKickstarter.BuildCursorListener;
+import com.jams.music.player.R;
 import com.jams.music.player.RemoteControlClient.RemoteControlClientCompat;
 import com.jams.music.player.RemoteControlClient.RemoteControlHelper;
 import com.jams.music.player.Scrobbling.ScrobbleDroidHelper;
@@ -62,6 +57,10 @@ import com.jams.music.player.WidgetProviders.AlbumArtWidgetProvider;
 import com.jams.music.player.WidgetProviders.BlurredWidgetProvider;
 import com.jams.music.player.WidgetProviders.LargeWidgetProvider;
 import com.jams.music.player.WidgetProviders.SmallWidgetProvider;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * The meat and potatoes of the entire app. Manages 
@@ -1466,8 +1465,6 @@ public class AudioPlaybackService extends Service {
 			 * 
 			 * TL;DR: Don't touch this interface. Ever.
 			 */
-			Log.e("DEBUG", ">>>>MediaPlayer died. What: " + what);
-			Log.e("DEBUG", ">>>>MediaPlayer died. Extra: " + extra);
 			return true;
 		}
     	
@@ -2068,9 +2065,9 @@ public class AudioPlaybackService extends Service {
     }
     
     /**
-     * Starts playing mMediaPlayer2, sends out the update UI broadcast, 
-     * and updates the notification and any open widgets. 
-     * 
+     * Starts playing mMediaPlayer2, sends out the update UI broadcast,
+     * and updates the notification and any open widgets.
+     *
      * Do NOT call this method before mMediaPlayer2 has been prepared.
      */
     private void startMediaPlayer2() throws IllegalStateException {

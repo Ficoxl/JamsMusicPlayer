@@ -1,21 +1,21 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/horiz_list_sub_activity_root"
+    android:id="@+id/browser_inner_fragment_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
     <RelativeLayout
-        android:id="@+id/horiz_list_sub_activity_background"
+        android:id="@+id/browser_inner_fragment_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="invisible"
         android:background="@android:color/black" />
 
     <RelativeLayout
-        android:id="@+id/horiz_list_sub_activity_content"
+        android:id="@+id/browser_inner_fragment_content"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:layout_below="@+id/horiz_list_sub_activity_header_image"
+        android:layout_below="@+id/browser_inner_fragment_header_image"
         android:visibility="invisible"
         android:background="@android:color/white" >
 
@@ -30,22 +30,37 @@
     </RelativeLayout>
 
     <ImageView
-        android:id="@+id/horiz_list_sub_activity_header_image"
+        android:id="@+id/browser_inner_fragment_header_image"
         android:layout_width="match_parent"
         android:layout_height="360dp"
         android:scaleType="centerCrop"
         android:adjustViewBounds="true" />
 
-    <com.mikhaellopez.circularimageview.CircularImageView
-        android:id="@+id/horiz_list_sub_activity_circular_action"
+    <RelativeLayout
+        android:id="@+id/browser_inner_fragment_circular_action_layout"
         android:layout_width="72dp"
         android:layout_height="72dp"
-        android:scaleType="centerCrop"
-        android:adjustViewBounds="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_marginTop="320dp"
         android:layout_marginRight="25dp"
-        android:visibility="invisible" />
+        android:visibility="invisible" >
+
+        <com.mikhaellopez.circularimageview.CircularImageView
+            android:id="@+id/browser_inner_fragment_circular_action"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:layout_centerInParent="true" />
+
+        <ImageView
+            android:id="@+id/browser_inner_fragment_circular_action_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="centerCrop"
+            android:adjustViewBounds="true"
+            android:src="@drawable/play_track_notification"
+            android:layout_centerInParent="true" />
+
+    </RelativeLayout>
 
 </RelativeLayout>
