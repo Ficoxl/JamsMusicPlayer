@@ -54,6 +54,7 @@ public class QuickScroll extends View {
     protected View handleBar;
     // indicator variables
     protected RelativeLayout scrollIndicator;
+    private OnScrollListener onScrollListener;
 
     // default constructors
     public QuickScroll(Context context) {
@@ -171,9 +172,14 @@ public class QuickScroll extends View {
                 listView.setOnScrollListener(new OnScrollListener() {
 
                     public void onScrollStateChanged(AbsListView view, int scrollState) {
+                        if (onScrollListener!=null)
+                            onScrollListener.onScrollStateChanged(view, scrollState);
                     }
 
                     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                        if (onScrollListener!=null)
+                            onScrollListener.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
+
                         if (!isScrolling && totalItemCount - visibleItemCount > 0) {
                             moveHandlebar(getHeight() * firstVisibleItem / (totalItemCount - visibleItemCount));
                         }
@@ -431,6 +437,10 @@ public class QuickScroll extends View {
         pinLayout.addView(indicatorTextView);
 
         return pinLayout;
+    }
+
+    public void setOnScrollListener(OnScrollListener listener) {
+        onScrollListener = listener;
     }
 
 }

@@ -333,8 +333,6 @@ public class ListViewFragment extends Fragment {
 	        animationAdapter.setAbsListView(mListView);
 	        mListView.setAdapter(animationAdapter);*/
 
-            PauseOnScrollHelper scrollListener = new PauseOnScrollHelper(mApp.getPicasso(), 300);
-            mListView.setOnScrollListener(scrollListener);
 	        mListView.setOnItemClickListener(onItemClickListener);
 	        
 	        //Init the quick scroll widget.
@@ -344,6 +342,9 @@ public class ListViewFragment extends Fragment {
 	        				  QuickScroll.STYLE_HOLO);
 	        
 	        int[] quickScrollColors = UIElementsHelper.getQuickScrollColors(mContext);
+            PauseOnScrollHelper scrollListener = new PauseOnScrollHelper(mApp.getPicasso(), null);
+
+            mQuickScroll.setOnScrollListener(scrollListener);
 	        mQuickScroll.setHandlebarColor(quickScrollColors[0], quickScrollColors[0], quickScrollColors[1]);
 	        mQuickScroll.setIndicatorColor(quickScrollColors[1], quickScrollColors[0], quickScrollColors[2]);
 	        mQuickScroll.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 48);

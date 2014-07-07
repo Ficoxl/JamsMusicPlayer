@@ -388,8 +388,6 @@ public class GridViewFragment extends Fragment {
         										  		mDBColumnsMap);
         	
 	        mGridView.setAdapter(mGridViewAdapter);
-            PauseOnScrollHelper scrollListener = new PauseOnScrollHelper(mApp.getPicasso(), 300);
-            mGridView.setOnScrollListener(scrollListener);
 	        mGridView.setOnItemClickListener(onItemClickListener);
 	        
 	       /* SwingBottomInAnimationAdapter animationAdapter = new SwingBottomInAnimationAdapter(mGridViewAdapter);
@@ -399,12 +397,15 @@ public class GridViewFragment extends Fragment {
 	        mGridView.setAdapter(animationAdapter);*/
 
 	        //Init the quick scroll widget.
-	        mQuickScroll.init(QuickScrollGridView.TYPE_INDICATOR_WITH_HANDLE, 
+	        mQuickScroll.init(QuickScrollGridView.TYPE_INDICATOR_WITH_HANDLE,
 	        				 	 	  mGridView, 
 	        				 	 	  (GridViewCardsAdapter) mGridViewAdapter, 
 	        				 	 	  QuickScrollGridView.STYLE_HOLO);
 	        
 	        int[] quickScrollColors = UIElementsHelper.getQuickScrollColors(mContext);
+            PauseOnScrollHelper scrollHelper = new PauseOnScrollHelper(mApp.getPicasso(), null);
+
+            mQuickScroll.setOnScrollListener(scrollHelper);
 	        mQuickScroll.setHandlebarColor(quickScrollColors[0], quickScrollColors[0], quickScrollColors[1]);
 	        mQuickScroll.setIndicatorColor(quickScrollColors[1], quickScrollColors[0], quickScrollColors[2]);
 	        mQuickScroll.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 48);

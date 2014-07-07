@@ -192,7 +192,7 @@ public class ListViewCardsAdapter extends SimpleCursorAdapter implements Scrolla
 		//Load the album art.
         mApp.getPicasso().load(artworkPath)
                          .transform(new PicassoCircularTransformation())
-                         .placeholder(UIElementsHelper.getEmptyColorPatch(mContext))
+                         .placeholder(UIElementsHelper.getEmptyCircularColorPatch(mContext))
                          .into(mHolder.image);
 		
 		return convertView;

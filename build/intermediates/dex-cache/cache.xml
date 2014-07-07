@@ -126,7 +126,7 @@
         jar="C:\Users\Saravan\Android Workspace\Jams Music Player\build\intermediates\exploded-aar\Jams Music Player\picasso\unspecified\classes.jar"
         jumboMode="false"
         revision="20.0.0"
-        sha1="f7a331bfcc40c9959e8f02ed5ee6134557fb74dc"/>
+        sha1="140af25ac1249a3620ec7ddfdd3926fcda115f1c"/>
     <item
         dex="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\okhttp-2.0.0-25ad818854b852b2693f602966329d6bc55e202b.jar"
         jar="C:\Users\Saravan\Android Workspace\Jams Music Player\build\intermediates\exploded-aar\Jams Music Player\picasso\unspecified\libs\okhttp-2.0.0.jar"
@@ -150,6 +150,6 @@
         jar="C:\Users\Saravan\Android Workspace\Jams Music Player\build\intermediates\exploded-aar\Jams Music Player\quickScroll\unspecified\classes.jar"
         jumboMode="false"
         revision="20.0.0"
-        sha1="22f822d100918df3b6cd759d45948925354bf623"/>
+        sha1="d10f680299ac491e092b0b3ae1bb1674fa995fe7"/>
 
 </pre-dex-items>

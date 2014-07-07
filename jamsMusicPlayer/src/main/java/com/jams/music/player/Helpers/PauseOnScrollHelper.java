@@ -1,76 +1,70 @@
 package com.jams.music.player.Helpers;
 
-
-import android.os.Handler;
-import android.util.Log;
+import android.content.Context;
 import android.widget.AbsListView;
-import android.widget.AbsListView.OnScrollListener;
-
 import com.squareup.picasso.Picasso;
 
-/**
- * Pauses image loading for various scroll events.
- */
-public class PauseOnScrollHelper implements OnScrollListener {
+public class PauseOnScrollHelper implements AbsListView.OnScrollListener {
 
-    private Picasso picasso;
-    private long delay;
-    private final OnScrollListener externalListener;
-    private Handler handler;
+    protected AbsListView.OnScrollListener delegate;
+    protected Picasso picasso;
+    private int previousScrollState = SCROLL_STATE_IDLE;
+    private boolean scrollingFirstTime = true;
 
-    public PauseOnScrollHelper(Picasso picasso, long delay) {
-        this(picasso, delay, null);
+    public PauseOnScrollHelper(Picasso picasso, AbsListView.OnScrollListener delegate) {
+        this.delegate = delegate;
+        this.picasso = picasso;
+        picasso.continueDispatching();
     }
 
-    public PauseOnScrollHelper(Picasso picasso, long delay, OnScrollListener customListener) {
-        this.picasso = picasso;
-        this.delay = delay;
-        handler = new Handler();
-        externalListener = customListener;
-        Log.e("DEBUG", ">>>>INITING SCROLL LISTENER");
+    public PauseOnScrollHelper(Picasso picasso) {
+        this(picasso, null);
+    }
+
+    public PauseOnScrollHelper(Context context) {
+        this(context, null);
+    }
+
+    public PauseOnScrollHelper(Context context, AbsListView.OnScrollListener delegate) {
+        this(Picasso.with(context), delegate);
     }
 
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
-        Log.e("DEBUG", ">>>>SCROLL STATE CHANGED");
-        switch (scrollState) {
-            case OnScrollListener.SCROLL_STATE_IDLE:
-                Log.e("DEBUG", ">>>>RESUMING!");
-                handler.postDelayed(resumeLoading, delay);
-                break;
-            case OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
-                Log.e("DEBUG", ">>>>SCROLLING");
-                picasso.interruptDispatching();
-                break;
-            case OnScrollListener.SCROLL_STATE_FLING:
-                Log.e("DEBUG", ">>>>>FLINGING!");
-                picasso.interruptDispatching();
-                break;
+
+        if (scrollingFirstTime) {
+            picasso.continueDispatching();
+            scrollingFirstTime = false;
         }
 
-        if (externalListener != null)
-            externalListener.onScrollStateChanged(view, scrollState);
+        // TO the picasso staff
+        if (!isScrolling(scrollState) && isScrolling(previousScrollState)) {
+            picasso.continueDispatching();
+        }
 
+        if (isScrolling(scrollState) && !isScrolling(previousScrollState)) {
+            picasso.interruptDispatching();
+        }
+
+        previousScrollState = scrollState;
+
+        // Forward to the delegate
+        if (delegate != null) {
+            delegate.onScrollStateChanged(view, scrollState);
+        }
+    }
+
+    protected boolean isScrolling(int scrollState) {
+        return scrollState == SCROLL_STATE_FLING || scrollState == SCROLL_STATE_TOUCH_SCROLL;
     }
 
     @Override
-    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        if (externalListener != null)
-            externalListener.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount,
+                         int totalItemCount) {
 
-    }
-
-    /**
-     * Runnable that resumes image loading after the specified delay.
-     */
-    Runnable resumeLoading = new Runnable() {
-
-        @Override
-        public void run() {
-            picasso.continueDispatching();
-
+        // Forward to the delegate
+        if (delegate != null) {
+            delegate.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
         }
-
-    };
-
+    }
 }
