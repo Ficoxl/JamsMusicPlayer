@@ -51,15 +51,15 @@ public class NavigationDrawerFragment extends Fragment {
 		mContext = getActivity();
 		mApp = (Common) mContext.getApplicationContext();
 		mHandler = new Handler();
-		
+
 		View rootView = inflater.inflate(R.layout.navigation_drawer_layout, null);
-		if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("LIGHT_CARDS_THEME") || 
+		if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("LIGHT_CARDS_THEME") ||
 			mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_THEME").equals("LIGHT_THEME")) {
 			rootView.setBackgroundColor(0xFFFFFFFF);
 		} else {
 			rootView.setBackgroundColor(0xFF191919);
 		}
-		
+
 		browsersListView = (ListView) rootView.findViewById(R.id.browsers_list_view);
 		librariesListView = (ListView) rootView.findViewById(R.id.libraries_list_view);
 		browsersHeaderText = (TextView) rootView.findViewById(R.id.browsers_header_text);
@@ -87,14 +87,24 @@ public class NavigationDrawerFragment extends Fragment {
 		setListViewHeightBasedOnChildren(browsersListView);
 		
 		//Apply the Libraries ListView's adapter.
-		if (mApp.getSharedPreferences().getBoolean("BUILDING_LIBRARY", false)==false) {
-			cursor = mApp.getDBAccessHelper().getAllUniqueLibraries();
-			mLibrariesAdapter = new NavigationDrawerLibrariesAdapter(getActivity(), cursor);
-			librariesListView.setAdapter(mLibrariesAdapter);
-			librariesListView.setOnItemClickListener(librariesClickListener);
-			setListViewHeightBasedOnChildren(librariesListView);
-			
-		}
+        cursor = mApp.getDBAccessHelper().getAllUniqueLibraries();
+        mLibrariesAdapter = new NavigationDrawerLibrariesAdapter(getActivity(), cursor);
+        librariesListView.setAdapter(mLibrariesAdapter);
+        librariesListView.setOnItemClickListener(librariesClickListener);
+        setListViewHeightBasedOnChildren(librariesListView);
+
+        //Apply the ListViews' dividers.
+        if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_THEME") ||
+            mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME")) {
+            browsersListView.setDivider(mContext.getResources().getDrawable(R.drawable.list_divider));
+            librariesListView.setDivider(mContext.getResources().getDrawable(R.drawable.list_divider));
+        } else {
+            browsersListView.setDivider(mContext.getResources().getDrawable(R.drawable.list_divider_light));
+            librariesListView.setDivider(mContext.getResources().getDrawable(R.drawable.list_divider_light));
+        }
+
+        browsersListView.setDividerHeight(1);
+        librariesListView.setDividerHeight(1);
 
 		return rootView;
 	}
@@ -106,10 +116,6 @@ public class NavigationDrawerFragment extends Fragment {
 			mApp.getSharedPreferences().edit().putString("CURRENT_LIBRARY", (String) view.getTag(R.string.library_name)).commit();
 			librariesListView.setAdapter(mLibrariesAdapter);
 			librariesListView.invalidate();
-			
-			//Refresh the activity to reflect the new library.
-			String currentLibrary = mApp.getSharedPreferences().getString("CURRENT_LIBRARY", mContext.getResources().getString(R.string.all_libraries));
-			currentLibrary = currentLibrary.replace("'", "''");
 			
 			//Update the fragment.
 			((MainActivity) getActivity()).loadFragment(null);

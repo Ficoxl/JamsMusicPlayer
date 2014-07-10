@@ -52,6 +52,7 @@ import com.jams.music.player.Animations.TranslateAnimation;
 import com.jams.music.player.AsyncTasks.AsyncRemovePinnedSongsTask;
 import com.jams.music.player.DBHelpers.DBAccessHelper;
 import com.jams.music.player.Dialogs.RepeatSongRangeDialog;
+import com.jams.music.player.Drawers.QueueDrawerFragment;
 import com.jams.music.player.EqualizerAudioFXActivity.EqualizerFragment;
 import com.jams.music.player.Helpers.TypefaceHelper;
 import com.jams.music.player.Helpers.UIElementsHelper;
@@ -74,13 +75,10 @@ public class NowPlayingActivity extends FragmentActivity {
 	private DrawerLayout mDrawerLayout;
 	private FrameLayout mDrawerParentLayout;
 	private RelativeLayout mEqualizerLayout;
+    private QueueDrawerFragment mQueueDrawerFragment;
 	
-	//Current queue, only on sw600dp-land layouts.
-	private RelativeLayout landscapeRootContainer;
-    private DragSortListView currentQueueListView;
-    private NowPlayingQueueListAdapter queueAdapter;
-    private RelativeLayout currentQueueLayout;
-    private ProgressBar loadingQueueProgress;
+	//Current queue fragment layout.
+    private RelativeLayout mCurrentQueueLayout;
     private boolean tabletInLandscape = false;
 	
 	//Song info/seekbar elements.
@@ -144,6 +142,8 @@ public class NowPlayingActivity extends FragmentActivity {
         
         //Drawer layout.
         mDrawerLayout = (DrawerLayout) findViewById(R.id.main_activity_drawer_root);
+        mDrawerParentLayout = (FrameLayout) findViewById(R.id.now_playing_drawer_frame_root);
+        mCurrentQueueLayout = (RelativeLayout) findViewById(R.id.queue_drawer);
         mDrawerLayout.setDrawerListener(mDrawerListener);
         
         //Equalizer layout.
@@ -184,49 +184,6 @@ public class NowPlayingActivity extends FragmentActivity {
             tabletInLandscape = true;
         } else {
             tabletInLandscape = false;
-        }
-
-        if (tabletInLandscape) {
-            landscapeRootContainer = (RelativeLayout) findViewById(R.id.nowPlayingRootContainer);
-            currentQueueListView = (DragSortListView) findViewById(R.id.queue_list_view);
-            currentQueueLayout = (RelativeLayout) findViewById(R.id.now_playing_tablet_queue_layout);
-            loadingQueueProgress = (ProgressBar) findViewById(R.id.now_playing_land_loading);
-
-            //Set the drawer backgrounds based on the theme.
-            if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME") ||
-                mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_THEME")) {
-                currentQueueLayout.setBackgroundColor(0xFF191919);
-            } else {
-                currentQueueLayout.setBackgroundColor(0xFFFFFFFF);
-            }
-
-        } else {
-            //Initialize the Current Queue drawer.
-            mDrawerParentLayout = (FrameLayout) findViewById(R.id.now_playing_drawer_frame_root);
-            currentQueueLayout = (RelativeLayout) findViewById(R.id.main_activity_queue_drawer);
-            currentQueueListView = (DragSortListView) findViewById(R.id.queue_list_view);
-
-            currentQueueLayout.setOnTouchListener(new OnTouchListener() {
-
-                @Override
-                public boolean onTouch(View arg0, MotionEvent arg1) {
-                    //Don't let touch events pass through the drawer.
-                    return true;
-                }
-
-            });
-
-            //Set the drawer backgrounds based on the theme.
-            if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME") ||
-                mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_THEME")) {
-                currentQueueLayout.setBackgroundColor(0xFF191919);
-                mDrawerLayout.setBackgroundColor(0xFF191919);
-            } else {
-                currentQueueLayout.setBackgroundColor(0xFFFFFFFF);
-                mDrawerLayout.setBackgroundColor(0xFFFFFFFF);
-            }
-
-            initializeDrawer();
         }
     	
         //Set the theme for the control headers and seekbar background.
@@ -303,7 +260,7 @@ public class NowPlayingActivity extends FragmentActivity {
         		} else {
         			scrollViewPager(position, true, 1, false);
         		}
-        	
+
         	}
         		
         	//Updates the playback control buttons.
@@ -417,6 +374,18 @@ public class NowPlayingActivity extends FragmentActivity {
 			}
 
     	}, 200);
+
+    }
+
+    /**
+     * Initializes the current queue drawer/layout.
+     */
+    private void initDrawer() {
+        //Load the current queue drawer.
+        mQueueDrawerFragment = new QueueDrawerFragment();
+        getSupportFragmentManager().beginTransaction()
+                                   .replace(R.id.queue_drawer, mQueueDrawerFragment)
+                                   .commit();
 
     }
     
@@ -539,35 +508,9 @@ public class NowPlayingActivity extends FragmentActivity {
                 actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
             }
             
-            if (landscapeRootContainer!=null) {
-            	landscapeRootContainer.setPadding(0, statusBarHeight + actionBarHeight, 0, 0);
-            	landscapeRootContainer.setClipToPadding(false);
-            }
-            
             if (mDrawerParentLayout!=null) {
             	mDrawerParentLayout.setPadding(0, actionBarHeight, 0, 0);
             	mDrawerParentLayout.setClipToPadding(false);
-            }
-            
-            int orientation = mApp.getOrientation();
-            if (orientation==Common.ORIENTATION_PORTRAIT) {
-            	
-                if (currentQueueListView!=null) {
-                	currentQueueListView.setPadding(0, statusBarHeight, 0, 0);
-                	currentQueueListView.setClipToPadding(false);
-                }
-                
-            } else if (orientation==Common.ORIENTATION_LANDSCAPE) {
-                
-            	if (!getResources().getString(R.string.screen_type).equals("Phone")) {
-                    
-                    if (currentQueueListView!=null) {
-                    	currentQueueListView.setPadding(0, statusBarHeight, 0, 0);
-                    	currentQueueListView.setClipToPadding(false);
-                    }
-                    
-            	}
-                
             }
 
         }
@@ -780,114 +723,7 @@ public class NowPlayingActivity extends FragmentActivity {
 		}
 		
     }
-    
-    /**
-     * Initializes the current queue drawer for the first time.
-     */
-    private void initializeDrawer() {
 
-		//Apply the card layout's background based on the color theme.
-		if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("LIGHT_CARDS_THEME")) {
-			currentQueueListView.setDivider(getResources().getDrawable(R.drawable.transparent_drawable));
-			currentQueueListView.setDividerHeight(3);
-			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-			layoutParams.setMargins(7, 3, 7, 3);
-			currentQueueListView.setLayoutParams(layoutParams);
-		} else if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME")) {
-			currentQueueListView.setDivider(getResources().getDrawable(R.drawable.transparent_drawable));
-			currentQueueListView.setDividerHeight(3);
-			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-			layoutParams.setMargins(7, 3, 7, 3);
-			currentQueueListView.setLayoutParams(layoutParams);
-		}
-		
-		updateDrawerQueue(true, true);
-
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
-		
-	}
-    
-    /**
-     * Updates the queue's list.
-     */
-    private void updateDrawerQueue(boolean initAdapter, boolean setListViewPosition) {
-		
-		//If the service is running, load the queue. If not, show the empty text.
-		if (mApp.getSharedPreferences().getBoolean("SERVICE_RUNNING", false)==true &&
-			mApp.getService().getCurrentMediaPlayer()!=null && 
-			mApp.getService().getPlaybackIndecesList()!=null &&
-			mApp.getService().getPlaybackIndecesList().size() > 0) {
-			
-			//The service is running.
-			currentQueueListView.setVisibility(View.VISIBLE);
-			
-			//Initialize the adapter (called the first time the drawer is initialized).
-			if (initAdapter) {
-				queueAdapter = new NowPlayingQueueListAdapter(mContext, 
-															  mApp.getService().getPlaybackIndecesList());
-			
-				currentQueueListView.setAdapter(queueAdapter);
-	    		currentQueueListView.setFastScrollEnabled(true);
-	    		currentQueueListView.setDropListener(onDrop);
-	    		currentQueueListView.setRemoveListener(onRemove);
-	    		SimpleFloatViewManager simpleFloatViewManager = new SimpleFloatViewManager(currentQueueListView);
-	    		simpleFloatViewManager.setBackgroundColor(Color.TRANSPARENT);
-	    		currentQueueListView.setFloatViewManager(simpleFloatViewManager);
-	    		
-	    		//Set the listview dividers.
-	    		if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME") ||
-	            	mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_THEME")) {
-	    			currentQueueListView.setDivider(getResources().getDrawable(R.drawable.list_divider));
-	    			currentQueueListView.setDividerHeight(1);
-	            } else {
-	            	currentQueueListView.setDivider(getResources().getDrawable(R.drawable.list_divider_light));
-	            	currentQueueListView.setDividerHeight(1);
-	            }
-	    		
-	            currentQueueListView.setOnItemClickListener(new OnItemClickListener() {
-
-	    			@Override
-	    			public void onItemClick(AdapterView<?> arg0, View view, int index, long arg3) {
-	    				
-	    				//Change the mCursor position in the service to skip to the appropriate track.
-	    				if (mApp.getService().getCurrentMediaPlayer()!=null && 
-	    					mApp.getService().getMediaPlayer()!=null &&
-	    					mApp.getService().getMediaPlayer2()!=null) {
-	    					
-	    					if (mApp.getService().getCursor().getCount() > index) {
-	        					mApp.getService().skipToTrack(index);
-	        					
-	    					}
-	    					
-	    				}
-	    				
-	    			}
-	            	
-	            });
-	    		
-			} else {
-				if (queueAdapter!=null) {
-					queueAdapter.notifyDataSetChanged();
-				}
-				
-			}
-            
-    		//Scroll down to the current song only if the drawer isn't already open.
-    		if (setListViewPosition) {
-    			if (!mDrawerLayout.isDrawerOpen(Gravity.END)) {
-    				currentQueueListView.setSelection(mApp.getService().getCurrentSongIndex());
-    			}
-    			
-    		}
-
-		} else {
-			//The service isn't running.
-			currentQueueListView.setVisibility(View.GONE);
-		}
-		
-	}
-    
     /**
      * Drawer open/close listener.
      */
@@ -895,13 +731,19 @@ public class NowPlayingActivity extends FragmentActivity {
 
 		@Override
 		public void onDrawerClosed(View drawer) {
-			// TODO Auto-generated method stub
+			if (mQueueDrawerFragment!=null &&
+                drawer==mCurrentQueueLayout) {
+                mQueueDrawerFragment.setIsDrawerOpen(false);
+            }
 			
 		}
 
 		@Override
 		public void onDrawerOpened(View drawer) {
-			currentQueueListView.setSelection(mApp.getService().getCurrentSongIndex());
+            if (mQueueDrawerFragment!=null &&
+                drawer==mCurrentQueueLayout) {
+                mQueueDrawerFragment.setIsDrawerOpen(true);
+            }
 			
 		}
 
@@ -918,105 +760,7 @@ public class NowPlayingActivity extends FragmentActivity {
 		}
     	
     };
-    
-    /**
-     * 
-     */
-    private void initNowPlayingQueue(boolean initAdapter, boolean setListViewPosition) {
-		
-		//If the service is running, load the queue. If not, show the empty text.
-		if (mApp.getSharedPreferences().getBoolean("SERVICE_RUNNING", false)==true &&
-			mApp.getService().getCurrentMediaPlayer()!=null && 
-			mApp.getService().getPlaybackIndecesList()!=null &&
-			mApp.getService().getPlaybackIndecesList().size() > 0) {
-			
-			//The service is running.
-			currentQueueListView.setVisibility(View.VISIBLE);
-			
-			//Initialize the adapter (called the first time the drawer is initialized).
-			if (initAdapter) {
-				queueAdapter = new NowPlayingQueueListAdapter(this, 
-															  mApp.getService().getPlaybackIndecesList());
-			
-				currentQueueListView.setAdapter(queueAdapter);
-	    		currentQueueListView.setFastScrollEnabled(true);
-	    		currentQueueListView.setDropListener(onDrop);
-	    		currentQueueListView.setRemoveListener(onRemove);
-	    		SimpleFloatViewManager simpleFloatViewManager = new SimpleFloatViewManager(currentQueueListView);
-	    		simpleFloatViewManager.setBackgroundColor(Color.TRANSPARENT);
-	    		currentQueueListView.setFloatViewManager(simpleFloatViewManager);
-	    		
-	    		//Set the listview dividers.
-	    		if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME") ||
-	            	mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_THEME")) {
-	    			currentQueueListView.setDivider(getResources().getDrawable(R.drawable.list_divider));
-	    			currentQueueListView.setDividerHeight(1);
-	            } else {
-	            	currentQueueListView.setDivider(getResources().getDrawable(R.drawable.list_divider_light));
-	            	currentQueueListView.setDividerHeight(1);
-	            }
-	    		
-	            currentQueueListView.setOnItemClickListener(new OnItemClickListener() {
 
-	    			@Override
-	    			public void onItemClick(AdapterView<?> arg0, View view, int index, long arg3) {
-	    				
-	    				//Change the mCursor position in the service to skip to the appropriate track.
-	    				if (mApp.getService().getCurrentMediaPlayer()!=null && 
-	    					mApp.getService().getMediaPlayer()!=null &&
-	    					mApp.getService().getMediaPlayer2()!=null) {
-	    					
-	    					if (mApp.getService().getCursor().getCount() > index) {
-	        					mApp.getService().skipToTrack(index);
-	        					
-	    					}
-	    					
-	    					if (index < mPlaylistPagerAdapter.getCount()) {
-	    						mPlaylistViewPager.setCurrentItem(index, true);
-	    						try {
-	    							queueAdapter.notifyDataSetChanged();
-	    						} catch (Exception e) {
-	    							e.printStackTrace();
-	    						}
-	    						
-	    					}
-	    					
-	    				}
-	    				
-	    			}
-	            	
-	            });
-	            
-	            //Fade out the progressbar and fade in the queue list.
-	            FadeAnimation fadeOutAnimation = new FadeAnimation(loadingQueueProgress, 400, 1.0f, 
-	            												   0.0f, new LinearInterpolator());
-	            fadeOutAnimation.animate();
-	            
-	            FadeAnimation fadeInAnimation = new FadeAnimation(currentQueueListView, 400, 0.0f, 
-						   										  1.0f, new LinearInterpolator());
-	            fadeInAnimation.animate();
-	    		
-			} else {
-				try {
-					queueAdapter.notifyDataSetChanged();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				
-			}
-            
-    		//Scroll down to the current song only if the drawer isn't already open.
-    		if (setListViewPosition) {
-    			currentQueueListView.setSelection(mApp.getService().getCurrentSongIndex());
-    		}
-
-		} else {
-			//The service isn't running.
-			currentQueueListView.setVisibility(View.GONE);
-		}
-		
-	}
-    
     /**
      * Provides callback methods when the ViewPager's position/current page has changed.
      */
@@ -1070,202 +814,37 @@ public class NowPlayingActivity extends FragmentActivity {
 	 * shown.
 	 */
 	public void showHideEqualizer() {
-		
-		if (mIsEqualizerVisible==false) {
-			//Slide down the entire player screen.
-			TranslateAnimation slideDownAnimation = new TranslateAnimation(mDrawerLayout, 400, new AccelerateInterpolator(), 
-																		   View.INVISIBLE, 
-																		   Animation.RELATIVE_TO_SELF, 0.0f, 
-																		   Animation.RELATIVE_TO_SELF, 0.0f, 
-																		   Animation.RELATIVE_TO_SELF, 0.0f, 
-																		   Animation.RELATIVE_TO_SELF, 2.0f);
-			
-			slideDownAnimation.animate();
-			mIsEqualizerVisible = true;
-			
-		} else {
-			//Slide up the entire player screen.
-			TranslateAnimation slideUpAnimation = new TranslateAnimation(mDrawerLayout, 400, new DecelerateInterpolator(), 
-																		 View.VISIBLE, 
-																		 Animation.RELATIVE_TO_SELF, 0.0f, 
-																		 Animation.RELATIVE_TO_SELF, 0.0f, 
-																		 Animation.RELATIVE_TO_SELF, 2.0f, 
-																		 Animation.RELATIVE_TO_SELF, 0.0f);
 
-			slideUpAnimation.animate();
-			mIsEqualizerVisible = false;
-			
-		}
-		
-		//Update the ActionBar.
-		invalidateOptionsMenu();
-		
-	}
-	
-	/**
-	 * Drop listener for the current queue list.
-	 */
-	private DragSortListView.DropListener onDrop = new DragSortListView.DropListener() {
-    	
-        @Override
-        public void drop(int from, int to) {
-            if (from!=to) {
-                int fromItem = queueAdapter.getItem(from);
-                int toItem = queueAdapter.getItem(to);
-                queueAdapter.remove(fromItem);
-                queueAdapter.insert(fromItem, to);
-                
-                //If the current song was reordered, change currentSongIndex and update the next song.
-                if (from==mApp.getService().getCurrentSongIndex()) {
-                	mApp.getService().setCurrentSongIndex(to);
-                	
-                	//Check which mediaPlayer is currently playing, and prepare the other mediaPlayer.
-                	mApp.getService().prepareAlternateMediaPlayer();
-                	
-                	queueReorderedInvalidatePager(from, to);
-                	return;
-                	
-                } else if (from > mApp.getService().getCurrentSongIndex() && to <= mApp.getService().getCurrentSongIndex()) {
-                	//One of the next songs was moved to a position before the current song. Move currentSongIndex forward by 1.
-                	mApp.getService().setCurrentSongIndex(mApp.getService().getCurrentSongIndex()+1);
-                	mApp.getService().setEnqueueReorderScalar(mApp.getService().getEnqueueReorderScalar()+1);
-                	
-                	//Check which mediaPlayer is currently playing, and prepare the other mediaPlayer.
-                	mApp.getService().prepareAlternateMediaPlayer();
-                	
-                	queueReorderedInvalidatePager(from, to);
-                	return;
-                	
-                } else if (from < mApp.getService().getCurrentSongIndex() && to==mApp.getService().getCurrentSongIndex()) {
-                	/* One of the previous songs was moved to the current song's position (visually speaking, 
-                	 * the new song will look like it was placed right after the current song.
-                	 */
-                	mApp.getService().setCurrentSongIndex(mApp.getService().getCurrentSongIndex()-1);
-                	mApp.getService().setEnqueueReorderScalar(mApp.getService().getEnqueueReorderScalar()-1);
-                	
-                	//Check which mediaPlayer is currently playing, and prepare the other mediaPlayer.
-                	mApp.getService().prepareAlternateMediaPlayer();
-                	
-                	queueReorderedInvalidatePager(from, to);
-                	return;
-                
-            	} else if (from < mApp.getService().getCurrentSongIndex() && to > mApp.getService().getCurrentSongIndex()) {
-                	//One of the previous songs was moved to a position after the current song. Move currentSongIndex back by 1.
-            		mApp.getService().setCurrentSongIndex(mApp.getService().getCurrentSongIndex()-1);
-                	mApp.getService().setEnqueueReorderScalar(mApp.getService().getEnqueueReorderScalar()-1);
-                	
-                	//Check which mediaPlayer is currently playing, and prepare the other mediaPlayer.
-                	mApp.getService().prepareAlternateMediaPlayer();
-                	
-                	queueReorderedInvalidatePager(from, to);
-                	return;
-                	
-                }
-                
-                //If the next song was reordered, reload it with the new index.
-                if (mApp.getService().getPlaybackIndecesList().size() > (mApp.getService().getCurrentSongIndex()+1)) {
-                    if (fromItem==mApp.getService().getPlaybackIndecesList().get(mApp.getService().getCurrentSongIndex()+1) || 
-                    	toItem==mApp.getService().getPlaybackIndecesList().get(mApp.getService().getCurrentSongIndex()+1)) {
-                    	
-                    	//Check which mediaPlayer is currently playing, and prepare the other mediaPlayer.
-                    	mApp.getService().prepareAlternateMediaPlayer();
-                    	
-                    }
-                    
-                } else {
-                	//Check which mediaPlayer is currently playing, and prepare the other mediaPlayer.
-                	mApp.getService().prepareAlternateMediaPlayer();
-                	
-                }
+        if (mIsEqualizerVisible == false) {
+            //Slide down the entire player screen.
+            TranslateAnimation slideDownAnimation = new TranslateAnimation(mDrawerLayout, 400, new AccelerateInterpolator(),
+                    View.INVISIBLE,
+                    Animation.RELATIVE_TO_SELF, 0.0f,
+                    Animation.RELATIVE_TO_SELF, 0.0f,
+                    Animation.RELATIVE_TO_SELF, 0.0f,
+                    Animation.RELATIVE_TO_SELF, 2.0f);
 
-            }
-            
-            queueReorderedInvalidatePager(from, to);
+            slideDownAnimation.animate();
+            mIsEqualizerVisible = true;
+
+        } else {
+            //Slide up the entire player screen.
+            TranslateAnimation slideUpAnimation = new TranslateAnimation(mDrawerLayout, 400, new DecelerateInterpolator(),
+                    View.VISIBLE,
+                    Animation.RELATIVE_TO_SELF, 0.0f,
+                    Animation.RELATIVE_TO_SELF, 0.0f,
+                    Animation.RELATIVE_TO_SELF, 2.0f,
+                    Animation.RELATIVE_TO_SELF, 0.0f);
+
+            slideUpAnimation.animate();
+            mIsEqualizerVisible = false;
+
         }
-        
-    };
-    
-    /**
-     * Invalidates the ViewPager if the queue is reordered.
-     * 
-     * @param from The index from which the item was moved.
-     * @param to The index to which the item was moved.
-     */
-    public void queueReorderedInvalidatePager(int from, int to) {
-        if (Math.abs(mPlaylistViewPager.getCurrentItem()-from) <= 10 ||
-        	Math.abs(mPlaylistViewPager.getCurrentItem()-to) <= 10) {
 
-        	//Invalidate the pager and redraw it.
-        	mPlaylistViewPager.setAdapter(null);
-        	mPlaylistPagerAdapter = null;
-        	mPlaylistPagerAdapter = new PlaylistPagerAdapter(getSupportFragmentManager());
-        	mPlaylistViewPager.setAdapter(mPlaylistPagerAdapter);
-            mPlaylistPagerAdapter.notifyDataSetChanged();
-            mPlaylistViewPager.invalidate();
-        	mPlaylistViewPager.setCurrentItem(mApp.getService().getCurrentSongIndex(), false);
-        }
-        
+        //Update the ActionBar.
+        invalidateOptionsMenu();
+
     }
-    
-    /**
-     * Remove interface for the queue list.
-     */
-    private DragSortListView.RemoveListener onRemove = new DragSortListView.RemoveListener() {
-    	
-        @Override
-        public void remove(int which) {
-
-        	//Stop the service if we just removed the last (and only) song.
-        	if (mApp.getService().getPlaybackIndecesList().size()==1) {
-        		finish();
-        		mContext.stopService(new Intent(mContext, AudioPlaybackService.class));
-        		return;
-        	}
-        	
-            //If the song that was removed is the next song, reload it.
-            if (mApp.getService().getPlaybackIndecesList().size() > (mApp.getService().getCurrentSongIndex()+1)) {
-                if (queueAdapter.getItem(which)==mApp.getService().getPlaybackIndecesList().get(mApp.getService().getCurrentSongIndex()+1)) {
-
-                	//Check which mediaPlayer is currently playing, and prepare the other mediaPlayer.
-                	mApp.getService().prepareAlternateMediaPlayer();
-                	
-                } else if (queueAdapter.getItem(which)==mApp.getService().getPlaybackIndecesList().get(mApp.getService().getCurrentSongIndex())) {
-                	mApp.getService().setCurrentSongIndex(mApp.getService().getCurrentSongIndex()+1);
-                	mApp.getService().prepareMediaPlayer(mApp.getService().getCurrentSongIndex());
-                	mApp.getService().setCurrentSongIndex(mApp.getService().getCurrentSongIndex()-1);
-                } else if (queueAdapter.getItem(which) < mApp.getService().getPlaybackIndecesList().get(mApp.getService().getCurrentSongIndex())) {
-                	mApp.getService().setCurrentSongIndex(mApp.getService().getCurrentSongIndex()-1);
-                }
-                
-            } else if (which==(mApp.getService().getPlaybackIndecesList().size()-1) &&
-      		   	   	   mApp.getService().getCurrentSongIndex()==(mApp.getService().getPlaybackIndecesList().size()-1)) {	
-            	//The current song was the last one and it was removed. Time to back up to the previous song.
-            	mApp.getService().setCurrentSongIndex(mApp.getService().getCurrentSongIndex()-1);
-            	mApp.getService().prepareMediaPlayer(mApp.getService().getCurrentSongIndex());
-            } else {
-            	//Check which mediaPlayer is currently playing, and prepare the other mediaPlayer.
-            	mApp.getService().prepareAlternateMediaPlayer();
-            	
-            }
-            
-            //Remove the item from the adapter.
-            queueAdapter.remove(queueAdapter.getItem(which));
-            mPlaylistPagerAdapter.notifyDataSetChanged();
-
-            if (Math.abs(mPlaylistViewPager.getCurrentItem()-which) <= 2) {
-            	mPlaylistPagerAdapter = null;
-                mPlaylistPagerAdapter= new PlaylistPagerAdapter(getSupportFragmentManager());
-                
-                //Set the ViewPager's adapter and the current song.
-                mPlaylistPagerAdapter.notifyDataSetChanged();
-                mPlaylistViewPager.setAdapter(mPlaylistPagerAdapter);
-                mPlaylistViewPager.setOffscreenPageLimit(10);
-            	mPlaylistViewPager.setCurrentItem(mApp.getService().getCurrentSongIndex(), false);
-            }
-           
-        }
-        
-    };
     
     /**
      * @deprecated
@@ -1424,11 +1003,11 @@ public class NowPlayingActivity extends FragmentActivity {
 			pinSong();
 			return true;
 	    case R.id.action_queue_drawer:
-	    	if (mDrawerLayout!=null && currentQueueLayout!=null) {
-		    	if (mDrawerLayout.isDrawerOpen(currentQueueLayout)) {
-		    		mDrawerLayout.closeDrawer(currentQueueLayout);
+	    	if (mDrawerLayout!=null && mCurrentQueueLayout!=null) {
+		    	if (mDrawerLayout.isDrawerOpen(mCurrentQueueLayout)) {
+		    		mDrawerLayout.closeDrawer(mCurrentQueueLayout);
 		    	} else {
-		    		mDrawerLayout.openDrawer(currentQueueLayout);
+		    		mDrawerLayout.openDrawer(mCurrentQueueLayout);
 		    	}
 		    	
 	    	}
@@ -1650,7 +1229,17 @@ public class NowPlayingActivity extends FragmentActivity {
 	@Override
 	public void onResume() {
 		super.onResume();
-		
+
+        //Load the drawer 1000ms after the activity is loaded.
+        mHandler.postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                initDrawer();
+            }
+
+        }, 1000);
+
 		if (getIntent().hasExtra(START_SERVICE) && 
 			getNowPlayingActivityListener()!=null) {
 			getNowPlayingActivityListener().onNowPlayingActivityReady();
@@ -1663,6 +1252,7 @@ public class NowPlayingActivity extends FragmentActivity {
 			getIntent().removeExtra(START_SERVICE);
 			
 		}
+
 	}
 	
 	@Override

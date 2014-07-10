@@ -61,26 +61,26 @@
     </content>
     <orderEntry type="jdk" jdkName="Android API 19 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="universal-image-loader-1.9.2-with-sources" level="project" />
-    <orderEntry type="library" exported="" name="play-services-5.0.77" level="project" />
-    <orderEntry type="library" exported="" name="google-http-client-1.16.0-rc" level="project" />
-    <orderEntry type="library" exported="" name="jaudiotagger-2.0.4-20111207.115108-15" level="project" />
-    <orderEntry type="library" exported="" name="commons-io-2.4" level="project" />
-    <orderEntry type="library" exported="" name="support-v4-20.0.0" level="project" />
-    <orderEntry type="library" exported="" name="dashclock-api-r2.0" level="project" />
-    <orderEntry type="library" exported="" name="commons-logging" level="project" />
-    <orderEntry type="library" exported="" name="google-http-client-android-1.16.0-rc" level="project" />
-    <orderEntry type="library" exported="" name="libGoogleAnalyticsServices" level="project" />
-    <orderEntry type="library" exported="" name="support-annotations-20.0.0" level="project" />
-    <orderEntry type="library" exported="" name="commons-lang3-3.1" level="project" />
     <orderEntry type="library" exported="" name="android-async-http-1.4.2-66-g4b6eb97" level="project" />
-    <orderEntry type="module" module-name="picasso" exported="" />
-    <orderEntry type="module" module-name="dragsortlistviewlibrary" exported="" />
+    <orderEntry type="library" exported="" name="google-http-client-1.16.0-rc" level="project" />
+    <orderEntry type="library" exported="" name="commons-io-2.4" level="project" />
+    <orderEntry type="library" exported="" name="jaudiotagger-2.0.4-20111207.115108-15" level="project" />
+    <orderEntry type="library" exported="" name="libGoogleAnalyticsServices" level="project" />
+    <orderEntry type="library" exported="" name="universal-image-loader-1.9.2-with-sources" level="project" />
+    <orderEntry type="library" exported="" name="dashclock-api-r2.0" level="project" />
+    <orderEntry type="library" exported="" name="support-v4-21.0.0-rc1" level="project" />
+    <orderEntry type="library" exported="" name="commons-lang3-3.1" level="project" />
+    <orderEntry type="library" exported="" name="support-annotations-21.0.0-rc1" level="project" />
+    <orderEntry type="library" exported="" name="google-http-client-android-1.16.0-rc" level="project" />
+    <orderEntry type="library" exported="" name="commons-logging" level="project" />
+    <orderEntry type="library" exported="" name="play-services-5.0.77" level="project" />
     <orderEntry type="module" module-name="circularImageView" exported="" />
-    <orderEntry type="module" module-name="quickScroll" exported="" />
-    <orderEntry type="module" module-name="licensesdialoglibrary" exported="" />
-    <orderEntry type="module" module-name="velocityviewpagerlibrary" exported="" />
     <orderEntry type="module" module-name="viewpagerindicatorlibrary" exported="" />
+    <orderEntry type="module" module-name="picasso" exported="" />
+    <orderEntry type="module" module-name="velocityviewpagerlibrary" exported="" />
+    <orderEntry type="module" module-name="licensesdialoglibrary" exported="" />
+    <orderEntry type="module" module-name="quickScroll" exported="" />
+    <orderEntry type="module" module-name="dragsortlistviewlibrary" exported="" />
   </component>
 </module>
 

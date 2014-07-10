@@ -22,6 +22,7 @@ import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.jams.music.player.Drawers.QueueDrawerFragment;
 import com.jams.music.player.R;
 import com.jams.music.player.Drawers.NavigationDrawerFragment;
 import com.jams.music.player.GridViewFragment.GridViewFragment;
@@ -42,6 +43,7 @@ public class MainActivity extends FragmentActivity {
 	private RelativeLayout mNavDrawerLayout;
 	private RelativeLayout mCurrentQueueDrawerLayout;
 	private ActionBarDrawerToggle mDrawerToggle;
+    private QueueDrawerFragment mQueueDrawerFragment;
 	
 	//Current fragment params.
 	private Fragment mCurrentFragment;
@@ -95,13 +97,17 @@ public class MainActivity extends FragmentActivity {
 
     		@Override
     		public void onDrawerClosed(View view) {
-    			// TODO Auto-generated method stub.
+    			if (mQueueDrawerFragment!=null &&
+                    view==mCurrentQueueDrawerLayout)
+                    mQueueDrawerFragment.setIsDrawerOpen(false);
     		
     		}
 
     		@Override
-    		public void onDrawerOpened(View drawerView) {
-    			// TODO Auto-generated method stub.
+    		public void onDrawerOpened(View view) {
+                if (mQueueDrawerFragment!=null &&
+                    view==mCurrentQueueDrawerLayout)
+                    mQueueDrawerFragment.setIsDrawerOpen(true);
 
     		}
 
@@ -115,14 +121,26 @@ public class MainActivity extends FragmentActivity {
 	}
 	
 	/**
-	 * Broadcast receiver to update this activity as necessary.
+	 * Broadcast receiver interface that will update this activity as necessary.
 	 */
 	BroadcastReceiver mReceiver = new BroadcastReceiver() {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			Bundle bundle = intent.getExtras();
-			
+
+			if (bundle.containsKey(Common.UPDATE_PAGER_POSTIION)) {
+                //Update the queue fragment with the new song info.
+                if (mQueueDrawerFragment!=null)
+                    mQueueDrawerFragment.initListViewAdapter(false);
+
+            }
+
+            //Show the "No music playing." message.
+            if (bundle.containsKey(Common.SERVICE_STOPPING))
+                if (mQueueDrawerFragment!=null)
+                    mQueueDrawerFragment.showEmptyTextView();
+
 		}
 		
 	};
@@ -164,13 +182,6 @@ public class MainActivity extends FragmentActivity {
             int actionBarHeight = 0;
             if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
                 actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
-            }
-            
-            //Calculate navigation bar height.
-            int navigationBarHeight = 0;
-            int resourceId = getResources().getIdentifier("navigation_bar_height", "dimen", "android");
-            if (resourceId > 0) {
-                navigationBarHeight = getResources().getDimensionPixelSize(resourceId);
             }
             
             if (mDrawerParentLayout!=null) {
@@ -301,14 +312,15 @@ public class MainActivity extends FragmentActivity {
 		   						   .commit();
 		
 		//Load the current queue drawer.
+        mQueueDrawerFragment = new QueueDrawerFragment();
 		getSupportFragmentManager().beginTransaction()
-		   						   .replace(R.id.current_queue_drawer_container, new NavigationDrawerFragment())
+		   						   .replace(R.id.current_queue_drawer_container, mQueueDrawerFragment)
 		   						   .commit();
 		
 	}
 	
 	/**
-	 * Called when the user taps on the "Play all" or "Shuffle all" action.
+	 * Called when the user taps on the "Play all" or "Shuffle all" action button.
 	 */
 	private void playAll(boolean shuffle) {
 		

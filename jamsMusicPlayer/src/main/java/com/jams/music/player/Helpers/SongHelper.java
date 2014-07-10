@@ -59,7 +59,7 @@ public class SongHelper {
 	 * helper object with new song data.
 	 * 
 	 * @param context Context used to get a new Common object.
-	 * @param index The index of the new song.
+	 * @param index The index of the song.
 	 */
 	public void populateSongData(Context context, int index) {
 		
@@ -85,12 +85,47 @@ public class SongHelper {
 			this.setSavedPosition(mApp.getService().getCursor().getLong(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SAVED_POSITION)));
 
             mApp.getPicasso().load(getAlbumArtPath()).into(imageLoadingTarget);
-			//mApp.getImageLoader().loadImage(this.getAlbumArtPath(), listener);
 		}
 
 	}
-	
-	/**
+
+    /**
+     * Moves the specified cursor to the specified index and populates this
+     * helper object with new song data. Note that this method only laods
+     * the song's title and artist. All other fields are set to null. To
+     * retrieve all song data, see populateSongData().
+     *
+     * @param context Context used to get a new Common object.
+     * @param index The index of the song.
+     */
+    public void populateBasicSongData(Context context, int index) {
+
+        mSongHelper = this;
+        mApp = (Common) context.getApplicationContext();
+        mIndex = index;
+
+        if (mApp.isServiceRunning()) {
+            mApp.getService().getCursor().moveToPosition(mApp.getService().getPlaybackIndecesList().get(index));
+
+            this.setId(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_ID)));
+            this.setTitle(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_TITLE)));
+            this.setAlbum(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_ALBUM)));
+            this.setArtist(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_ARTIST)));
+            this.setAlbumArtist(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_ALBUM_ARTIST)));
+            this.setGenre(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_GENRE)));
+            this.setDuration(mApp.getService().getCursor().getLong(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_DURATION)));
+
+            this.setAlbumArtPath(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_ALBUM_ART_PATH)));
+            this.setFilePath(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_FILE_PATH)));
+            this.setSource(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_SOURCE)));
+            this.setLocalCopyPath(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.LOCAL_COPY_PATH)));
+            this.setSavedPosition(mApp.getService().getCursor().getLong(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SAVED_POSITION)));
+
+        }
+
+    }
+
+    /**
 	 * Sets this helper object as the current song. This method 
 	 * will check if the song's album art has already been loaded. 
 	 * If so, the updateNotification() and updateWidget() methods 
@@ -148,7 +183,11 @@ public class SongHelper {
         }
 
     };
-	
+
+    public int getSongIndex() {
+        return mIndex;
+    }
+
 	public String getTitle() {
 		return mTitle;
 	}

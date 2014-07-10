@@ -61,6 +61,7 @@ import com.jams.music.player.WidgetProviders.SmallWidgetProvider;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Random;
 
 /**
  * The meat and potatoes of the entire app. Manages 
@@ -380,8 +381,11 @@ public class AudioPlaybackService extends Service {
 			
 			if (isShuffleOn()) {
 				//Shuffle all elements before and after the current index.
-	    		Collections.shuffle(getPlaybackIndecesList().subList(0, getCurrentSongIndex()));
-	    		Collections.shuffle(getPlaybackIndecesList().subList(getCurrentSongIndex()+1, getPlaybackIndecesList().size()));
+                Random preSubListSeed = new Random();
+                Random postSubListSeed = new Random();
+	    		Collections.shuffle(getPlaybackIndecesList().subList(0, getCurrentSongIndex()), preSubListSeed);
+	    		Collections.shuffle(getPlaybackIndecesList().subList(getCurrentSongIndex()+1, getPlaybackIndecesList().size()),
+                                    postSubListSeed);
 			}
 			
 		} else {

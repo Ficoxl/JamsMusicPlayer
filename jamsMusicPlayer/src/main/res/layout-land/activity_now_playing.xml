@@ -20,37 +20,12 @@
 	    tools:context=".NowPlayingActivity" >
 	    
 	    <RelativeLayout
-	        android:id="@+id/now_playing_tablet_queue_layout"
+	        android:id="@+id/queue_drawer"
 	        android:layout_width="match_parent"
 	        android:layout_height="match_parent"
 	        android:layout_weight="1.5" >
 	        
-	        <com.mobeta.android.dslv.DragSortListView
-	            xmlns:dslv="http://schemas.android.com/apk/res/com.jams.music.player"
-	            android:id="@+id/queue_list_view"
-	            android:layout_width="fill_parent"
-	            android:layout_height="wrap_content"
-	            android:drawSelectorOnTop="true"
-	            dslv:drag_enabled="true"
-			    dslv:drag_handle_id="@+id/playlists_flipped_handle"
-			    dslv:drag_scroll_start="0.33"
-			    dslv:drag_start_mode="onDown"
-			    dslv:float_alpha="0.6"
-			    dslv:remove_enabled="true"
-			    dslv:remove_mode="clickRemove"
-			    dslv:max_drag_scroll_speed="0.8"
-			    dslv:click_remove_id="@+id/remove_song_from_queue"
-			    dslv:slide_shuffle_speed="0.5"
-			    android:visibility="invisible" />
-	
-	        <ProgressBar
-	            android:id="@+id/now_playing_land_loading"
-	            style="?android:attr/progressBarStyleLarge"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:layout_centerHorizontal="true"
-	            android:layout_centerVertical="true" />
-	        
+
 	    </RelativeLayout>
 	    
 	    <RelativeLayout

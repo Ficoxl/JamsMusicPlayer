@@ -37,7 +37,8 @@
     		android:layout_width="match_parent"
     		android:layout_height="wrap_content"
     		android:layout_below="@+id/browsers_header_underline"
-    		android:layout_marginTop="5dp" >
+    		android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp" >
 		</ListView>
 
 	   	<TextView
@@ -68,8 +69,9 @@
 		    android:id="@+id/libraries_list_view"
 		    android:layout_width="match_parent"
 		    android:layout_height="wrap_content" 
-		    android:layout_below="@+id/libraries_header_underline" 
-		    android:layout_marginTop="5dp"
+		    android:layout_below="@+id/libraries_header_underline"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
 		    android:listSelector="#00000000" >
 		</ListView>
 		
