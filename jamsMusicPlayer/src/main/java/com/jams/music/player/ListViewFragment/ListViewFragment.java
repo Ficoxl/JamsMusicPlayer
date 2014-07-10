@@ -347,6 +347,7 @@ public class ListViewFragment extends Fragment {
             PauseOnScrollHelper scrollListener = new PauseOnScrollHelper(mApp.getPicasso(), null);
 
             mQuickScroll.setOnScrollListener(scrollListener);
+            mQuickScroll.setPicassoInstance(mApp.getPicasso());
 	        mQuickScroll.setHandlebarColor(quickScrollColors[0], quickScrollColors[0], quickScrollColors[1]);
 	        mQuickScroll.setIndicatorColor(quickScrollColors[1], quickScrollColors[0], quickScrollColors[2]);
 	        mQuickScroll.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 48);

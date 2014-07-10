@@ -1,6 +1,7 @@
 package com.jams.music.player.Helpers;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.AbsListView;
 import com.squareup.picasso.Picasso;
 

@@ -19,6 +19,8 @@ import android.view.animation.Animation.AnimationListener;
 import android.widget.*;
 import android.widget.AbsListView.OnScrollListener;
 
+import com.squareup.picasso.Picasso;
+
 public class QuickScroll extends View {
 
     // IDs
@@ -54,7 +56,9 @@ public class QuickScroll extends View {
     protected View handleBar;
     // indicator variables
     protected RelativeLayout scrollIndicator;
+
     private OnScrollListener onScrollListener;
+    private Picasso picasso;
 
     // default constructors
     public QuickScroll(Context context) {
@@ -211,6 +215,10 @@ public class QuickScroll extends View {
         }
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
+                //Pause image loading.
+                if (picasso!=null)
+                    picasso.interruptDispatching();
+
                 if (type == TYPE_INDICATOR || type == TYPE_INDICATOR_WITH_HANDLE) {
                     scrollIndicator.startAnimation(fadeInAnimation);
                     scrollIndicator.setPadding(0, 0, getWidth(), 0);
@@ -222,6 +230,10 @@ public class QuickScroll extends View {
                 scroll(event.getY());
                 return true;
             case MotionEvent.ACTION_UP:
+                //Resume image loading.
+                if (picasso!=null)
+                    picasso.continueDispatching();
+
                 if (type == TYPE_INDICATOR_WITH_HANDLE || type == TYPE_POPUP_WITH_HANDLE)
                     handleBar.setSelected(false);
                 if (type == TYPE_INDICATOR || type == TYPE_INDICATOR_WITH_HANDLE)
@@ -442,5 +454,7 @@ public class QuickScroll extends View {
     public void setOnScrollListener(OnScrollListener listener) {
         onScrollListener = listener;
     }
+
+    public void setPicassoInstance(Picasso picasso) { this.picasso = picasso; }
 
 }
