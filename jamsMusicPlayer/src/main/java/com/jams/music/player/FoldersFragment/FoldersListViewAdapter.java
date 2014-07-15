@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.jams.music.player.R;
 import com.jams.music.player.Helpers.TypefaceHelper;
 import com.jams.music.player.Helpers.UIElementsHelper;
+import com.jams.music.player.Utils.Common;
 
 public class FoldersListViewAdapter extends ArrayAdapter<String> {
 
@@ -33,7 +34,7 @@ public class FoldersListViewAdapter extends ArrayAdapter<String> {
     							  List<String> sizeList, 
     							  List<String> fileFolderPathsList) {
     	
-    	super(context, R.id.file_folder_title, nameList);
+    	super(context, -1, nameList);
     	
     	mContext = context;
     	sharedPreferences = mContext.getSharedPreferences("com.jams.music.player", Context.MODE_PRIVATE);
@@ -51,14 +52,7 @@ public class FoldersListViewAdapter extends ArrayAdapter<String> {
 		if (convertView == null) {
 			
 			if (mFromSaveSongFromCloud==false) {
-				
-				if (sharedPreferences.getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("LIGHT_CARDS_THEME") || 
-					sharedPreferences.getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME")) {
-					convertView = LayoutInflater.from(mContext).inflate(R.layout.folder_view_cards_layout, parent, false);
-				} else {
-					convertView = LayoutInflater.from(mContext).inflate(R.layout.folder_view_layout, parent, false);
-				}
-				
+                convertView = LayoutInflater.from(mContext).inflate(R.layout.folder_view_cards_layout, parent, false);
 			} else {
 				convertView = LayoutInflater.from(mContext).inflate(R.layout.folder_view_layout, parent, false);
 			}
@@ -85,9 +79,9 @@ public class FoldersListViewAdapter extends ArrayAdapter<String> {
 		    holder = (FoldersViewHolder) convertView.getTag();
 		}
 			
-		if (sharedPreferences.getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("LIGHT_CARDS_THEME")) {
+		if (sharedPreferences.getString(Common.CURRENT_THEME, "LIGHT_CARDS_THEME").equals("LIGHT_CARDS_THEME")) {
 			convertView.setBackgroundResource(R.drawable.card_light);
-		} else if (sharedPreferences.getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME")) {
+		} else if (sharedPreferences.getString(Common.CURRENT_THEME, "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME")) {
 			convertView.setBackgroundResource(R.drawable.card_dark);
 		}
 		

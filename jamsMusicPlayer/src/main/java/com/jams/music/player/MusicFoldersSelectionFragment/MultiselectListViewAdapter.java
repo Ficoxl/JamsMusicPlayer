@@ -31,7 +31,7 @@ public class MultiselectListViewAdapter extends ArrayAdapter<String> {
     								  boolean welcomeSetup,
     								  boolean dirChecked) {
     	
-    	super(context, R.id.file_folder_title, fragment.getFileFolderNamesList());
+    	super(context, -1, fragment.getFileFolderNamesList());
     	
     	mContext = context;
     	mApp = (Common) mContext.getApplicationContext();
@@ -55,13 +55,11 @@ public class MultiselectListViewAdapter extends ArrayAdapter<String> {
 			holder.fileFolderSizeText = (TextView) convertView.findViewById(R.id.file_folder_size_multiselect);
 
 			//Apply the card layout's background based on the color theme.
-			if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("LIGHT_CARDS_THEME") ||
-				mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("LIGHT_THEME") || 
+			if (mApp.getCurrentTheme()==Common.LIGHT_THEME ||
 				mWelcomeSetup==true) {
 				convertView.setBackgroundResource(R.drawable.card_light);
 				holder.fileFolderNameText.setTextColor(Color.parseColor("#2F2F2F"));
-			} else if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME") ||
-					   mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_THEME")) {
+			} else if (mApp.getCurrentTheme()==Common.DARK_THEME) {
 				convertView.setBackgroundResource(R.drawable.card_dark);
 				holder.fileFolderNameText.setTextColor(UIElementsHelper.getThemeBasedTextColor(mContext));
 			}

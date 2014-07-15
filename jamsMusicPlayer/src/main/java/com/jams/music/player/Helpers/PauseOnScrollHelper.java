@@ -11,23 +11,20 @@ public class PauseOnScrollHelper implements AbsListView.OnScrollListener {
     protected Picasso picasso;
     private int previousScrollState = SCROLL_STATE_IDLE;
     private boolean scrollingFirstTime = true;
+    private boolean pauseOnScroll = false;
+    private boolean pauseOnFling = true;
 
-    public PauseOnScrollHelper(Picasso picasso, AbsListView.OnScrollListener delegate) {
+    public PauseOnScrollHelper(Picasso picasso, AbsListView.OnScrollListener delegate,
+                               boolean pauseOnScroll, boolean pauseOnFling) {
         this.delegate = delegate;
         this.picasso = picasso;
+        this.pauseOnScroll = pauseOnScroll;
+        this.pauseOnFling = pauseOnFling;
         picasso.continueDispatching();
     }
 
-    public PauseOnScrollHelper(Picasso picasso) {
-        this(picasso, null);
-    }
-
-    public PauseOnScrollHelper(Context context) {
-        this(context, null);
-    }
-
-    public PauseOnScrollHelper(Context context, AbsListView.OnScrollListener delegate) {
-        this(Picasso.with(context), delegate);
+    public PauseOnScrollHelper(Picasso picasso, boolean pauseOnScroll, boolean pauseOnFling) {
+        this(picasso, null, pauseOnScroll, pauseOnFling);
     }
 
     @Override
@@ -38,7 +35,16 @@ public class PauseOnScrollHelper implements AbsListView.OnScrollListener {
             scrollingFirstTime = false;
         }
 
-        // TO the picasso staff
+        //Intercept this method here if we don't need imagel loading to be paused while scrolling.
+        if (scrollState==SCROLL_STATE_TOUCH_SCROLL && pauseOnScroll==false) {
+            return;
+        }
+
+        //Intercept this method here if we don't need imagel loading to be paused while flinging.
+        if (scrollState==SCROLL_STATE_FLING && pauseOnFling==false) {
+            return;
+        }
+
         if (!isScrolling(scrollState) && isScrolling(previousScrollState)) {
             picasso.continueDispatching();
         }

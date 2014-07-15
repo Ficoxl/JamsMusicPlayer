@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.widget.Toast;
 
 import com.jams.music.player.R;
@@ -60,9 +61,9 @@ public class PlaybackKickstarter implements NowPlayingActivityListener, PrepareS
 	 * needs to be changed.
 	 */
 	public void initPlayback(Context context, 
-						     String querySelection, 
+						     String querySelection,
 							 int fragmentId, 
-							 int currentSongIndex, 
+							 int currentSongIndex,
 							 boolean showNowPlayingActivity) {
 		
 		mContext = context;

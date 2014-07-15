@@ -20,6 +20,7 @@ import com.jams.music.player.Dialogs.EditDeleteMusicLibraryDialog;
 import com.jams.music.player.Dialogs.GooglePlayMusicAuthenticationDialog;
 import com.jams.music.player.Dialogs.NowPlayingColorSchemesDialog;
 import com.jams.music.player.Dialogs.ScanFrequencyDialog;
+import com.jams.music.player.Utils.Common;
 
 /*************************************************************************
  * This class displays a dummy activity which fires up a FragmentDialog 
@@ -29,13 +30,16 @@ import com.jams.music.player.Dialogs.ScanFrequencyDialog;
  *************************************************************************/
 public class PreferenceDialogLauncherActivity extends FragmentActivity {
 
+    private Context mContext;
+    private Common mApp;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		
-		SharedPreferences sharedPreferences = this.getSharedPreferences("com.jams.music.player", Context.MODE_PRIVATE);
-		
-		if (sharedPreferences.getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_THEME") ||
-			sharedPreferences.getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME")) {
+
+        mContext = this;
+        mApp = (Common) mContext.getApplicationContext();
+
+		if (mApp.getCurrentTheme()==Common.DARK_THEME) {
 			this.setTheme(R.style.AppThemeTransparent);
 		} else {
 			this.setTheme(R.style.AppThemeTransparentLight);
@@ -76,7 +80,7 @@ public class PreferenceDialogLauncherActivity extends FragmentActivity {
 			
 		} else if (index==6) {	
 			//Seting the "REBUILD_LIBRARY" flag to true will force MainActivity to rescan the folders.
-			sharedPreferences.edit().putBoolean("REBUILD_LIBRARY", true).commit();
+			mApp.getSharedPreferences().edit().putBoolean("REBUILD_LIBRARY", true).commit();
 	    	
 			//Restart the app.
 			Intent i = getBaseContext().getPackageManager().getLaunchIntentForPackage(getBaseContext().getPackageName());

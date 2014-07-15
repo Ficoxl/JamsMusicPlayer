@@ -1,6 +1,7 @@
 package com.jams.music.player.GridViewFragment;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -13,6 +14,7 @@ import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,6 +37,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.andraskindler.quickscroll.QuickScrollGridView;
+import com.jams.music.player.Animations.FadeAnimation;
 import com.jams.music.player.DBHelpers.DBAccessHelper;
 import com.jams.music.player.Helpers.ImageViewCoordHelper;
 import com.jams.music.player.Helpers.PauseOnScrollHelper;
@@ -43,6 +46,7 @@ import com.jams.music.player.Helpers.UIElementsHelper;
 import com.jams.music.player.BrowserInnerSubFragment.BrowserInnerSubFragment;
 import com.jams.music.player.R;
 import com.jams.music.player.Utils.Common;
+import com.nhaarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
 
 import java.util.HashMap;
 
@@ -57,13 +61,13 @@ public class GridViewFragment extends Fragment {
 	private GridViewFragment mFragment;
 	private Common mApp;
 	private View mRootView;
+    private RelativeLayout mBgColorFillLayout;
 	private int mFragmentId;
 	
 	private QuickScrollGridView mQuickScroll;
 	private BaseAdapter mGridViewAdapter;
 	private HashMap<Integer, String> mDBColumnsMap;
 	private GridView mGridView;
-	private ListView mListView;
 	private TextView mEmptyTextView;
 	
 	private RelativeLayout mSearchLayout;
@@ -75,10 +79,23 @@ public class GridViewFragment extends Fragment {
 	
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mRootView = (ViewGroup) inflater.inflate(R.layout.fragment_grid_view, container, false);
+        mRootView = inflater.inflate(R.layout.fragment_grid_view, container, false);
         mContext = getActivity().getApplicationContext();
 	    mApp = (Common) mContext;
         mFragment = this;
+
+        //Set the background color and the partial color bleed.
+        mRootView.setBackgroundColor(UIElementsHelper.getBackgroundColor(mContext));
+        mBgColorFillLayout = (RelativeLayout) mRootView.findViewById(R.id.gridViewBgColorFill);
+        DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mBgColorFillLayout.getLayoutParams();
+        params.height = (metrics.widthPixels/2);
+        mBgColorFillLayout.setLayoutParams(params);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
+            mBgColorFillLayout.setBackground(UIElementsHelper.getGeneralActionBarBackground(mContext));
+        else
+            mBgColorFillLayout.setBackgroundDrawable(UIElementsHelper.getGeneralActionBarBackground(mContext));
         
         //Grab the fragment. This will determine which data to load into the cursor.
         mFragmentId = getArguments().getInt(Common.FRAGMENT_ID);
@@ -96,46 +113,16 @@ public class GridViewFragment extends Fragment {
 	    
         mQuickScroll = (QuickScrollGridView) mRootView.findViewById(R.id.quickscrollgrid);
 
-		    //Set the adapter for the outer gridview.
+		//Set the adapter for the outer gridview.
         mGridView = (GridView) mRootView.findViewById(R.id.generalGridView);
         mGridView.setVerticalScrollBarEnabled(false);
-        
-		//Limit the number of gridview columns to two if we're dealing with a cards theme. Also set the background color based on the theme.
-		if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("LIGHT_CARDS_THEME")) {
-			
-			//Set the number of gridview columns based on the orientation.
-			if (mApp.getOrientation()==Common.ORIENTATION_PORTRAIT) {
-				mGridView.setNumColumns(2);
-			} else {
-				mGridView.setNumColumns(4);
-			}
-			
-			mRootView.setBackgroundColor(0xFFEEEEEE);
-			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-			layoutParams.setMargins(10, 10, 10, 10);
-			mGridView.setLayoutParams(layoutParams);
-			
-		} else if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME")) {
-			//Set the number of gridview columns based on the orientation.
-			if (mApp.getOrientation()==Common.ORIENTATION_PORTRAIT) {
-				mGridView.setNumColumns(2);
-			} else {
-				mGridView.setNumColumns(4);
-			}
-			
-			mRootView.setBackgroundColor(0xFF111111);
-			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-			layoutParams.setMargins(10, 10, 10, 10);
-			mGridView.setLayoutParams(layoutParams);
-		} else {
-			//Set the number of gridview columns based on the orientation.
-			if (mApp.getOrientation()==Common.ORIENTATION_PORTRAIT) {
-				mGridView.setNumColumns(3);
-			} else {
-				mGridView.setNumColumns(4);
-			}
-			
-		}
+
+        //Set the number of gridview columns based on the orientation.
+        if (mApp.getOrientation()==Common.ORIENTATION_PORTRAIT) {
+            mGridView.setNumColumns(2);
+        } else {
+            mGridView.setNumColumns(4);
+        }
         
         //KitKat translucent navigation/status bar.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -314,7 +301,6 @@ public class GridViewFragment extends Fragment {
     	
     	onItemClickListener = null;
     	mGridView = null;
-    	mListView = null;
     	mGridViewAdapter = null;
     	mContext = null;
     	mHandler = null;
@@ -360,6 +346,7 @@ public class GridViewFragment extends Fragment {
 				mDBColumnsMap.put(GridViewCardsAdapter.SOURCE, DBAccessHelper.SONG_SOURCE);
 				mDBColumnsMap.put(GridViewCardsAdapter.FILE_PATH, DBAccessHelper.SONG_FILE_PATH);
 				mDBColumnsMap.put(GridViewCardsAdapter.ARTWORK_PATH, DBAccessHelper.SONG_ALBUM_ART_PATH);
+                mDBColumnsMap.put(GridViewCardsAdapter.FIELD_1, DBAccessHelper.SONG_ARTIST);
 				break;
 			case Common.PLAYLISTS_FRAGMENT:
 				break;
@@ -374,69 +361,80 @@ public class GridViewFragment extends Fragment {
 		@Override
 		public void onPostExecute(Void result) {
 			super.onPostExecute(result);
+            mHandler.postDelayed(initGridView, 200);
 			
-			TranslateAnimation animation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0.0f, 
-					  											  Animation.RELATIVE_TO_SELF, 0.0f, 
-					  											  Animation.RELATIVE_TO_SELF, 2.0f, 
+		}
+		
+    }
+
+    /**
+     * Runnable that loads the GridView after a set interval.
+     */
+    private Runnable initGridView = new Runnable() {
+
+        @Override
+        public void run() {
+            TranslateAnimation animation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0.0f,
+					  											  Animation.RELATIVE_TO_SELF, 0.0f,
+					  											  Animation.RELATIVE_TO_SELF, 2.0f,
 					  											  Animation.RELATIVE_TO_SELF, 0.0f);
 
 			animation.setDuration(600);
 			animation.setInterpolator(new AccelerateDecelerateInterpolator());
-			
-        	mGridViewAdapter = new GridViewCardsAdapter(mContext, mFragment, 
-        										  		mApp.getOrientation()==Common.ORIENTATION_LANDSCAPE, 
-        										  		mDBColumnsMap);
-        	
-	        mGridView.setAdapter(mGridViewAdapter);
-	        mGridView.setOnItemClickListener(onItemClickListener);
-	        
-	       /* SwingBottomInAnimationAdapter animationAdapter = new SwingBottomInAnimationAdapter(mGridViewAdapter);
-	        animationAdapter.setShouldAnimate(true);
-	        animationAdapter.setShouldAnimateFromPosition(0);
-	        animationAdapter.setAbsListView(mGridView);
-	        mGridView.setAdapter(animationAdapter);*/
 
-	        //Init the quick scroll widget.
-	        mQuickScroll.init(QuickScrollGridView.TYPE_INDICATOR_WITH_HANDLE,
-	        				 	 	  mGridView, 
-	        				 	 	  (GridViewCardsAdapter) mGridViewAdapter, 
-	        				 	 	  QuickScrollGridView.STYLE_HOLO);
-	        
-	        int[] quickScrollColors = UIElementsHelper.getQuickScrollColors(mContext);
-            PauseOnScrollHelper scrollHelper = new PauseOnScrollHelper(mApp.getPicasso(), null);
+            mGridViewAdapter = new GridViewCardsAdapter(mContext, mFragment,
+                                                        mApp.getOrientation()==Common.ORIENTATION_LANDSCAPE,
+                                                        mDBColumnsMap);
+            mGridView.setAdapter(mGridViewAdapter);
+
+            //GridView animation adapter.
+         /* SwingBottomInAnimationAdapter animationAdapter = new SwingBottomInAnimationAdapter(mGridViewAdapter, 100, 150);
+            animationAdapter.setShouldAnimate(true);
+            animationAdapter.setShouldAnimateFromPosition(0);
+            animationAdapter.setAbsListView(mGridView);
+            mGridView.setAdapter(animationAdapter); */
+
+            //Init the quick scroll widget.
+            mQuickScroll.init(QuickScrollGridView.TYPE_INDICATOR_WITH_HANDLE,
+                    mGridView,
+                    (GridViewCardsAdapter) mGridViewAdapter,
+                    QuickScrollGridView.STYLE_HOLO);
+
+            int[] quickScrollColors = UIElementsHelper.getQuickScrollColors(mContext);
+            PauseOnScrollHelper scrollHelper = new PauseOnScrollHelper(mApp.getPicasso(), null, false, true);
 
             mQuickScroll.setOnScrollListener(scrollHelper);
-	        mQuickScroll.setHandlebarColor(quickScrollColors[0], quickScrollColors[0], quickScrollColors[1]);
-	        mQuickScroll.setIndicatorColor(quickScrollColors[1], quickScrollColors[0], quickScrollColors[2]);
-	        mQuickScroll.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 48);
-	        
+            mQuickScroll.setPicassoInstance(mApp.getPicasso());
+            mQuickScroll.setHandlebarColor(quickScrollColors[0], quickScrollColors[0], quickScrollColors[1]);
+            mQuickScroll.setIndicatorColor(quickScrollColors[1], quickScrollColors[0], quickScrollColors[2]);
+            mQuickScroll.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 48);
+
 	        animation.setAnimationListener(new AnimationListener() {
 
 				@Override
 				public void onAnimationEnd(Animation arg0) {
 					mQuickScroll.setVisibility(View.VISIBLE);
-					
+
 				}
 
 				@Override
 				public void onAnimationRepeat(Animation arg0) {
 					// TODO Auto-generated method stub
-					
+
 				}
 
 				@Override
 				public void onAnimationStart(Animation arg0) {
 					mGridView.setVisibility(View.VISIBLE);
-					
+
 				}
-	        	
+
 	        });
-	        
+
 	        mGridView.startAnimation(animation);
-			
-		}
-		
-    }
+        }
+
+    };
 
     /*
      * Getter methods.
@@ -448,10 +446,6 @@ public class GridViewFragment extends Fragment {
 
 	public GridView getGridView() {
 		return mGridView;
-	}
-
-	public ListView getListView() {
-		return mListView;
 	}
 
 	public Cursor getCursor() {

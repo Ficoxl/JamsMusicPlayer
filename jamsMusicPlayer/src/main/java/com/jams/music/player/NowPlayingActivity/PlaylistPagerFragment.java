@@ -69,19 +69,7 @@ public class PlaylistPagerFragment extends Fragment implements AlbumArtLoadedLis
 	private ScrollView mLyricsScrollView;
 	private TextView mLyricsTextView;
 	private TextView mLyricsEmptyTextView;
-	
-	private Bitmap bitmapWithReflection;
-	private Bitmap reflectionImage;
-	private Bitmap bm;
 
-	private Matrix matrix;
-	private Canvas canvas;
-	private Paint paint;
-	private LinearGradient shader;
-	private BroadcastReceiver receiver;
-	
-	private int screenWidth;
-	
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         
@@ -107,34 +95,29 @@ public class PlaylistPagerFragment extends Fragment implements AlbumArtLoadedLis
     	mLyricsTextView = (TextView) mRootView.findViewById(R.id.lyrics);
     	mLyricsEmptyTextView = (TextView) mRootView.findViewById(R.id.lyrics_empty);
         
-    	mLyricsTextView.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Light"));
-    	mLyricsTextView.setPaintFlags(mLyricsTextView.getPaintFlags() |
+    	mLyricsTextView.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
+/*    	mLyricsTextView.setPaintFlags(mLyricsTextView.getPaintFlags() |
     								  Paint.ANTI_ALIAS_FLAG |
-    								  Paint.SUBPIXEL_TEXT_FLAG);
+    								  Paint.SUBPIXEL_TEXT_FLAG);*/
     	
-    	mLyricsEmptyTextView.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Light"));
-    	mLyricsEmptyTextView.setPaintFlags(mLyricsEmptyTextView.getPaintFlags() |
+    	mLyricsEmptyTextView.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
+/*    	mLyricsEmptyTextView.setPaintFlags(mLyricsEmptyTextView.getPaintFlags() |
     								  	   Paint.ANTI_ALIAS_FLAG |
-    								  	   Paint.SUBPIXEL_TEXT_FLAG);
+    								  	   Paint.SUBPIXEL_TEXT_FLAG);*/
     	
-    	songNameTextView.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Light"));
-    	songNameTextView.setPaintFlags(songNameTextView.getPaintFlags() |
+    	songNameTextView.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
+/*    	songNameTextView.setPaintFlags(songNameTextView.getPaintFlags() |
     								   Paint.ANTI_ALIAS_FLAG |
-    								   Paint.SUBPIXEL_TEXT_FLAG);
+    								   Paint.SUBPIXEL_TEXT_FLAG);*/
     	
-    	artistAlbumNameTextView.setTypeface(TypefaceHelper.getTypeface(mContext, "RobotoCondensed-Regular"));
-    	artistAlbumNameTextView.setPaintFlags(artistAlbumNameTextView.getPaintFlags() |
+    	artistAlbumNameTextView.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
+/*    	artistAlbumNameTextView.setPaintFlags(artistAlbumNameTextView.getPaintFlags() |
     								   		  Paint.ANTI_ALIAS_FLAG |
-    								   		  Paint.SUBPIXEL_TEXT_FLAG);
+    								   		  Paint.SUBPIXEL_TEXT_FLAG);*/
     	
     	//Initialize the pop up menu.
     	popup = new PopupMenu(getActivity(), overflowIcon);
 		popup.getMenuInflater().inflate(R.menu.now_playing_overflow_menu, popup.getMenu());
-    	
-    	//Get the screen's parameters.
-	    DisplayMetrics displaymetrics = new DisplayMetrics();
-	    getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-	    screenWidth = displaymetrics.widthPixels;
         
     	//Set the layout's background based on the selected color scheme.
     	songInfoLayout.setBackgroundResource(UIElementsHelper.getNowPlayingInfoBackground(mContext));
@@ -338,53 +321,28 @@ public class PlaylistPagerFragment extends Fragment implements AlbumArtLoadedLis
     public void onPause() {
     	super.onPause();
     	
-    	bitmapWithReflection = null;
-    	reflectionImage = null;
-    	bm = null;
-    	
-    	matrix = null;
-    	canvas = null;
-    	paint = null;
-    	shader = null;
-    	
     }
 	
     @Override
     public void onDestroy() {
     	super.onDestroy();
     	
-    	bitmapWithReflection = null;
-    	reflectionImage = null;
-    	bm = null;
-    	
-    	matrix = null;
-    	canvas = null;
-    	paint = null;
-    	shader = null;
-    	
     }
     
     @Override
     public void onDestroyView() {
     	super.onDestroyView();
-    	
     	mRootView = null;
-		bm = null;
-		bitmapWithReflection = null;
-		reflectionImage = null;
     }
     
 	@Override
 	public void onStart() {
 	    super.onStart();
-	    LocalBroadcastManager.getInstance(mContext)
-	    					 .registerReceiver(receiver, new IntentFilter("com.jams.music.player.PAGER_RECEIVER"));
 	
 	}
 
 	@Override
 	public void onStop() {
-	    LocalBroadcastManager.getInstance(mContext).unregisterReceiver(receiver);
 	    super.onStop();
 	    
 	}

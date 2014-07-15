@@ -34,7 +34,7 @@ public class NowPlayingQueueListViewAdapter extends ArrayAdapter<Integer> {
     	mApp = (Common) mContext.getApplicationContext();
     	sharedPreferences = mContext.getSharedPreferences("com.jams.music.player", Context.MODE_PRIVATE);
     	mPlaybackIndecesList = playbackIndecesList;
-    	mCurrentTheme = sharedPreferences.getString("SELECTED_THEME", "LIGHT_CARDS_THEME");
+    	mCurrentTheme = sharedPreferences.getString(Common.CURRENT_THEME, "LIGHT_CARDS_THEME");
     	
     }
     

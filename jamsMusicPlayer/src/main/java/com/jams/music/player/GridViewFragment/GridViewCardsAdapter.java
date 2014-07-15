@@ -13,7 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
+import android.widget.AbsListView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -48,6 +48,8 @@ public class GridViewCardsAdapter extends SimpleCursorAdapter implements Scrolla
 	private GridViewFragment mGridViewFragment;
     public static GridViewHolder mHolder = null;
     private String mName = "";
+    private int mWidth;
+    private int mHeight;
     
     //HashMap for DB column names.
     private HashMap<Integer, String> mDBColumnsMap;
@@ -55,14 +57,14 @@ public class GridViewCardsAdapter extends SimpleCursorAdapter implements Scrolla
     public static final int SOURCE = 1;
     public static final int FILE_PATH = 2;
     public static final int ARTWORK_PATH = 3;
-    public static final int FIELD_1 = 4; //Empty fields for other 
+    public static final int FIELD_1 = 4; //Empty fields for other parameters.
     public static final int FIELD_2 = 5;
     public static final int FIELD_3 = 6;
     public static final int FIELD_4 = 7;
     public static final int FIELD_5 = 8;
     
     public GridViewCardsAdapter(Context context, GridViewFragment gridViewFragment, 
-    					   boolean landscape, HashMap<Integer, String> dbColumnsMap) {
+    					        boolean landscape, HashMap<Integer, String> dbColumnsMap) {
     	
         super(context, -1, gridViewFragment.getCursor(), new String[] {}, new int[] {}, 0);
         mContext = context;
@@ -70,7 +72,19 @@ public class GridViewCardsAdapter extends SimpleCursorAdapter implements Scrolla
         mApp = (Common) mContext.getApplicationContext();
         mLandscape = landscape;
         mDBColumnsMap = dbColumnsMap;
-        
+
+        //Calculate the height and width of each item image.
+        DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
+        if (!landscape) {
+            //Two column layout.
+            mWidth = (metrics.widthPixels)/2;
+            mHeight = mWidth + (mWidth/3);
+        } else {
+            //Four column layout.
+            mWidth = (metrics.widthPixels)/4;
+            mHeight = mWidth + (mWidth/3);
+        }
+
     }
     
     /**
@@ -104,91 +118,43 @@ public class GridViewCardsAdapter extends SimpleCursorAdapter implements Scrolla
 	public View getView(int position, View convertView, ViewGroup parent) {
         Cursor c = (Cursor) getItem(position);
 
-		if (convertView == null) {
-			
+		if (convertView==null) {
 			mHolder = new GridViewHolder();
-			if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("LIGHT_CARDS_THEME") || 
-				mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME")) {
-				convertView = LayoutInflater.from(mContext).inflate(R.layout.artists_grid_view_cards_layout, parent, false);
-				mHolder.cardBackground = (LinearLayout) convertView.findViewById(R.id.artist_card_layout);
-			} else {
-				convertView = LayoutInflater.from(mContext).inflate(R.layout.artists_grid_view_layout, parent, false);
-			}
+            convertView = LayoutInflater.from(mContext).inflate(R.layout.grid_view_item, parent, false);
 
-			mHolder.gridViewArt = (ImageView) convertView.findViewById(R.id.artistsGridViewImage);
-			mHolder.title = (TextView) convertView.findViewById(R.id.artistName);
-			mHolder.overflowButton = (ImageButton) convertView.findViewById(R.id.overflow_icon);
+            mHolder.background = (RelativeLayout) convertView.findViewById(R.id.gridViewItemLayout);
+            mHolder.textLayout = (LinearLayout) convertView.findViewById(R.id.gridViewTextLayout);
+			mHolder.gridViewArt = (ImageView) convertView.findViewById(R.id.gridViewImage);
+			mHolder.titleText = (TextView) convertView.findViewById(R.id.gridViewTitleText);
+            mHolder.subText = (TextView) convertView.findViewById(R.id.gridViewSubText);
+
+			mHolder.overflowButton = (ImageButton) convertView.findViewById(R.id.gridViewOverflowButton);
+            mHolder.overflowButton.setImageResource(UIElementsHelper.getIcon(mContext, "ic_action_overflow"));
 			mHolder.overflowButton.setOnClickListener(overflowClickListener);
 			mHolder.overflowButton.setFocusable(false);
 			mHolder.overflowButton.setFocusableInTouchMode(false);
-			mHolder.selector = (RelativeLayout) convertView.findViewById(R.id.selector);
 
-			mHolder.title.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Light"));
-			mHolder.title.setPaintFlags(mHolder.title.getPaintFlags() | 
-									   Paint.SUBPIXEL_TEXT_FLAG | 
-									   Paint.ANTI_ALIAS_FLAG);
+			mHolder.titleText.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
+            mHolder.subText.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
 			
 	        mHolder.gridViewArt.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            mHolder.gridViewArt.setImageResource(UIElementsHelper.getEmptyColorPatch(mContext));
+            mHolder.background.setBackgroundColor(UIElementsHelper.getGridViewBackground(mContext));
+            mHolder.titleText.setTextColor(UIElementsHelper.getThemeBasedTextColor(mContext));
+            mHolder.subText.setTextColor(UIElementsHelper.getSmallTextColor(mContext));
+
+            //Apply the ImageView's dimensions.
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mHolder.gridViewArt.getLayoutParams();
+            params.width = mWidth;
+            params.height = mWidth;
+            mHolder.gridViewArt.setLayoutParams(params);
+
+            //Apply the card's background.
+            mHolder.background.setBackgroundResource(UIElementsHelper.getGridViewCardBackground(mContext));
 			
 			convertView.setTag(mHolder);
 		} else {
 		    mHolder = (GridViewHolder) convertView.getTag();
-		}
-		
-		DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
-		int width = (metrics.widthPixels)/3;
-		int height = (metrics.widthPixels)/2;
-		int nonCardsThemeWidth = (metrics.widthPixels)/4;
-		
-		//Apply the card layout's background and text color based on the color theme. Also set the image position.
-		if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("LIGHT_CARDS_THEME")) {
-			mHolder.cardBackground.setBackgroundResource(R.drawable.card_gridview_light);
-			
-			if (mLandscape) {
-				width = (metrics.widthPixels)/4;
-				height = width;
-			} else {
-				width = (metrics.widthPixels)/2;
-				height = width;
-			}
-
-			RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mHolder.gridViewArt.getLayoutParams();
-			params.width = width;
-			params.height = height;
-			mHolder.gridViewArt.setLayoutParams(params);
-			
-			mHolder.title.setTextColor(UIElementsHelper.getThemeBasedTextColor(mContext));
-			
-		} else if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME")) {
-			mHolder.cardBackground.setBackgroundResource(R.drawable.card_gridview_dark);
-
-			if (mLandscape) {
-				width = (metrics.widthPixels)/4;
-				height = width;
-			} else {
-				width = (metrics.widthPixels)/2;
-				height = width;
-			}
-			
-			RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mHolder.gridViewArt.getLayoutParams();
-			params.width = width;
-			params.height = height;
-			mHolder.gridViewArt.setLayoutParams(params);
-			
-			mHolder.title.setTextColor(UIElementsHelper.getThemeBasedTextColor(mContext));
-			
-		} else {
-			LayoutParams params = mHolder.gridViewArt.getLayoutParams();
-			
-			if (mLandscape) {
-				params.width = nonCardsThemeWidth;
-				params.height = nonCardsThemeWidth;
-			} else {
-				params.width = width;
-				params.height = height;
-			}
-			
-			mHolder.gridViewArt.setLayoutParams(params);
 		}
 		
 		//Retrieve data from the cursor.
@@ -227,7 +193,7 @@ public class GridViewCardsAdapter extends SimpleCursorAdapter implements Scrolla
 		convertView.setTag(R.string.field_4, field4);
 		convertView.setTag(R.string.field_5, field5);
 		
-		//Set the tags for this grid item's overflow button.
+		/*//Set the tags for this grid item's overflow button.
 		mHolder.overflowButton.setTag(R.string.title_text, titleText);
 		mHolder.overflowButton.setTag(R.string.source, source);
 		mHolder.overflowButton.setTag(R.string.file_path, filePath);
@@ -235,11 +201,12 @@ public class GridViewCardsAdapter extends SimpleCursorAdapter implements Scrolla
 		mHolder.overflowButton.setTag(R.string.field_2, field2);
 		mHolder.overflowButton.setTag(R.string.field_3, field3);
 		mHolder.overflowButton.setTag(R.string.field_4, field4);
-		mHolder.overflowButton.setTag(R.string.field_5, field5);
+		mHolder.overflowButton.setTag(R.string.field_5, field5);*/
 		
 		//Set the title text in the GridView.
-		mHolder.title.setText(titleText);
-		
+		mHolder.titleText.setText(titleText);
+        mHolder.subText.setText(field1);
+
 		//Load the album art.
         mApp.getPicasso().load(artworkPath)
                          .placeholder(UIElementsHelper.getEmptyColorPatch(mContext))
@@ -247,7 +214,7 @@ public class GridViewCardsAdapter extends SimpleCursorAdapter implements Scrolla
 
 		return convertView;
 	}
-    
+
     /**
      * Click listener for overflow button.
      */
@@ -356,11 +323,12 @@ public class GridViewCardsAdapter extends SimpleCursorAdapter implements Scrolla
      */
 	public static class GridViewHolder {
 	    public ImageView gridViewArt;
-	    public TextView title;
-	    public ImageButton overflowButton;
-	    public RelativeLayout selector;
-	    public LinearLayout cardBackground;
-	    
+	    public TextView titleText;
+        public TextView subText;
+	    public RelativeLayout background;
+	    public LinearLayout textLayout;
+        public ImageButton overflowButton;
+
 	}
 	
 }

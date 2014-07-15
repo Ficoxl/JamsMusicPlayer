@@ -29,10 +29,11 @@ import com.jams.music.player.DBHelpers.DBAccessHelper;
 import com.jams.music.player.Helpers.TypefaceHelper;
 import com.jams.music.player.Helpers.UIElementsHelper;
 import com.jams.music.player.MainActivity.MainActivity;
+import com.jams.music.player.Utils.Common;
 
 public class InnerNavigationDrawerFragment extends Fragment {
-	
-	private SharedPreferences sharedPreferences;
+
+    private Common mApp;
 	private ListView browsersListView;
 	private ListView librariesListView;
 	private TextView browsersHeaderText;
@@ -47,7 +48,7 @@ public class InnerNavigationDrawerFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.navigation_drawer_layout, null);
-		sharedPreferences = getActivity().getSharedPreferences("com.jams.music.player", Context.MODE_PRIVATE);
+		mApp = (Common) getActivity().getApplicationContext();
 		
 		browsersListView = (ListView) rootView.findViewById(R.id.browsers_list_view);
 		librariesListView = (ListView) rootView.findViewById(R.id.libraries_list_view);
@@ -58,8 +59,7 @@ public class InnerNavigationDrawerFragment extends Fragment {
 		librariesIcon.setImageResource(UIElementsHelper.getIcon(getActivity(), "libraries"));
 		
 		Drawable backgroundDrawable;
-		if (sharedPreferences.getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_THEME") || 
-			sharedPreferences.getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME")) {
+		if (mApp.getCurrentTheme()== Common.DARK_THEME) {
 			backgroundDrawable = new ColorDrawable(0x191919);
 		} else {
 			backgroundDrawable = getResources().getDrawable(R.drawable.holo_white_selector);

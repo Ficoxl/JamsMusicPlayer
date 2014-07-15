@@ -69,11 +69,8 @@ public class ListViewFragment extends Fragment {
 	    mApp = (Common) mContext;
         mFragment = this;
         
-        //Set the background.
-        if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("LIGHT_CARDS_THEME"))
-			mRootView.setBackgroundColor(0xFFEEEEEE);
-		else
-			mRootView.setBackgroundColor(0xFF111111);
+        //Set the background. We're using getGridViewBackground() since the list doesn't have card items.
+        mRootView.setBackgroundColor(UIElementsHelper.getGridViewBackground(mContext));
         
         //Grab the fragment. This will determine which data to load into the cursor.
         mFragmentId = getArguments().getInt(Common.FRAGMENT_ID);
@@ -93,11 +90,15 @@ public class ListViewFragment extends Fragment {
 
 	    mListView = (ListView) mRootView.findViewById(R.id.generalListView);
         mListView.setVerticalScrollBarEnabled(false);
-		mListView.setDivider(getResources().getDrawable(R.drawable.transparent_drawable));
-		mListView.setDividerHeight(10);
-		RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) mListView.getLayoutParams();
-		layoutParams.setMargins(20, 20, 20, 20);
-		mListView.setLayoutParams(layoutParams);
+
+        //Apply the ListViews' dividers.
+        if (mApp.getCurrentTheme()==Common.DARK_THEME) {
+            mListView.setDivider(mContext.getResources().getDrawable(R.drawable.icon_list_divider));
+        } else {
+            mListView.setDivider(mContext.getResources().getDrawable(R.drawable.icon_list_divider_light));
+        }
+
+		mListView.setDividerHeight(1);
         
         //KitKat translucent navigation/status bar.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -113,7 +114,8 @@ public class ListViewFragment extends Fragment {
             mListView.setClipToPadding(false);
             mListView.setPadding(0, topPadding, 0, navigationBarHeight);
             mQuickScroll.setPadding(0, topPadding, 0, navigationBarHeight);
-            
+
+            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) mListView.getLayoutParams();
             layoutParams = (RelativeLayout.LayoutParams) mSearchLayout.getLayoutParams();
             layoutParams.setMargins(15, topPadding + 15, 15, 0);
             mSearchLayout.setLayoutParams(layoutParams);
@@ -229,7 +231,11 @@ public class ListViewFragment extends Fragment {
 		@Override
 		public void onItemClick(AdapterView<?> arg0, View view, int index, long id) {
 			mApp.getPlaybackKickstarter()
-				.initPlayback(mContext, mQuerySelection, Common.SONGS_FRAGMENT, index, true);
+				.initPlayback(mContext,
+                              mQuerySelection,
+                              Common.SONGS_FRAGMENT,
+                              index,
+                              true);
 
             getActivity().overridePendingTransition(R.anim.slide_in_from_right, R.anim.fade_out);
 			
@@ -328,14 +334,13 @@ public class ListViewFragment extends Fragment {
 			
         	mListViewAdapter = new ListViewCardsAdapter(mContext, mFragment, mDBColumnsMap);
 	        mListView.setAdapter(mListViewAdapter);
+            mListView.setOnItemClickListener(onItemClickListener);
 	        
-	       /* SwingBottomInAnimationAdapter animationAdapter = new SwingBottomInAnimationAdapter(mListViewAdapter);
+	     /* SwingBottomInAnimationAdapter animationAdapter = new SwingBottomInAnimationAdapter(mListViewAdapter);
 	        animationAdapter.setShouldAnimate(true);
 	        animationAdapter.setShouldAnimateFromPosition(0);
 	        animationAdapter.setAbsListView(mListView);
-	        mListView.setAdapter(animationAdapter);*/
-
-	        mListView.setOnItemClickListener(onItemClickListener);
+	        mListView.setAdapter(animationAdapter); */
 	        
 	        //Init the quick scroll widget.
 	        mQuickScroll.init(QuickScroll.TYPE_INDICATOR_WITH_HANDLE, 
@@ -344,7 +349,7 @@ public class ListViewFragment extends Fragment {
 	        				  QuickScroll.STYLE_HOLO);
 	        
 	        int[] quickScrollColors = UIElementsHelper.getQuickScrollColors(mContext);
-            PauseOnScrollHelper scrollListener = new PauseOnScrollHelper(mApp.getPicasso(), null);
+            PauseOnScrollHelper scrollListener = new PauseOnScrollHelper(mApp.getPicasso(), null, true, true);
 
             mQuickScroll.setOnScrollListener(scrollListener);
             mQuickScroll.setPicassoInstance(mApp.getPicasso());

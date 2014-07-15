@@ -29,7 +29,7 @@
         <item name="android:actionModeBackground">@drawable/cab_background_top_apptheme</item>
         <item name="android:actionModeSplitBackground">@drawable/cab_background_bottom_apptheme</item>
         <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Apptheme</item>
-        <item name="android:windowContentOverlay">@drawable/ab_solid_shadow_holo</item>
+        <item name="android:windowContentOverlay">@null</item>
     </style>
 
     <style name="ActionBar.Solid.Apptheme" parent="@android:style/Widget.Holo.ActionBar.Solid">
@@ -102,7 +102,7 @@
         <item name="android:actionModeBackground">@drawable/cab_background_top_appthemelight</item>
         <item name="android:actionModeSplitBackground">@drawable/cab_background_bottom_appthemelight</item>
         <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Appthemelight</item>
-        <item name="android:windowContentOverlay">@drawable/ab_solid_shadow_holo</item>
+        <item name="android:windowContentOverlay">@null</item>
 
     </style>
 

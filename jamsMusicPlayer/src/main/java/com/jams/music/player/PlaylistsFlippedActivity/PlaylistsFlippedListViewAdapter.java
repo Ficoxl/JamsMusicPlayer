@@ -26,6 +26,7 @@ import com.jams.music.player.AsyncTasks.AsyncReorderPlaylistEntriesTask;
 import com.jams.music.player.DBHelpers.DBAccessHelper;
 import com.jams.music.player.GMusicHelpers.GMusicClientCalls;
 import com.jams.music.player.Helpers.TypefaceHelper;
+import com.jams.music.player.Utils.Common;
 import com.mobeta.android.dslv.SimpleDragSortCursorAdapter;
 
 public class PlaylistsFlippedListViewAdapter extends SimpleDragSortCursorAdapter {
@@ -94,9 +95,9 @@ public class PlaylistsFlippedListViewAdapter extends SimpleDragSortCursorAdapter
 		v.setTag(R.string.song_id, c.getString(c.getColumnIndex(DBAccessHelper.SONG_ID)));
 		
 		//Apply the card layout's background based on the color theme.
-		if (sharedPreferences.getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("LIGHT_CARDS_THEME")) {
+		if (sharedPreferences.getString(Common.CURRENT_THEME, "LIGHT_CARDS_THEME").equals("LIGHT_CARDS_THEME")) {
 			v.setBackgroundResource(R.drawable.card_light);
-		} else if (sharedPreferences.getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME")) {
+		} else if (sharedPreferences.getString(Common.CURRENT_THEME, "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME")) {
 			v.setBackgroundResource(R.drawable.card_dark);
 		}
 

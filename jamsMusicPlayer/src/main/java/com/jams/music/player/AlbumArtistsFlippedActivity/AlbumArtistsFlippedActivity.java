@@ -84,10 +84,6 @@ public class AlbumArtistsFlippedActivity extends FragmentActivity {
     public String MUSIC_PLAYING = "MUSIC_PLAYING";
     public String MAIN_ACTIVITY_VISIBLE = "MAIN_ACTIVITY_VISIBLE";
     public String SERVICE_RUNNING = "SERVICE_RUNNING";
-    public String SELECTED_THEME = "SELECTED_THEME";
-    public String DARK_CARDS_THEME = "DARK_CARDS_THEME";
-    public String LIGHT_CARDS_THEME = "LIGHT_CARDS_THEME";
-    public String LIGHT_THEME = "LIGHT_THEME";
     public String FIRST_RUN = "FIRST_RUN";
 	
     public RelativeLayout nowPlayingFooterContentLayout;
@@ -133,14 +129,6 @@ public class AlbumArtistsFlippedActivity extends FragmentActivity {
 		mContext = this;
 		sharedPreferences = getSharedPreferences("com.jams.music.player", Context.MODE_PRIVATE);
 		sharedPreferences.edit().putBoolean("ARTISTS_FLIPPED_ACTIVITY_VISIBLE", true).commit();
-		
-    	//Set the UI theme.
-    	if (sharedPreferences.getString(SELECTED_THEME, LIGHT_CARDS_THEME).equals("DARK_THEME") ||
-    		sharedPreferences.getString(SELECTED_THEME, LIGHT_CARDS_THEME).equals(DARK_CARDS_THEME)) {
-    		setTheme(R.style.AppTheme);
-    	} else {
-    		setTheme(R.style.AppThemeLight);
-    	}
 		
 		super.onCreate(savedInstanceState);
         receiver = new BroadcastReceiver() {
@@ -221,8 +209,8 @@ public class AlbumArtistsFlippedActivity extends FragmentActivity {
 											Paint.SUBPIXEL_TEXT_FLAG);
 		
         //Set the drawer backgrounds based on the theme.
-        if (sharedPreferences.getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME") ||
-        	sharedPreferences.getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_THEME")) {
+        if (sharedPreferences.getString(Common.CURRENT_THEME, "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME") ||
+        	sharedPreferences.getString(Common.CURRENT_THEME, "LIGHT_CARDS_THEME").equals("DARK_THEME")) {
         	drawerScrollView.setBackgroundColor(0xFF191919);
         	currentQueueLayout.setBackgroundColor(0xFF191919);
         } else {
@@ -348,8 +336,8 @@ public class AlbumArtistsFlippedActivity extends FragmentActivity {
 		}
 		
 		//Set the listview dividers.
-		if (sharedPreferences.getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME") ||
-        	sharedPreferences.getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_THEME")) {
+		if (sharedPreferences.getString(Common.CURRENT_THEME, "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME") ||
+        	sharedPreferences.getString(Common.CURRENT_THEME, "LIGHT_CARDS_THEME").equals("DARK_THEME")) {
 			librariesListView.setDivider(getResources().getDrawable(R.drawable.list_divider));
 			librariesListView.setDividerHeight(1);
 			
@@ -364,13 +352,13 @@ public class AlbumArtistsFlippedActivity extends FragmentActivity {
         }
 		
 		//Apply the card layout's background based on the color theme.
-		if (sharedPreferences.getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("LIGHT_CARDS_THEME")) {
+		if (sharedPreferences.getString(Common.CURRENT_THEME, "LIGHT_CARDS_THEME").equals("LIGHT_CARDS_THEME")) {
 			currentQueueListView.setDivider(getResources().getDrawable(R.drawable.transparent_drawable));
 			currentQueueListView.setDividerHeight(3);
 			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 			layoutParams.setMargins(7, 3, 7, 3);
 			currentQueueListView.setLayoutParams(layoutParams);
-		} else if (sharedPreferences.getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME")) {
+		} else if (sharedPreferences.getString(Common.CURRENT_THEME, "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME")) {
 			currentQueueListView.setDivider(getResources().getDrawable(R.drawable.transparent_drawable));
 			currentQueueListView.setDividerHeight(3);
 			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
@@ -462,8 +450,8 @@ public class AlbumArtistsFlippedActivity extends FragmentActivity {
 	    		currentQueueListView.setFloatViewManager(simpleFloatViewManager);
 	    		
 	    		//Set the listview dividers.
-	    		if (sharedPreferences.getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME") ||
-	            	sharedPreferences.getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_THEME")) {
+	    		if (sharedPreferences.getString(Common.CURRENT_THEME, "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME") ||
+	            	sharedPreferences.getString(Common.CURRENT_THEME, "LIGHT_CARDS_THEME").equals("DARK_THEME")) {
 	    			currentQueueListView.setDivider(getResources().getDrawable(R.drawable.list_divider));
 	    			currentQueueListView.setDividerHeight(1);
 	            } else {

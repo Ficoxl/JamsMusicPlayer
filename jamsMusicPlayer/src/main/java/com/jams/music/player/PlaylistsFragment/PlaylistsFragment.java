@@ -57,9 +57,9 @@ public class PlaylistsFragment extends Fragment {
         mApp = (Common) mContext;
 	    
         //Set the drawer backgrounds based on the theme.
-        if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_THEME")) {
+        if (mApp.getCurrentTheme()==Common.DARK_THEME) {
         	rootView.setBackgroundColor(0xFF191919);
-        } else if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("LIGHT_THEME")) {
+        } else {
         	rootView.setBackgroundColor(0xFFFFFFFF);
         }
 	    
@@ -67,21 +67,21 @@ public class PlaylistsFragment extends Fragment {
 	    mListView = (ListView) rootView.findViewById(R.id.playlists_list_view);
         
 		//Set the background color based on the theme.
-		if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("LIGHT_CARDS_THEME")) {
+		if (mApp.getSharedPreferences().getString(Common.CURRENT_THEME, "LIGHT_CARDS_THEME").equals("LIGHT_CARDS_THEME")) {
 			rootView.setBackgroundColor(0xFFEEEEEE);
 			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 			layoutParams.setMargins(20, 20, 20, 20);
 			mListView.setLayoutParams(layoutParams);
 			mListView.setDivider(getResources().getDrawable(R.drawable.transparent_drawable));
 			mListView.setDividerHeight(10);
-		} else if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME")) {
+		} else if (mApp.getSharedPreferences().getString(Common.CURRENT_THEME, "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME")) {
 			rootView.setBackgroundColor(0xFF111111);
 			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 			layoutParams.setMargins(20, 20, 20, 20);
 			mListView.setLayoutParams(layoutParams);
 			mListView.setDivider(getResources().getDrawable(R.drawable.transparent_drawable));
 			mListView.setDividerHeight(10);
-		} else if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_THEME")) {
+		} else if (mApp.getSharedPreferences().getString(Common.CURRENT_THEME, "LIGHT_CARDS_THEME").equals("DARK_THEME")) {
 			mListView.setDivider(getResources().getDrawable(R.drawable.list_divider));
 			mListView.setDividerHeight(1);
         } else {

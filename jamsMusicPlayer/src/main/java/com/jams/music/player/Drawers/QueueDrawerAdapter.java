@@ -22,7 +22,6 @@ public class QueueDrawerAdapter extends ArrayAdapter<Integer> {
 
     private Context mContext;
     private Common mApp;
-    private String mCurrentTheme;
     private int[] mColors;
 
     public QueueDrawerAdapter(Context context, ArrayList<Integer> playbackIndecesList) {
@@ -30,7 +29,6 @@ public class QueueDrawerAdapter extends ArrayAdapter<Integer> {
 
         mContext = context;
         mApp = (Common) mContext.getApplicationContext();
-        mCurrentTheme = mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME");
         mColors = UIElementsHelper.getQuickScrollColors(context);
     }
 
@@ -76,15 +74,13 @@ public class QueueDrawerAdapter extends ArrayAdapter<Integer> {
             holder.artistText.setTextColor(mColors[2]);
             holder.removeSong.setImageResource(R.drawable.cross_light);
 
-        } else if (mCurrentTheme.equals("LIGHT_CARDS_THEME") ||
-                   mCurrentTheme.equals("LIGHT_THEME")) {
+        } else if (mApp.getCurrentTheme()==Common.LIGHT_THEME) {
             convertView.setBackgroundColor(0xFFFFFFFF);
             holder.songTitleText.setTextColor(UIElementsHelper.getThemeBasedTextColor(mContext));
             holder.artistText.setTextColor(UIElementsHelper.getSmallTextColor(mContext));
             holder.removeSong.setImageResource(R.drawable.cross);
 
-        } else if (mCurrentTheme.equals("DARK_CARDS_THEME") ||
-                   mCurrentTheme.equals("DARK_THEME")) {
+        } else if (mApp.getCurrentTheme()==Common.DARK_THEME) {
             convertView.setBackgroundColor(0xFF191919);
             holder.songTitleText.setTextColor(UIElementsHelper.getThemeBasedTextColor(mContext));
             holder.artistText.setTextColor(UIElementsHelper.getSmallTextColor(mContext));

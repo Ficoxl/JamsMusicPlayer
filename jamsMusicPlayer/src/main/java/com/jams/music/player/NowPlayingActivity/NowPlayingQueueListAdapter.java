@@ -22,19 +22,15 @@ public class NowPlayingQueueListAdapter extends ArrayAdapter<Integer> {
 
 	private Context mContext;
 	private Common mApp;
-	private SharedPreferences sharedPreferences;
 	private ArrayList<Integer> mPlaybackIndecesList;
-	private String mCurrentTheme;
    
     public NowPlayingQueueListAdapter(Context context, ArrayList<Integer> playbackIndecesList) {
     	
-    	super(context, R.id.playlists_flipped_song, playbackIndecesList);
+    	super(context, -1, playbackIndecesList);
     	
     	mContext = context;
     	mApp = (Common) mContext;
-    	sharedPreferences = mContext.getSharedPreferences("com.jams.music.player", Context.MODE_PRIVATE);
     	mPlaybackIndecesList = playbackIndecesList;
-    	mCurrentTheme = sharedPreferences.getString("SELECTED_THEME", "LIGHT_CARDS_THEME");
     	
     }
     
@@ -98,15 +94,13 @@ public class NowPlayingQueueListAdapter extends ArrayAdapter<Integer> {
 			holder.artistText.setTextColor(colors[2]);
 			holder.removeSong.setImageResource(R.drawable.cross_light);
 			
-		} else if (mCurrentTheme.equals("LIGHT_CARDS_THEME") ||
-				   mCurrentTheme.equals("LIGHT_THEME")) {
+		} else if (mApp.getCurrentTheme()==Common.LIGHT_THEME) {
 			convertView.setBackgroundColor(0xFFFFFFFF);
 			holder.songTitleText.setTextColor(UIElementsHelper.getThemeBasedTextColor(mContext));
 			holder.artistText.setTextColor(UIElementsHelper.getSmallTextColor(mContext));
 			holder.removeSong.setImageResource(R.drawable.cross);
 			
-		} else if (mCurrentTheme.equals("DARK_CARDS_THEME") ||
-				   mCurrentTheme.equals("DARK_THEME")) {
+		} else if (mApp.getCurrentTheme()==Common.DARK_THEME) {
 			convertView.setBackgroundColor(0xFF191919);
 			holder.songTitleText.setTextColor(UIElementsHelper.getThemeBasedTextColor(mContext));
 			holder.artistText.setTextColor(UIElementsHelper.getSmallTextColor(mContext));

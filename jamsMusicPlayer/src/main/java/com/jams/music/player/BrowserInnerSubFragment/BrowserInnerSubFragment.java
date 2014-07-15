@@ -2,11 +2,13 @@ package com.jams.music.player.BrowserInnerSubFragment;
 
 import android.animation.Animator;
 import android.content.Context;
+import android.graphics.Paint;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -15,13 +17,16 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.jams.music.player.Animations.FadeAnimation;
 import com.jams.music.player.Animations.TranslateAnimation;
+import com.jams.music.player.Helpers.TypefaceHelper;
 import com.jams.music.player.Helpers.UIElementsHelper;
 import com.jams.music.player.R;
 import com.jams.music.player.Utils.Common;
 import com.jams.music.player.Utils.EaseInOutInterpolator;
+import com.manuelpeinado.fadingactionbar.FadingActionBarHelper;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
 /**
@@ -40,15 +45,16 @@ public class BrowserInnerSubFragment extends Fragment {
 
     //UI elements
     private ViewGroup mRootView;
-    private RelativeLayout mCircularActionLayout;
-    private CircularImageView mCircularActionButton;
-    private ImageView mCircularActionIcon;
     private ImageView mHeaderImage;
     private RelativeLayout mContentLayout;
     private RelativeLayout mBackgroundLayout;
+    private RelativeLayout mDetailsLayout;
+    private TextView mHeaderText;
+    private TextView mHeaderSubText;
+    private FadingActionBarHelper mFadingActionBarHelper;
 
     //Image scale/translate parameters.
-    private static final int ANIM_DURATION = 225;
+    private static final int ANIM_DURATION = 300;
     private int mLeftDelta;
     private int mTopDelta;
     private float mWidthScale;
@@ -65,23 +71,39 @@ public class BrowserInnerSubFragment extends Fragment {
         mContext = getActivity().getApplicationContext();
         mApp = (Common) mContext;
         mRootView = (ViewGroup) inflater.inflate(R.layout.fragment_horizontal_list_sub, null);
+        mRootView.setOnTouchListener(new View.OnTouchListener() {
 
-        mCircularActionLayout = (RelativeLayout) mRootView.findViewById(R.id.browser_inner_fragment_circular_action_layout);
-        mCircularActionButton = (CircularImageView) mRootView.findViewById(R.id.browser_inner_fragment_circular_action);
-        mCircularActionIcon = (ImageView) mRootView.findViewById(R.id.browser_inner_fragment_circular_action_icon);
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return true;
+            }
+
+        });
+
         mHeaderImage = (ImageView) mRootView.findViewById(R.id.browser_inner_fragment_header_image);
         mContentLayout = (RelativeLayout) mRootView.findViewById(R.id.browser_inner_fragment_content);
         mBackgroundLayout = (RelativeLayout) mRootView.findViewById(R.id.browser_inner_fragment_background);
+        mDetailsLayout = (RelativeLayout) mRootView.findViewById(R.id.browser_inner_fragment_details_layout);
+        mHeaderText = (TextView) mRootView.findViewById(R.id.browser_inner_fragment_details_header_text);
+        mHeaderSubText = (TextView) mRootView.findViewById(R.id.browser_inner_fragment_details_header_subtext);
+
+        //Apply fonts and text rendering properties.
+        mHeaderText.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Light"));
+        mHeaderText.setPaintFlags(mHeaderText.getPaintFlags() | Paint.ANTI_ALIAS_FLAG | Paint.SUBPIXEL_TEXT_FLAG);
+
+        mHeaderSubText.setTypeface(TypefaceHelper.getTypeface(mContext, "RobotoCondensed-Regular"));
+        mHeaderSubText.setPaintFlags(mHeaderSubText.getPaintFlags() | Paint.ANTI_ALIAS_FLAG | Paint.SUBPIXEL_TEXT_FLAG);
+
+        //Set the background colors.
+        mBackgroundLayout.setBackgroundColor(UIElementsHelper.getBackgroundColor(mContext));
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN)
+            mDetailsLayout.setBackgroundDrawable(UIElementsHelper.getGeneralActionBarBackground(mContext));
+        else
+            mDetailsLayout.setBackground(UIElementsHelper.getGeneralActionBarBackground(mContext));
 
         //Init the interpolators.
         easeOutInterpolator = new EaseInOutInterpolator(EaseInOutInterpolator.EasingType.Type.OUT);
         easeInOutInterpolator = new EaseInOutInterpolator(EaseInOutInterpolator.EasingType.Type.INOUT);
-
-        //Set the circular action button.
-        mCircularActionButton.setImageDrawable(UIElementsHelper.getGeneralActionBarBackground(mContext));
-        mCircularActionButton.setBorderWidth(0);
-        mCircularActionButton.addShadow();
-        mCircularActionIcon.setImageResource(UIElementsHelper.getIcon(mContext, "play_track_notification"));
 
        /*
         * Retrieve the data we need for the picture to display
@@ -96,7 +118,6 @@ public class BrowserInnerSubFragment extends Fragment {
         mOriginalOrientation = bundle.getInt("orientation");
 
         mApp.getPicasso().load(artworkPath).into(mHeaderImage);
-        //mCircularActionButton.setImageBitmap(bitmap);
 
         /*
          * Only run the animation if we're coming from the parent activity and not if
@@ -110,9 +131,10 @@ public class BrowserInnerSubFragment extends Fragment {
                 public boolean onPreDraw() {
                     mHeaderImage.getViewTreeObserver().removeOnPreDrawListener(this);
 
-                            /* Figure out where the thumbnail and full size versions
-                             * are, relative to the screen and each other.
-                             */
+                    /*
+                     * Figure out where the thumbnail and full size versions
+                     * are, relative to the screen and each other.
+                     */
                     int[] screenLocation = new int[2];
                     mHeaderImage.getLocationOnScreen(screenLocation);
                     mLeftDelta = thumbnailLeft - screenLocation[0];
@@ -200,19 +222,22 @@ public class BrowserInnerSubFragment extends Fragment {
 
                         });
 
-            new Handler().postDelayed(new Runnable() {
-
-                @Override
-                public void run() {
-                    mHeaderImage.animate()
-                                .setDuration(300)
-                                .translationY(0)
-                                .setInterpolator(easeInOutInterpolator);
-                }
-
-            }, 100);
-
         }
+
+        //Moves the header image up to the top.
+        new Handler().postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                mHeaderImage.animate()
+                            .setDuration(300)
+                            .translationY(0)
+                            .setInterpolator(easeInOutInterpolator);
+            }
+
+        }, 100);
+
+
 
         //Dim the background view.
         FadeAnimation fadeIn = new FadeAnimation(mBackgroundLayout, 400, 0.0f, 0.8f,
@@ -222,29 +247,19 @@ public class BrowserInnerSubFragment extends Fragment {
     }
 
     /**
-     * Scales in the main action button. Also slides down the
-     * content layout as a part of the transitional animation
-     * sequence. Called right after the header image has been
-     * scaled into place.
+     * Slides down the content layout as a part of the transitional
+     * animation sequence. Called right after the header image has
+     * been scaled into place.
      */
     private void animateContent() {
-        //Scale in the action button.
-        int pivotX = mCircularActionButton.getWidth()/2;
-        int pivotY = mCircularActionButton.getHeight()/2;
-        final ScaleAnimation scaleIn = new ScaleAnimation(0.0f, 1.0f, 0.0f, 1.0f,
-                                                          pivotX, pivotY);
-        scaleIn.setDuration(300);
-        scaleIn.setAnimationListener(scaleInListener);
-        scaleIn.setInterpolator(easeOutInterpolator);
-
-        new Handler().postDelayed(new Runnable() {
-
-            @Override
-            public void run() {
-                mCircularActionLayout.startAnimation(scaleIn);
-            }
-
-        }, 500);
+        //Slide down the details pane.
+        /*TranslateAnimation slideDownDetails = new TranslateAnimation(mContentLayout, 300,
+                                                                     new DecelerateInterpolator(2.0f),
+                                                                     View.VISIBLE,
+                                                                     Animation.RELATIVE_TO_SELF, 0.0f,
+                                                                     Animation.RELATIVE_TO_SELF, 0.0f,
+                                                                     Animation.RELATIVE_TO_SELF, -0.5f,
+                                                                     Animation.RELATIVE_TO_SELF, 0.0f);*/
 
         //Slide down the content view.
         TranslateAnimation slideDown = new TranslateAnimation(mContentLayout, 400,
@@ -255,30 +270,9 @@ public class BrowserInnerSubFragment extends Fragment {
                                                               Animation.RELATIVE_TO_SELF, -0.5f,
                                                               Animation.RELATIVE_TO_SELF, 0.0f);
 
+        //slideDownDetails.animate();
         slideDown.animate();
 
     }
-
-    /**
-     * Action button scale animation listener.
-     */
-    private Animation.AnimationListener scaleInListener = new Animation.AnimationListener() {
-
-        @Override
-        public void onAnimationStart(Animation animation) {
-            mCircularActionLayout.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        public void onAnimationEnd(Animation animation) {
-            mCircularActionLayout.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        public void onAnimationRepeat(Animation animation) {
-
-        }
-
-    };
 
 }

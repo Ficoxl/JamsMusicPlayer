@@ -24,7 +24,7 @@ public class NavigationDrawerAdapter extends ArrayAdapter<String> {
 	private ArrayList<String> mTitlesList;
    
     public NavigationDrawerAdapter(Context context, ArrayList<String> titlesList) {
-    	super(context, R.id.playlists_flipped_song, titlesList);
+    	super(context, R.layout.sliding_menu_browsers_layout, titlesList);
     	mContext = context;
     	mTitlesList = titlesList;
     	sharedPreferences = mContext.getSharedPreferences("com.jams.music.player", Context.MODE_PRIVATE);

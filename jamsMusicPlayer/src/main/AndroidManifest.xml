@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.jams.music.player"
-    android:hardwareAccelerated="true"
-    android:versionCode="47"
-    android:versionName="3.0" >
+          xmlns:tools="http://schemas.android.com/tools"
+          package="com.jams.music.player"
+          android:hardwareAccelerated="true"
+          android:versionCode="47"
+          android:versionName="3.0" >
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
@@ -16,7 +17,7 @@
 
     <uses-sdk
         android:minSdkVersion="14"
-        android:targetSdkVersion="20" />
+        android:targetSdkVersion="19" />
 
     <application
         android:name=".Utils.Common"

@@ -80,15 +80,9 @@ public class PlaylistsListViewAdapter extends SimpleCursorAdapter implements Scr
 	    PlaylistsListViewHolder holder = null;
 
 		if (convertView == null) {
-			
-			if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("LIGHT_CARDS_THEME") || 
-				mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME")) {
-				convertView = LayoutInflater.from(mContext).inflate(R.layout.playlists_list_cards_layout, parent, false);
-			} else {
-				convertView = LayoutInflater.from(mContext).inflate(R.layout.playlists_list_layout, parent, false);
-			}
-			
-			holder = new PlaylistsListViewHolder();
+            convertView = LayoutInflater.from(mContext).inflate(R.layout.playlists_list_cards_layout, parent, false);
+
+            holder = new PlaylistsListViewHolder();
 			holder.playlistImage = (ImageView) convertView.findViewById(R.id.playlistImage);
 			holder.title = (TextView) convertView.findViewById(R.id.playlistListViewName);
 			holder.songCount = (TextView) convertView.findViewById(R.id.playlistNumberOfSongs);
@@ -119,9 +113,9 @@ public class PlaylistsListViewAdapter extends SimpleCursorAdapter implements Scr
 		holder.songCount.setVisibility(View.GONE);
 		
 		//Apply the card layout's background based on the color theme.
-		if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("LIGHT_CARDS_THEME")) {
+		if (mApp.getSharedPreferences().getString(Common.CURRENT_THEME, "LIGHT_CARDS_THEME").equals("LIGHT_CARDS_THEME")) {
 			convertView.setBackgroundResource(R.drawable.card_light);
-		} else if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME")) {
+		} else if (mApp.getSharedPreferences().getString(Common.CURRENT_THEME, "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME")) {
 			convertView.setBackgroundResource(R.drawable.card_dark);
 		}
 		

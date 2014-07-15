@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/fragment_grid_view_root_container"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"  
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:descendantFocusability="beforeDescendants"
 	android:focusableInTouchMode="true" >
+
+    <RelativeLayout
+        android:id="@+id/gridViewBgColorFill"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true" />
     
     <RelativeLayout
         android:id="@+id/search_layout"
@@ -32,7 +38,8 @@
         android:id="@+id/fragment_grid_view_frontal_layout"
 	    android:layout_width="match_parent"
 	    android:layout_height="match_parent"
-	    android:layout_centerInParent="true"
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="6dp"
 	    android:layout_below="@+id/search_layout" >
 	    
  	   	<GridView
@@ -40,10 +47,9 @@
  	   	    android:layout_width="fill_parent"
  	   	    android:layout_height="wrap_content"
  	   	    android:drawSelectorOnTop="true"
- 	   	    android:horizontalSpacing="1dp"
- 	   	    android:verticalSpacing="1dp"
- 	   	    android:layout_centerInParent="true"
- 	   	    android:numColumns="3" />
+            android:verticalSpacing="3dp"
+            android:horizontalSpacing="3dp"
+ 	   	    android:layout_centerInParent="true" />
  	    
  	    <com.andraskindler.quickscroll.QuickScrollGridView
 			android:id="@+id/quickscrollgrid"

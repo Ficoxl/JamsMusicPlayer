@@ -140,14 +140,15 @@ public class FilesFoldersFragment extends Fragment {
         registerForContextMenu(listView);
         
 		//Set the background color based on the theme.
-		if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("LIGHT_CARDS_THEME")) {
+		if (mApp.getCurrentTheme()==Common.LIGHT_THEME) {
 			rootView.setBackgroundColor(0xFFEEEEEE);
 			listView.setDivider(getResources().getDrawable(R.drawable.transparent_drawable));
 			listView.setDividerHeight(10);
 			RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) listView.getLayoutParams();
 			layoutParams.setMargins(20, 20, 20, 20);
 			listView.setLayoutParams(layoutParams);
-		} else if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME")) {
+
+		} else if (mApp.getCurrentTheme()==Common.DARK_THEME) {
 			rootView.setBackgroundColor(0xFF111111);
 			listView.setDividerHeight(0);
 			listView.setDivider(getResources().getDrawable(R.drawable.transparent_drawable));
@@ -155,12 +156,7 @@ public class FilesFoldersFragment extends Fragment {
 			RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) listView.getLayoutParams();
 			layoutParams.setMargins(20, 20, 20, 20);
 			listView.setLayoutParams(layoutParams);
-		} else if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_THEME")) {
-			listView.setDivider(getResources().getDrawable(R.drawable.list_divider));
-			listView.setDividerHeight(1);
-        } else {
-        	listView.setDivider(getResources().getDrawable(R.drawable.list_divider_light));
-        	listView.setDividerHeight(1);
+
 		}
 		
 		//Get the orientation parameter and store it locally.

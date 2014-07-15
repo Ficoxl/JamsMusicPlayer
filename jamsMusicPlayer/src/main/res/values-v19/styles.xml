@@ -31,7 +31,7 @@
         <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Apptheme</item>
         <item name="android:windowTranslucentStatus">true</item>
 		<item name="android:windowTranslucentNavigation">true</item>
-		<item name="android:windowContentOverlay">@drawable/ab_solid_shadow_holo</item>
+        <item name="android:windowContentOverlay">@null</item>
     </style>
 
     <style name="AppThemeNoTranslucentNav" parent="android:Theme.Holo">
@@ -44,7 +44,7 @@
         <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Apptheme</item>
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowTranslucentNavigation">false</item>
-		<item name="android:windowContentOverlay">@drawable/ab_solid_shadow_holo</item>
+		<item name="android:windowContentOverlay">@null</item>
     </style>
     
     <style name="ActionBar.Solid.Apptheme" parent="@android:style/Widget.Holo.ActionBar.Solid">
@@ -120,7 +120,7 @@
         <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Apptheme</item>
         <item name="android:windowTranslucentStatus">true</item>
 		<item name="android:windowTranslucentNavigation">true</item>
-		<item name="android:windowContentOverlay">@drawable/ab_solid_shadow_holo</item>
+		<item name="android:windowContentOverlay">@null</item>
 
     </style>
     
@@ -134,7 +134,7 @@
         <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Apptheme</item>
         <item name="android:windowTranslucentStatus">true</item>
 		<item name="android:windowTranslucentNavigation">false</item>
-		<item name="android:windowContentOverlay">@drawable/ab_solid_shadow_holo</item>
+		<item name="android:windowContentOverlay">@null</item>
 
     </style>
 

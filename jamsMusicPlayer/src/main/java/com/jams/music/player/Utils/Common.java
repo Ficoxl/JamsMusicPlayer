@@ -11,8 +11,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.DisplayMetrics;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.webkit.WebView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.common.images.ImageManager;
@@ -141,6 +143,16 @@ public class Common extends Application {
 	//Device orientation constants.
 	public static final int ORIENTATION_PORTRAIT = 0;
 	public static final int ORIENTATION_LANDSCAPE = 1;
+
+    //Miscellaneous flags/identifiers.
+    public static final String SONG_ID = "SongId";
+    public static final String SONG_TITLE = "SongTitle";
+    public static final String SONG_ALBUM = "SongAlbum";
+    public static final String SONG_ARTIST = "SongArtist";
+    public static final String ALBUM_ART = "AlbumArt";
+    public static final String CURRENT_THEME = "CurrentTheme";
+    public static final int DARK_THEME = 0;
+    public static final int LIGHT_THEME = 1;
 	
 	@Override
 	public void onCreate() {
@@ -740,6 +752,10 @@ public class Common extends Application {
     
     public ImageLoader getImageLoader() {
     	return mImageLoader;
+    }
+
+    public int getCurrentTheme() {
+        return getSharedPreferences().getInt(CURRENT_THEME, DARK_THEME);
     }
     
     public boolean isServiceRunning() {

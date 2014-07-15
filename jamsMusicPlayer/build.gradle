@@ -27,7 +27,12 @@ android {
     }
 }
 
+repositories {
+    mavenCentral()
+}
+
 dependencies {
+    //Project libraries with source code.
     compile project(':licensesdialoglibrary')
     compile project(':quickScroll')
     compile project(':velocityviewpagerlibrary')
@@ -35,8 +40,8 @@ dependencies {
     compile project(':viewpagerindicatorlibrary')
     compile project(':circularImageView')
     compile project(':picasso')
-    compile 'com.android.support:support-v4:+'
-    compile 'com.google.android.gms:play-services:+'
+    compile project(':fadingActionBar')
+    //JAR file libraries.
     compile files('libs/android-async-http-1.4.2-66-g4b6eb97.jar')
     compile files('libs/commons-io-2.4.jar')
     compile files('libs/commons-lang3-3.1.jar')
@@ -47,4 +52,9 @@ dependencies {
     compile files('libs/jaudiotagger-2.0.4-20111207.115108-15.jar')
     compile files('libs/libGoogleAnalyticsServices.jar')
     compile files('libs/universal-image-loader-1.9.2-with-sources.jar')
+    //Maven libraries.
+    compile 'com.android.support:support-v4:+'
+    compile 'com.google.android.gms:play-services:+'
+    compile files('libs/com.haarman.listviewanimations-2.6.0.jar')
+    compile files('libs/nineoldandroids-2.4.0.jar')
 }

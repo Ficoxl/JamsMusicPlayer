@@ -122,14 +122,14 @@ public class NowPlayingQueueFragment extends Fragment {
         previousButton = (ImageButton) rootView.findViewById(R.id.now_playing_queue_previous);
         
 		//Apply the card layout's background based on the color theme.
-		if (sharedPreferences.getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("LIGHT_CARDS_THEME")) {
+		if (sharedPreferences.getString(Common.CURRENT_THEME, "LIGHT_CARDS_THEME").equals("LIGHT_CARDS_THEME")) {
 			rootView.setBackgroundColor(0xFFEEEEEE);
 			nowPlayingQueueListView.setDivider(getResources().getDrawable(R.drawable.transparent_drawable));
 			nowPlayingQueueListView.setDividerHeight(3);
 			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 			layoutParams.setMargins(7, 3, 7, 3);
 			nowPlayingQueueListView.setLayoutParams(layoutParams);
-		} else if (sharedPreferences.getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME")) {
+		} else if (sharedPreferences.getString(Common.CURRENT_THEME, "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME")) {
 			rootView.setBackgroundColor(0xFF000000);
 			nowPlayingQueueListView.setDivider(getResources().getDrawable(R.drawable.transparent_drawable));
 			nowPlayingQueueListView.setDividerHeight(3);

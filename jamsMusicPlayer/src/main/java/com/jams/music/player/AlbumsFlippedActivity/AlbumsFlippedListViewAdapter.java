@@ -48,8 +48,8 @@ public class AlbumsFlippedListViewAdapter extends SimpleCursorAdapter {
 	    
 		if (convertView == null) {
 			
-			if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("LIGHT_CARDS_THEME") || 
-				mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME")) {
+			if (mApp.getSharedPreferences().getString(Common.CURRENT_THEME, "LIGHT_CARDS_THEME").equals("LIGHT_CARDS_THEME") ||
+				mApp.getSharedPreferences().getString(Common.CURRENT_THEME, "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME")) {
 				convertView = LayoutInflater.from(mContext).inflate(R.layout.albums_flipped_list_view_cards_layout, parent, false);
 			} else {
 				convertView = LayoutInflater.from(mContext).inflate(R.layout.albums_flipped_list_view_layout, parent, false);
@@ -82,9 +82,9 @@ public class AlbumsFlippedListViewAdapter extends SimpleCursorAdapter {
 		}
 		
 		//Apply the card layout's background based on the color theme.
-		if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("LIGHT_CARDS_THEME")) {
+		if (mApp.getSharedPreferences().getString(Common.CURRENT_THEME, "LIGHT_CARDS_THEME").equals("LIGHT_CARDS_THEME")) {
 			convertView.setBackgroundResource(R.drawable.card_light);
-		} else if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME")) {
+		} else if (mApp.getSharedPreferences().getString(Common.CURRENT_THEME, "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME")) {
 			convertView.setBackgroundResource(R.drawable.card_dark);
 		}
 		

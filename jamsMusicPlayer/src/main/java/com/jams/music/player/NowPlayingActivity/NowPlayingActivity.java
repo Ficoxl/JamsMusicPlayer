@@ -6,8 +6,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.TransitionDrawable;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,23 +21,17 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.DrawerLayout.DrawerListener;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
-import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
-import android.view.animation.LinearInterpolator;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
+import android.view.animation.RotateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
@@ -60,26 +54,24 @@ import com.jams.music.player.R;
 import com.jams.music.player.Services.AudioPlaybackService;
 import com.jams.music.player.SettingsActivity.SettingsActivity;
 import com.jams.music.player.Utils.Common;
-import com.mobeta.android.dslv.DragSortListView;
-import com.mobeta.android.dslv.SimpleFloatViewManager;
 import com.velocity.view.pager.library.VelocityViewPager;
 
 import java.util.HashMap;
 
 public class NowPlayingActivity extends FragmentActivity {
 
+    //Common objects.
 	private Context mContext;
+    private Common mApp;
 	private Menu mMenu;
 	private FragmentManager mFragmentManager;
-	
+
+    //Layouts.
 	private DrawerLayout mDrawerLayout;
 	private FrameLayout mDrawerParentLayout;
 	private RelativeLayout mEqualizerLayout;
     private QueueDrawerFragment mQueueDrawerFragment;
-	
-	//Current queue fragment layout.
     private RelativeLayout mCurrentQueueLayout;
-    private boolean tabletInLandscape = false;
 	
 	//Song info/seekbar elements.
     private RelativeLayout seekbarLayout;
@@ -97,8 +89,8 @@ public class NowPlayingActivity extends FragmentActivity {
 	private ImageButton mRepeatButton;
 	
 	//Playlist pager.
-    private PlaylistPagerAdapter mPlaylistPagerAdapter;
-    private VelocityViewPager mPlaylistViewPager;
+    private VelocityViewPager mViewPager;
+    private PlaylistPagerAdapter mViewPagerAdapter;
 	
     //Handler object.
     private Handler mHandler = new Handler();
@@ -109,19 +101,16 @@ public class NowPlayingActivity extends FragmentActivity {
     //Equalizer fragment.
     private EqualizerFragment mEqualizerFragment;
     private boolean mIsEqualizerVisible = false;
-    
-    //Global objects provider.
-    private Common mApp;
-    
+
     //HashMap that passes on song information to the "Download from Cloud" dialog.
     private HashMap<String, String> metadata;
-    
-    //Receiver to update the UI.
-    private boolean mTrackComplete = false;
     
     //Interface instance and flags.
     private NowPlayingActivityListener mNowPlayingActivityListener;
     public static final String START_SERVICE = "StartService";
+
+    //Miscellaneous flags.
+    private boolean mPagerInitializingFirstTime = true;
     
     @SuppressLint("NewApi")
 	@Override
@@ -145,12 +134,13 @@ public class NowPlayingActivity extends FragmentActivity {
         mDrawerParentLayout = (FrameLayout) findViewById(R.id.now_playing_drawer_frame_root);
         mCurrentQueueLayout = (RelativeLayout) findViewById(R.id.queue_drawer);
         mDrawerLayout.setDrawerListener(mDrawerListener);
+        mDrawerLayout.setBackgroundColor(UIElementsHelper.getBackgroundColor(mContext));
         
         //Equalizer layout.
         mEqualizerLayout = (RelativeLayout) findViewById(R.id.equalizer_fragment_container);
         
         //ViewPager.
-        mPlaylistViewPager = (VelocityViewPager) findViewById(R.id.nowPlayingPlaylistPager);
+        mViewPager = (VelocityViewPager) findViewById(R.id.nowPlayingPlaylistPager);
     	
     	//Playback Controls
         mControlsLayoutHeader = (RelativeLayout) findViewById(R.id.relativeLayout1);
@@ -167,7 +157,7 @@ public class NowPlayingActivity extends FragmentActivity {
     	remainingTime = (TextView) findViewById(R.id.remainingTime);
     	mStreamingProgressBar = (ProgressBar) findViewById(R.id.startingStreamProgressBar);
     	mStreamingProgressBar.setVisibility(View.GONE);
-    	
+
     	elapsedTime.setTypeface(TypefaceHelper.getTypeface(mContext, "RobotoCondensed-Regular"));
     	elapsedTime.setPaintFlags(elapsedTime.getPaintFlags() |
     							  Paint.ANTI_ALIAS_FLAG |
@@ -177,37 +167,33 @@ public class NowPlayingActivity extends FragmentActivity {
     	remainingTime.setPaintFlags(remainingTime.getPaintFlags() |
     							    Paint.ANTI_ALIAS_FLAG |
     							    Paint.SUBPIXEL_TEXT_FLAG);
-    	
-    	//Tablet layout specific code.
-    	if (getResources().getBoolean(R.bool.tablet_in_landscape) || 
-            mApp.getOrientation()==Common.ORIENTATION_LANDSCAPE) {
-            tabletInLandscape = true;
-        } else {
-            tabletInLandscape = false;
-        }
-    	
+
         //Set the theme for the control headers and seekbar background.
         mControlsLayoutHeader.setBackgroundResource(UIElementsHelper.getNowPlayingControlsBackground(mContext));
         seekbarLayout.setBackgroundResource(UIElementsHelper.getNowPlayingControlsBackground(mContext));
-    	
+
     	try {
     		mSeekbar.setThumb(getResources().getDrawable(R.drawable.transparent_drawable));
     	} catch (Exception e) {
     		e.printStackTrace();
     	}
 
+        int resourceId = UIElementsHelper.getIcon(mContext, "play_pause_transition_drawable");
+        TransitionDrawable drawable = (TransitionDrawable) mContext.getResources().getDrawable(resourceId);
+        drawable.setCrossFadeEnabled(true);
+        mPlayPauseButton.setImageDrawable(drawable);
+
     	mNextButton.setImageResource(UIElementsHelper.getIcon(mContext, "btn_playback_next"));
     	mPreviousButton.setImageResource(UIElementsHelper.getIcon(mContext, "btn_playback_previous"));
     	
-    	if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME") ||
-        	mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_THEME")) {
+    	if (mApp.getCurrentTheme()==Common.DARK_THEME) {
     		mNextButton.setAlpha(1f);
     		mPreviousButton.setAlpha(1f);
         }
-    	
-    	//KitKat specific layout code.
+
+        //KitKat specific layout code.
         setKitKatTranslucentBars();
-    	
+
     	//Set the control buttons.
     	setPlayPauseButton();
         setShuffleButtonIcon();
@@ -249,14 +235,14 @@ public class NowPlayingActivity extends FragmentActivity {
         	//Initializes the ViewPager.
         	if (intent.hasExtra(Common.INIT_PAGER) || 
         		intent.hasExtra(Common.NEW_QUEUE_ORDER))
-        		initViewPager();
-        	
+                initViewPager();
+
         	//Updates the ViewPager's current page/position.
         	if (intent.hasExtra(Common.UPDATE_PAGER_POSTIION) && 
-        		mPlaylistViewPager.getCurrentItem()!=mApp.getService().getCurrentSongIndex()) {
+        		mViewPager.getCurrentItem()!=mApp.getService().getCurrentSongIndex()) {
         		int position = Integer.parseInt(bundle.getString(Common.UPDATE_PAGER_POSTIION));
         		if (position==0) {
-        			mPlaylistViewPager.setCurrentItem(position, false);
+        			mViewPager.setCurrentItem(position, false);
         		} else {
         			scrollViewPager(position, true, 1, false);
         		}
@@ -307,11 +293,20 @@ public class NowPlayingActivity extends FragmentActivity {
         	if (intent.hasExtra(Common.UPDATE_EQ_FRAGMENT) && 
         		mEqualizerFragment==null) {
         		//The equalizer fragment hasn't been initialized yet.
-        		mFragmentManager = getSupportFragmentManager();
-        		mEqualizerFragment = new EqualizerFragment();
-        		mFragmentManager.beginTransaction()
-        					    .add(R.id.equalizer_fragment_container, mEqualizerFragment, "EqualizerFragment")
-        					    .commit();
+                new Handler().postDelayed(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        mFragmentManager = getSupportFragmentManager();
+                        mEqualizerFragment = new EqualizerFragment();
+                        mFragmentManager.beginTransaction()
+                                        .add(R.id.equalizer_fragment_container, mEqualizerFragment, "EqualizerFragment")
+                                        .commit();
+
+                    }
+
+                }, 500);
+
         	}
         	
         	//Close this activity if the service is about to stop running.
@@ -330,8 +325,7 @@ public class NowPlayingActivity extends FragmentActivity {
     private void setTheme() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
         	//Use the standard theme.
-        	if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_THEME") ||
-        		mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME")) {
+        	if (mApp.getCurrentTheme()==Common.DARK_THEME) {
         		this.setTheme(R.style.AppTheme);
         	} else {
         		this.setTheme(R.style.AppThemeLight);
@@ -339,8 +333,7 @@ public class NowPlayingActivity extends FragmentActivity {
         	
         } else {
         	//Use the theme without translucent nav bar.
-        	if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_THEME") ||
-        		mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME")) {
+        	if (mApp.getCurrentTheme()==Common.DARK_THEME) {
         		this.setTheme(R.style.AppThemeNoTranslucentNav);
         	} else {
         		this.setTheme(R.style.AppThemeNoTranslucentNavLight);
@@ -354,26 +347,26 @@ public class NowPlayingActivity extends FragmentActivity {
      * Initializes the view pager.
      */
     private void initViewPager() {
-    	mPlaylistViewPager.setVisibility(View.INVISIBLE);
-    	mPlaylistPagerAdapter = new PlaylistPagerAdapter(getSupportFragmentManager());
-    	mPlaylistViewPager.setAdapter(mPlaylistPagerAdapter);
-    	mPlaylistViewPager.setOffscreenPageLimit(5);
-    	mPlaylistViewPager.setOnPageChangeListener(mPageChangeListener);
-    	mPlaylistViewPager.setCurrentItem(mApp.getService().getCurrentSongIndex(), false);
+        //Delay loading the pager by 700ms to keep the animation smooth.
+        new Handler().postDelayed(new Runnable() {
 
-    	//Show the pager after a .1sec delay (keeps the animation smooth).
-    	mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mViewPager.setVisibility(View.INVISIBLE);
+                mViewPagerAdapter = new PlaylistPagerAdapter(getSupportFragmentManager());
+                mViewPager.setAdapter(mViewPagerAdapter);
+                mViewPager.setOffscreenPageLimit(5);
+                mViewPager.setOnPageChangeListener(mPageChangeListener);
+                mViewPager.setCurrentItem(mApp.getService().getCurrentSongIndex(), false);
 
-			@Override
-			public void run() {
-                FadeAnimation fadeAnimation = new FadeAnimation(mPlaylistViewPager, 600, 0.0f,
-                                                                1.0f, new DecelerateInterpolator(2.0f));
+                FadeAnimation fadeAnimation = new FadeAnimation(mViewPager, 600, 0.0f,
+                        1.0f, new DecelerateInterpolator(2.0f));
 
                 fadeAnimation.animate();
 
-			}
+            }
 
-    	}, 200);
+        }, 700);
 
     }
 
@@ -399,7 +392,7 @@ public class NowPlayingActivity extends FragmentActivity {
     							 boolean dispatchToListener) {
     	
     	USER_SCROLL = dispatchToListener;
-    	mPlaylistViewPager.scrollToItem(newPosition, 
+    	mViewPager.scrollToItem(newPosition, 
     									smoothScroll, 
     									velocity, 
     									dispatchToListener);
@@ -410,16 +403,16 @@ public class NowPlayingActivity extends FragmentActivity {
      * Sets the play/pause button states.
      */
     private void setPlayPauseButton() {
-    	if (mApp.isServiceRunning())
-	    	if (mApp.getService().isPlayingMusic()) {
-	    		mPlayPauseButton.setImageResource(UIElementsHelper.getIcon(mContext, "pause"));
-	    	} else {
-	    		mPlayPauseButton.setImageResource(UIElementsHelper.getIcon(mContext, "play"));
-	    	}
-    	
-    	else
-    		mPlayPauseButton.setImageResource(UIElementsHelper.getIcon(mContext, "pause"));
-    	
+
+        final TransitionDrawable drawable = (TransitionDrawable) (mPlayPauseButton.getDrawable());
+        if (mApp.isServiceRunning())
+            if (mApp.getService().isPlayingMusic())
+                drawable.reverseTransition(150);
+            else
+                drawable.startTransition(150);
+
+        else
+            drawable.startTransition(250);
     }
     
     /**
@@ -483,8 +476,7 @@ public class NowPlayingActivity extends FragmentActivity {
         	//Set the background for the view.
         	RelativeLayout containerBackground = (RelativeLayout) findViewById(R.id.landscape_background);
         	if (containerBackground!=null) {
-                if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME") ||
-                	mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_THEME")) {
+                if (mApp.getCurrentTheme()==Common.DARK_THEME) {
                 	containerBackground.setBackgroundColor(0xFF191919);
                 } else {
                 	containerBackground.setBackgroundColor(0xFFFFFFFF);
@@ -610,7 +602,7 @@ public class NowPlayingActivity extends FragmentActivity {
 				mHandler.post(seekbarUpdateRunnable);
 			else
 				mHandler.removeCallbacks(seekbarUpdateRunnable);
-			
+
 		}
 		
 	};
@@ -629,11 +621,11 @@ public class NowPlayingActivity extends FragmentActivity {
 			 * animation completes. This has the side-benefit of letting the animation 
 			 * finish before starting playback (keeps the animation buttery smooth).
 			 */
-			int newPosition = mPlaylistViewPager.getCurrentItem() - 1;
+			int newPosition = mViewPager.getCurrentItem() - 1;
 			if (newPosition > -1) {
 				scrollViewPager(newPosition, true, 1, true);
 			} else {
-				mPlaylistViewPager.setCurrentItem(0, false);
+				mViewPager.setCurrentItem(0, false);
 			}
 			
 		}
@@ -654,12 +646,12 @@ public class NowPlayingActivity extends FragmentActivity {
 			 * animation completes. This has the side-benefit of letting the animation 
 			 * finish before starting playback (keeps the animation buttery smooth).
 			 */
-			int newPosition = mPlaylistViewPager.getCurrentItem() + 1;
-			if (newPosition < mPlaylistPagerAdapter.getCount()) {
+			int newPosition = mViewPager.getCurrentItem() + 1;
+			if (newPosition < mViewPagerAdapter.getCount()) {
 				scrollViewPager(newPosition, true, 1, true);
 			} else {
 				if (mApp.getService().getRepeatMode()== AudioPlaybackService.REPEAT_PLAYLIST)
-					mPlaylistViewPager.setCurrentItem(0, false);
+					mViewPager.setCurrentItem(0, false);
 				else
 					Toast.makeText(mContext, R.string.no_songs_to_skip_to, Toast.LENGTH_SHORT).show();
 			}
@@ -669,7 +661,7 @@ public class NowPlayingActivity extends FragmentActivity {
 		}
 		
 	};
-	
+
 	/**
 	 * Downloads a GMusic song for local playback.
 	 */
@@ -855,9 +847,9 @@ public class NowPlayingActivity extends FragmentActivity {
     	if (mApp.getSharedPreferences().getInt("TRACK_CHANGE_ANIMATION", 0)==0) {
     		//Don't set a transformer.
     	} else if (mApp.getSharedPreferences().getInt("TRACK_CHANGE_ANIMATION", 0)==1) {
-    		//mPlaylistViewPager.setPageTransformer(true, new ZoomOutPageTransformer(0.85f));
+    		//mViewPager.setPageTransformer(true, new ZoomOutPageTransformer(0.85f));
     	} else if (mApp.getSharedPreferences().getInt("TRACK_CHANGE_ANIMATION", 0)==2) {
-    		//mPlaylistViewPager.setPageTransformer(true, new DepthPageTransformer());
+    		//mViewPager.setPageTransformer(true, new DepthPageTransformer());
     	}
     	
     }
@@ -1082,7 +1074,7 @@ public class NowPlayingActivity extends FragmentActivity {
 		}
 		
 		//Hide the queue button if we're in landscape mode (on a tablet).
-		if (tabletInLandscape) {
+		if (mApp.getOrientation()==Common.ORIENTATION_LANDSCAPE) {
 			if (menu!=null) {
 				menu.findItem(R.id.action_queue_drawer).setVisible(false);
 			}
@@ -1177,15 +1169,11 @@ public class NowPlayingActivity extends FragmentActivity {
 	}
 	
 	public VelocityViewPager getPlaylistViewPager() {
-		return mPlaylistViewPager;
+		return mViewPager;
 	}
 	
 	public ImageButton getPlayPauseButton() {
 		return mPlayPauseButton;
-	}
- 	
-	public boolean getTrackComplete() {
-		return mTrackComplete;
 	}
 	
 	public EqualizerFragment getEqualizerFragment() {

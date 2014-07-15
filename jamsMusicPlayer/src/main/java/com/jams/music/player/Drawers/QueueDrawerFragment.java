@@ -44,8 +44,7 @@ public class QueueDrawerFragment extends Fragment {
 		mApp = (Common) mContext.getApplicationContext();
 
 		View rootView = inflater.inflate(R.layout.fragment_queue_drawer, null);
-		if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("LIGHT_CARDS_THEME") ||
-			mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_THEME").equals("LIGHT_THEME")) {
+		if (mApp.getCurrentTheme()==Common.LIGHT_THEME) {
 			rootView.setBackgroundColor(0xFFFFFFFF);
 		} else {
 			rootView.setBackgroundColor(0xFF191919);
@@ -106,8 +105,7 @@ public class QueueDrawerFragment extends Fragment {
             //Reset the initialization flag.
             mInitListViewParams = false;
 
-            if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_THEME") ||
-                mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME")) {
+            if (mApp.getCurrentTheme()==Common.DARK_THEME) {
                 mListView.setDivider(mContext.getResources().getDrawable(R.drawable.list_divider));
             } else {
                 mListView.setDivider(mContext.getResources().getDrawable(R.drawable.list_divider_light));

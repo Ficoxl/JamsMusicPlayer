@@ -115,18 +115,11 @@ public class AsyncBuildLibraryTask extends AsyncTask<String, String, Void> {
 			saveMediaStoreDataToDB(mediaStoreCursor);
 			mediaStoreCursor.close();
 		}
-		
-		
-		
-		
-    	/* 
-    	 * Save EQ presets to the database. 
-    	 */
+
+    	//Save EQ presets to the database.
 		saveEQPresets();
-		
-		/*
-		 * Save album art paths for each song to the database.
-		 */
+
+		//Save album art paths for each song to the database.
 		getAlbumArt();
 		
     	return null;

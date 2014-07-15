@@ -79,14 +79,8 @@ public class GenresListViewAdapter extends SimpleCursorAdapter implements Scroll
 	    GenresListViewHolder holder = null;
 
 		if (convertView == null) {
-			
-			if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("LIGHT_CARDS_THEME") || 
-				mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME")) {
-				convertView = LayoutInflater.from(mContext).inflate(R.layout.playlists_list_cards_layout, parent, false);
-			} else {
-				convertView = LayoutInflater.from(mContext).inflate(R.layout.playlists_list_layout, parent, false);
-			}
-			
+            convertView = LayoutInflater.from(mContext).inflate(R.layout.playlists_list_cards_layout, parent, false);
+
 			holder = new GenresListViewHolder();
 			holder.genreImage = (ImageView) convertView.findViewById(R.id.playlistImage);
 			holder.title = (TextView) convertView.findViewById(R.id.playlistListViewName);
@@ -115,9 +109,9 @@ public class GenresListViewAdapter extends SimpleCursorAdapter implements Scroll
 		}
 		
 		//Apply the card layout's background based on the color theme.
-		if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("LIGHT_CARDS_THEME")) {
+		if (mApp.getSharedPreferences().getString(Common.CURRENT_THEME, "LIGHT_CARDS_THEME").equals("LIGHT_CARDS_THEME")) {
 			convertView.setBackgroundResource(R.drawable.card_light);
-		} else if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME")) {
+		} else if (mApp.getSharedPreferences().getString(Common.CURRENT_THEME, "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME")) {
 			convertView.setBackgroundResource(R.drawable.card_dark);
 		}
 		

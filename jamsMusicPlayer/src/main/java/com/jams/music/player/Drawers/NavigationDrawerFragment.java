@@ -53,8 +53,7 @@ public class NavigationDrawerFragment extends Fragment {
 		mHandler = new Handler();
 
 		View rootView = inflater.inflate(R.layout.navigation_drawer_layout, null);
-		if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("LIGHT_CARDS_THEME") ||
-			mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_THEME").equals("LIGHT_THEME")) {
+		if (mApp.getCurrentTheme()==Common.LIGHT_THEME) {
 			rootView.setBackgroundColor(0xFFFFFFFF);
 		} else {
 			rootView.setBackgroundColor(0xFF191919);
@@ -94,8 +93,7 @@ public class NavigationDrawerFragment extends Fragment {
         setListViewHeightBasedOnChildren(librariesListView);
 
         //Apply the ListViews' dividers.
-        if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_THEME") ||
-            mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME")) {
+        if (mApp.getCurrentTheme()==Common.DARK_THEME) {
             browsersListView.setDivider(mContext.getResources().getDrawable(R.drawable.list_divider));
             librariesListView.setDivider(mContext.getResources().getDrawable(R.drawable.list_divider));
         } else {

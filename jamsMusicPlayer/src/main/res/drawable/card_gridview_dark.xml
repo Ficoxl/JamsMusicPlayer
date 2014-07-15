@@ -2,23 +2,23 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<item>
-		
-		<shape 
+
+		<shape
 		    android:shape="rectangle"
 			android:dither="true" >
 
-			<corners 
+			<corners
 			    android:radius="2dp" />
 
-			<solid 
+			<solid
 			    android:color="@android:color/black" />
 
 		</shape>
-		
+
 	</item>
 	
 	<item 
-	    android:bottom="2dp" >
+	    android:bottom="1dp" >
 		
 		<shape 
 		    android:shape="rectangle"
@@ -27,14 +27,14 @@
 			<corners 
 			    android:radius="2dp" />
 
-			<solid 
+			<solid
 			    android:color="#232323" />
 
-			<padding 
-			    android:bottom="2.5dp"
+			<padding
+			    android:bottom="0dp"
 				android:left="0dp"
 				android:right="0dp"
-				android:top="-2.5dp" />
+				android:top="0dp" />
 		</shape>
 		
 	</item>

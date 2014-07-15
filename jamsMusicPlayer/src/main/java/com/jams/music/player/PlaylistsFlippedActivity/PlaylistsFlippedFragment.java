@@ -101,21 +101,21 @@ public class PlaylistsFlippedFragment extends Fragment {
 		playlistsFlippedListView.setFloatViewManager(simpleFloatViewManager);
 
 		//Set the background color based on the theme.
-		if (sharedPreferences.getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("LIGHT_CARDS_THEME")) {
+		if (sharedPreferences.getString(Common.CURRENT_THEME, "LIGHT_CARDS_THEME").equals("LIGHT_CARDS_THEME")) {
 			rootView.setBackgroundColor(0xFFEEEEEE);
 			playlistsFlippedListView.setDivider(getResources().getDrawable(R.drawable.transparent_drawable));
 			playlistsFlippedListView.setDividerHeight(3);
 			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 			layoutParams.setMargins(7, 3, 7, 3);
 			playlistsFlippedListView.setLayoutParams(layoutParams);
-		} else if (sharedPreferences.getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME")) {
+		} else if (sharedPreferences.getString(Common.CURRENT_THEME, "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME")) {
 			rootView.setBackgroundColor(0xFF000000);
 			playlistsFlippedListView.setDivider(getResources().getDrawable(R.drawable.transparent_drawable));
 			playlistsFlippedListView.setDividerHeight(3);
 			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 			layoutParams.setMargins(7, 3, 7, 3);
 			playlistsFlippedListView.setLayoutParams(layoutParams);
-		} else if (sharedPreferences.getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_THEME")) {
+		} else if (sharedPreferences.getString(Common.CURRENT_THEME, "LIGHT_CARDS_THEME").equals("DARK_THEME")) {
 			playlistsFlippedListView.setDivider(getResources().getDrawable(R.drawable.list_divider));
 			playlistsFlippedListView.setDividerHeight(1);
         } else {
@@ -137,8 +137,8 @@ public class PlaylistsFlippedFragment extends Fragment {
         
         //Retrieve the correct layout for the ListView based on the current theme.
         int layoutId = 0;
-        if (sharedPreferences.getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("LIGHT_CARDS_THEME") || 
-			sharedPreferences.getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME")) {
+        if (sharedPreferences.getString(Common.CURRENT_THEME, "LIGHT_CARDS_THEME").equals("LIGHT_CARDS_THEME") ||
+			sharedPreferences.getString(Common.CURRENT_THEME, "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME")) {
 			layoutId = R.layout.playlist_flipped_listview_cards_layout;
 		} else {
 			layoutId = R.layout.playlist_flipped_listview_layout;

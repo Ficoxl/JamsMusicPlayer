@@ -17,13 +17,7 @@ import com.jams.music.player.Utils.Common;
 public class UIElementsHelper {
 	
 	private static Common mApp;
-	
-	private static final String SELECTED_THEME = "SELECTED_THEME";
-	private static final String DARK_THEME = "DARK_THEME";
-	private static final String LIGHT_THEME = "LIGHT_THEME";
-	private static final String DARK_CARDS_THEME = "DARK_CARDS_THEME";
-	private static final String LIGHT_CARDS_THEME = "LIGHT_CARDS_THEME";
-	
+
 	private static final String NOW_PLAYING_COLOR = "NOW_PLAYING_COLOR";
 	private static final String BLUE = "BLUE";
 	private static final String RED = "RED";
@@ -54,8 +48,7 @@ public class UIElementsHelper {
 			
 		} else {
 			
-			if (mApp.getSharedPreferences().getString(SELECTED_THEME, LIGHT_CARDS_THEME).equals(DARK_THEME) || 
-				mApp.getSharedPreferences().getString(SELECTED_THEME, LIGHT_CARDS_THEME).equals(DARK_CARDS_THEME)) {
+			if (mApp.getCurrentTheme()==Common.DARK_THEME) {
 				color = Color.parseColor("#FFFFFF");
 			} else {
 				color = Color.parseColor("#5F5F5F");
@@ -74,11 +67,10 @@ public class UIElementsHelper {
 		mApp = (Common) context.getApplicationContext();
 		int color;
 		
-		if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME") ||
-			mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_THEME")) {
-			color = Color.parseColor("#FFFFFF");
+		if (mApp.getCurrentTheme()==Common.DARK_THEME) {
+			color = Color.parseColor("#DEDEDE");
 		} else {
-			color = Color.parseColor("#2F2F2F");
+			color = Color.parseColor("#404040");
 		}
 		
 		return color;
@@ -93,11 +85,10 @@ public class UIElementsHelper {
 		mApp = (Common) context.getApplicationContext();
 		int color;
 			
-		if (mApp.getSharedPreferences().getString(SELECTED_THEME, LIGHT_CARDS_THEME).equals(DARK_THEME) || 
-			mApp.getSharedPreferences().getString(SELECTED_THEME, LIGHT_CARDS_THEME).equals(DARK_CARDS_THEME)) {
+		if (mApp.getCurrentTheme()==Common.DARK_THEME) {
 			color = Color.parseColor("#999999");
 		} else {
-			color = Color.parseColor("#5F5F5F");
+			color = Color.parseColor("#7F7F7F");
 		}
 
 		return color;
@@ -129,8 +120,7 @@ public class UIElementsHelper {
                     iconName = "equalizer";
                 }
 
-                if (mApp.getSharedPreferences().getString(SELECTED_THEME, LIGHT_CARDS_THEME).equals(DARK_THEME) ||
-                    mApp.getSharedPreferences().getString(SELECTED_THEME, LIGHT_CARDS_THEME).equals(DARK_CARDS_THEME)) {
+                if (mApp.getCurrentTheme()==Common.DARK_THEME) {
                     resourceID = context.getResources().getIdentifier(iconName + "_light", "drawable", context.getPackageName());
                 } else {
                     resourceID = context.getResources().getIdentifier(iconName, "drawable", context.getPackageName());
@@ -138,8 +128,7 @@ public class UIElementsHelper {
 
             } else {
 
-                if (mApp.getSharedPreferences().getString(SELECTED_THEME, LIGHT_CARDS_THEME).equals(DARK_THEME) ||
-                    mApp.getSharedPreferences().getString(SELECTED_THEME, LIGHT_CARDS_THEME).equals(DARK_CARDS_THEME)) {
+                if (mApp.getCurrentTheme()==Common.DARK_THEME) {
                     resourceID = context.getResources().getIdentifier(iconName + "_light", "drawable", context.getPackageName());
                 } else {
                     resourceID = context.getResources().getIdentifier(iconName, "drawable", context.getPackageName());
@@ -153,6 +142,31 @@ public class UIElementsHelper {
 		
 	}
 
+    /**
+     * Returns the correct background for the GridView card based on the selected theme.
+     */
+    public static int getGridViewCardBackground(Context context) {
+        if (mApp.getCurrentTheme()==Common.DARK_THEME) {
+            return context.getResources().getIdentifier("card_gridview_dark", "drawable", context.getPackageName());
+        } else {
+            return context.getResources().getIdentifier("card_gridview_light", "drawable", context.getPackageName());
+        }
+
+    }
+
+    /**
+     * Returns the correct background color for the GridView based on the selected theme.
+     * Do not use this method if the GridView needs cards as its background.
+     */
+    public static int getGridViewBackground(Context context) {
+        if (mApp.getCurrentTheme()==Common.DARK_THEME) {
+            return 0xFF232323;
+        } else {
+            return 0xFFEEEEEE;
+        }
+
+    }
+
 	/**
 	 * Background gradient in the flipped fragments' listviews.
 	 * 
@@ -164,8 +178,7 @@ public class UIElementsHelper {
 		Drawable backgroundDrawable;
 		mApp = (Common) context.getApplicationContext();
 		
-		if (mApp.getSharedPreferences().getString(SELECTED_THEME, LIGHT_CARDS_THEME).equals(DARK_THEME) || 
-			mApp.getSharedPreferences().getString(SELECTED_THEME, LIGHT_CARDS_THEME).equals(DARK_CARDS_THEME)) {
+		if (mApp.getCurrentTheme()==Common.DARK_THEME) {
 			backgroundDrawable = context.getResources().getDrawable(R.drawable.dark_gray_gradient);
 		} else {
 			backgroundDrawable = context.getResources().getDrawable(R.drawable.holo_white_selector);
@@ -183,8 +196,7 @@ public class UIElementsHelper {
 		int resourceID = 0;
 		mApp = (Common) context.getApplicationContext();
 		
-		if (mApp.getSharedPreferences().getString(SELECTED_THEME, LIGHT_CARDS_THEME).equals(DARK_THEME) || 
-			mApp.getSharedPreferences().getString(SELECTED_THEME, LIGHT_CARDS_THEME).equals(DARK_CARDS_THEME)) {
+		if (mApp.getCurrentTheme()==Common.DARK_THEME) {
 			resourceID = context.getResources().getIdentifier("now_playing_controls_background", "drawable", context.getPackageName());
 		} else {
 			resourceID = context.getResources().getIdentifier("now_playing_controls_background_light", "drawable", context.getPackageName());
@@ -203,9 +215,8 @@ public class UIElementsHelper {
 		int resourceID = 0;
 		mApp = (Common) context.getApplicationContext();
 		
-		if (mApp.getSharedPreferences().getString(SELECTED_THEME, LIGHT_CARDS_THEME).equals(DARK_CARDS_THEME) || 
-			mApp.getSharedPreferences().getString(SELECTED_THEME, LIGHT_CARDS_THEME).equals(DARK_THEME)) {
-			resourceID = context.getResources().getIdentifier("now_playing_title_background", "drawable", context.getPackageName());
+		if (mApp.getCurrentTheme()==Common.DARK_THEME) {
+			return R.drawable.solid_black_drawable;
 		} else {
 			resourceID = context.getResources().getIdentifier("now_playing_title_background_light", "drawable", context.getPackageName());
 		}
@@ -221,8 +232,7 @@ public class UIElementsHelper {
 		int hexColor;
 		mApp = (Common) context.getApplicationContext();
 		
-		if (mApp.getSharedPreferences().getString(SELECTED_THEME, LIGHT_CARDS_THEME).equals(DARK_THEME) || 
-			mApp.getSharedPreferences().getString(SELECTED_THEME, LIGHT_CARDS_THEME).equals(DARK_CARDS_THEME)) {
+		if (mApp.getCurrentTheme()==Common.DARK_THEME) {
 			hexColor = 0xFF3A3A3A;
 		} else {
 			hexColor = 0xFFDCDCDC;
@@ -230,6 +240,61 @@ public class UIElementsHelper {
 		
 		return hexColor;
 	}
+
+    /**
+     * Returns the opposite ColorDrawable (complementary color) of the current
+     * ActionBar color. The commented object assignments are the original
+     * ActionBar colors.
+     */
+    public static Drawable getComplementaryActionBarBackground(Context context) {
+
+        mApp = (Common) context.getApplicationContext();
+
+        Drawable drawable = null;
+        if (mApp.getSharedPreferences().getString(NOW_PLAYING_COLOR, BLUE).equals(BLUE)) {
+            //drawable = new ColorDrawable(0xFF0099CC);
+            drawable = new ColorDrawable(0xFFFF8800);
+
+        } else if (mApp.getSharedPreferences().getString(NOW_PLAYING_COLOR, BLUE).equals(RED)) {
+            //drawable = new ColorDrawable(0xFFCC0000);
+            drawable = new ColorDrawable(0xFF669900);
+
+        } else if (mApp.getSharedPreferences().getString(NOW_PLAYING_COLOR, BLUE).equals(GREEN)) {
+            //drawable = new ColorDrawable(0xFF669900);
+            drawable = new ColorDrawable(0xFFCC0000);
+
+        } else if (mApp.getSharedPreferences().getString(NOW_PLAYING_COLOR, BLUE).equals(ORANGE)) {
+            //drawable = new ColorDrawable(0xFFFF8800);
+            drawable = new ColorDrawable(0xFF0099CC);
+
+        } else if (mApp.getSharedPreferences().getString(NOW_PLAYING_COLOR, BLUE).equals(PURPLE)) {
+            //drawable = new ColorDrawable(0xFF9933CC);
+            drawable = new ColorDrawable(0xFF65CC32);
+
+        } else if (mApp.getSharedPreferences().getString(NOW_PLAYING_COLOR, BLUE).equals(MAGENTA)) {
+            //drawable = new ColorDrawable(0xFFCE0059);
+            drawable = new ColorDrawable(0xFF0099CC);
+
+        } else if (mApp.getSharedPreferences().getString(NOW_PLAYING_COLOR, BLUE).equals(GRAY)) {
+            //drawable = new ColorDrawable(0xFFAAAAAA);
+            drawable = new ColorDrawable(0xFFFFFFFF);
+
+        }  else if (mApp.getSharedPreferences().getString(NOW_PLAYING_COLOR, BLUE).equals(WHITE)) {
+            //drawable = context.getResources().getDrawable(R.drawable.ab_solid_light_holo);
+            drawable = context.getResources().getDrawable(R.drawable.holo_gray_selector);
+
+        } else if (mApp.getSharedPreferences().getString(NOW_PLAYING_COLOR, BLUE).equals(BLACK)) {
+            //drawable = context.getResources().getDrawable(R.drawable.holo_gray_selector);
+            drawable = context.getResources().getDrawable(R.drawable.ab_solid_light_holo);
+
+        } else {
+            //drawable = context.getResources().getDrawable(R.drawable.holo_gray_selector);
+            drawable = context.getResources().getDrawable(R.drawable.ab_solid_light_holo);
+        }
+
+        return drawable;
+
+    }
 	
 	/**
 	 * Returns the ActionBar color based on the selected color theme (not used for the player).
@@ -308,33 +373,49 @@ public class UIElementsHelper {
 			colors[2] = Color.WHITE;
 			
 		} else if (mApp.getSharedPreferences().getString(NOW_PLAYING_COLOR, BLUE).equals(MAGENTA)) {
-			colors[0] = 0xFFA60056;
-			colors[1] = 0x99A60056;
+			colors[0] = 0xFFCE0059;
+			colors[1] = 0x99CE0059;
 			colors[2] = Color.WHITE;
 			
 		} else if (mApp.getSharedPreferences().getString(NOW_PLAYING_COLOR, BLUE).equals(GRAY)) {
-			colors[0] = 0xFF707070;
-			colors[1] = 0x99707070;
+			colors[0] = 0xFFAAAAAA;
+			colors[1] = 0x99AAAAAA;
 			colors[2] = Color.WHITE;
 			
 		}  else if (mApp.getSharedPreferences().getString(NOW_PLAYING_COLOR, BLUE).equals(WHITE)) {
-			colors[0] = 0xFFBBBBBB;
-			colors[1] = 0x99EEEEEE;
+			colors[0] = 0xFF8C8C8C;
+			colors[1] = 0x998C8C8C;
 			colors[2] = Color.BLACK;
 			
 		} else if (mApp.getSharedPreferences().getString(NOW_PLAYING_COLOR, BLUE).equals(BLACK)) {
-			colors[0] = 0xFF0A0A0A;
-			colors[1] = 0x990A0A0A;
+			colors[0] = 0xFF000000;
+			colors[1] = 0x99000000;
 			colors[2] = Color.WHITE;
 			
 		} else {
-			colors[0] = 0xFFEEEEEE;
-			colors[1] = 0x99EEEEEE;
+			colors[0] = 0xFFC4C4C4;
+			colors[1] = 0x99C4C4C4;
 			colors[2] = Color.BLACK;
 		}
 		
 		return colors;
 	}
+
+    /**
+     * Returns a solid background color based on the selected theme.
+     */
+    public static int getBackgroundColor(Context context) {
+        mApp = (Common) context.getApplicationContext();
+
+        int color;
+        if (mApp.getCurrentTheme()==Common.DARK_THEME) {
+            color = 0xFF111111;
+        } else {
+            color = 0xFFEEEEEE;
+        }
+
+        return color;
+    }
 
     /**
      * Returns the correct empty color patch drawable based on the selected theme.
@@ -343,8 +424,7 @@ public class UIElementsHelper {
         mApp = (Common) context.getApplicationContext();
 
         int resourceID = 0;
-        if (mApp.getSharedPreferences().getString(SELECTED_THEME, LIGHT_CARDS_THEME).equals(DARK_CARDS_THEME) ||
-                mApp.getSharedPreferences().getString(SELECTED_THEME, LIGHT_CARDS_THEME).equals(DARK_THEME)) {
+        if (mApp.getCurrentTheme()==Common.DARK_THEME) {
             resourceID = context.getResources().getIdentifier("empty_color_patch", "drawable", context.getPackageName());
         } else {
             resourceID = context.getResources().getIdentifier("empty_color_patch_light", "drawable", context.getPackageName());
@@ -360,8 +440,7 @@ public class UIElementsHelper {
         mApp = (Common) context.getApplicationContext();
 
         int resourceID = 0;
-        if (mApp.getSharedPreferences().getString(SELECTED_THEME, LIGHT_CARDS_THEME).equals(DARK_CARDS_THEME) ||
-                mApp.getSharedPreferences().getString(SELECTED_THEME, LIGHT_CARDS_THEME).equals(DARK_THEME)) {
+        if (mApp.getCurrentTheme()==Common.DARK_THEME) {
             resourceID = context.getResources().getIdentifier("empty_color_patch_circular", "drawable", context.getPackageName());
         } else {
             resourceID = context.getResources().getIdentifier("empty_color_patch_circular_light", "drawable", context.getPackageName());

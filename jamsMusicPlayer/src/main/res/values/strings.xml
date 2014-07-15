@@ -67,14 +67,12 @@
     </string-array>
 
     <string name="title_activity_settings_detail">SettingsDetailActivity</string>
-    <string name="app_theme">Application Theme</string>
+    <string name="app_theme">Theme</string>
     <string name="now_playing_color_scheme">Color Accent</string>
 
     <string-array name="app_theme_choices">
-        <item>Holo Light</item>
-        <item>Holo Dark</item>
-        <item>Holo Cards Light</item>
-        <item>Holo Cards Dark</item>
+        <item>Light</item>
+        <item>Dark</item>
     </string-array>
 
     <string name="ok">OK</string>
@@ -802,9 +800,9 @@
     <string name="eq_reset">Equalizer reset.</string>
     <string name="go_to">Go to</string>
     <string name="hide_lyrics">Hide lyrics</string>
-    <string name="title_text">Title Text</string>
-    <string name="source">Source</string>
-    <string name="file_path">File path</string>
+    <string name="title_text">titleText</string>
+    <string name="source">source</string>
+    <string name="file_path">filePath</string>
     <string name="field_1">field1</string>
     <string name="field_2">field2</string>
     <string name="field_3">field3</string>

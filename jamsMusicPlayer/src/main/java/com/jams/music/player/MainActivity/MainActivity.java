@@ -150,8 +150,7 @@ public class MainActivity extends FragmentActivity {
 	 */
 	private void setTheme() {
     	//Set the UI theme.
-    	if (mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_THEME") ||
-    		mApp.getSharedPreferences().getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME")) {
+    	if (mApp.getCurrentTheme()==Common.DARK_THEME) {
     		setTheme(R.style.AppTheme);
     	} else {
     		setTheme(R.style.AppThemeLight);

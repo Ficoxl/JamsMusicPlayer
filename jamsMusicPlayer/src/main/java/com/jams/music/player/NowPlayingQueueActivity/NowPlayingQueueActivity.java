@@ -16,6 +16,7 @@ import android.util.DisplayMetrics;
 import android.widget.Toast;
 
 import com.jams.music.player.R;
+import com.jams.music.player.Utils.Common;
 import com.jams.music.player.Utils.TypefaceSpan;
 
 public class NowPlayingQueueActivity extends FragmentActivity {
@@ -35,8 +36,8 @@ public class NowPlayingQueueActivity extends FragmentActivity {
 	    int screenWidth = displayMetrics.widthPixels;
 		
     	//Set the UI theme.
-    	if (sharedPreferences.getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_THEME") ||
-    		sharedPreferences.getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME")) {
+    	if (sharedPreferences.getString(Common.CURRENT_THEME, "LIGHT_CARDS_THEME").equals("DARK_THEME") ||
+    		sharedPreferences.getString(Common.CURRENT_THEME, "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME")) {
     		setTheme(R.style.AppTheme);
     	} else {
     		setTheme(R.style.AppThemeLight);

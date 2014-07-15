@@ -35,7 +35,7 @@ import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 public class MusicLibraryEditorActivity extends FragmentActivity {
 	
 	private Context mContext;
-	private SharedPreferences sharedPreferences;
+	private Common mApp;
 	private String libraryName;
 	private String libraryIconName;
 	public static DBAccessHelper dbHelper;
@@ -49,7 +49,7 @@ public class MusicLibraryEditorActivity extends FragmentActivity {
 		
 		//Initialize Context and SharedPreferences.
 		mContext = this;
-		sharedPreferences = mContext.getSharedPreferences("com.jams.music.player", Context.MODE_PRIVATE);
+        mApp = (Common) mContext.getApplicationContext();
 		
 		//Retrieve the name/icon of the library from the arguments.
 		libraryName = getIntent().getExtras().getString("LIBRARY_NAME");
@@ -60,8 +60,7 @@ public class MusicLibraryEditorActivity extends FragmentActivity {
 		}
 
     	//Set the UI theme.
-    	if (sharedPreferences.getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_THEME") ||
-    		sharedPreferences.getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME")) {
+    	if (mApp.getCurrentTheme()==Common.DARK_THEME) {
     		setTheme(R.style.AppTheme);
     	} else {
     		setTheme(R.style.AppThemeLight);

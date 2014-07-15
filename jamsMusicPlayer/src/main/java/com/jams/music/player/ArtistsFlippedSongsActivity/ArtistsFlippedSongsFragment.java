@@ -144,23 +144,23 @@ public class ArtistsFlippedSongsFragment extends Fragment {
         	
         }
 
-        if (sharedPreferences.getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME") ||
-        	sharedPreferences.getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("LIGHT_CARDS_THEME")) {
+        if (sharedPreferences.getString(Common.CURRENT_THEME, "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME") ||
+        	sharedPreferences.getString(Common.CURRENT_THEME, "LIGHT_CARDS_THEME").equals("LIGHT_CARDS_THEME")) {
         	RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 			layoutParams.setMargins(20, 20, 20, 20);
 			songsListView.setLayoutParams(layoutParams);
         }
         
 		//Set the background color based on the theme.
-		if (sharedPreferences.getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("LIGHT_CARDS_THEME")) {
+		if (sharedPreferences.getString(Common.CURRENT_THEME, "LIGHT_CARDS_THEME").equals("LIGHT_CARDS_THEME")) {
 			rootView.setBackgroundColor(0xFFEEEEEE);
 			songsListView.setDivider(getResources().getDrawable(R.drawable.transparent_drawable));
 			songsListView.setDividerHeight(10);
-		} else if (sharedPreferences.getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME")) {
+		} else if (sharedPreferences.getString(Common.CURRENT_THEME, "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME")) {
 			rootView.setBackgroundColor(0xFF111111);
 			songsListView.setDivider(getResources().getDrawable(R.drawable.transparent_drawable));
 			songsListView.setDividerHeight(10);
-		} else if (sharedPreferences.getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_THEME")) {
+		} else if (sharedPreferences.getString(Common.CURRENT_THEME, "LIGHT_CARDS_THEME").equals("DARK_THEME")) {
 			songsListView.setDivider(getResources().getDrawable(R.drawable.list_divider));
 			songsListView.setDividerHeight(1);
         } else {

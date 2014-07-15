@@ -14,7 +14,7 @@
 	</item>
 
 	<item 
-	    android:bottom="2dp" >
+	    android:bottom="1dp" >
 		
 		<shape 
 		    android:shape="rectangle"
@@ -27,10 +27,10 @@
 			    android:color="@android:color/white" />
 
 			<padding 
-			    android:bottom="2.5dp"
+			    android:bottom="0dp"
 				android:left="0dp"
 				android:right="0dp"
-				android:top="-2.5dp" />
+				android:top="0dp" />
 		</shape>
 		
 	</item>

@@ -49,7 +49,7 @@
 			 	    android:layout_centerVertical="true" >
 				        
 				</RelativeLayout>
-			 	
+
 			 	<com.velocity.view.pager.library.VelocityViewPager
 			 	    android:id="@+id/nowPlayingPlaylistPager"
 			 	    android:layout_width="match_parent"

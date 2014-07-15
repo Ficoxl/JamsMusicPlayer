@@ -147,21 +147,21 @@ public class GenresFlippedFragment extends Fragment {
         emptyViewText.setPaintFlags(emptyViewText.getPaintFlags() | Paint.ANTI_ALIAS_FLAG | Paint.SUBPIXEL_TEXT_FLAG);
         
         //Set the background color based on the theme.
-  		if (sharedPreferences.getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("LIGHT_CARDS_THEME")) {
+  		if (sharedPreferences.getString(Common.CURRENT_THEME, "LIGHT_CARDS_THEME").equals("LIGHT_CARDS_THEME")) {
   			rootView.setBackgroundColor(0xFFEEEEEE);
   			genresFlippedListView.setDivider(getResources().getDrawable(R.drawable.transparent_drawable));
 			genresFlippedListView.setDividerHeight(3);
 			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
 			layoutParams.setMargins(20, 20, 20, 20);
 			genresFlippedListView.setLayoutParams(layoutParams);
-  		} else if (sharedPreferences.getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME")) {
+  		} else if (sharedPreferences.getString(Common.CURRENT_THEME, "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME")) {
   			rootView.setBackgroundColor(0xFF000000);
   			genresFlippedListView.setDivider(getResources().getDrawable(R.drawable.transparent_drawable));
 			genresFlippedListView.setDividerHeight(3);
 			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
 			layoutParams.setMargins(20, 20, 20, 20);
 			genresFlippedListView.setLayoutParams(layoutParams);
-  		} else if (sharedPreferences.getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_THEME")) {
+  		} else if (sharedPreferences.getString(Common.CURRENT_THEME, "LIGHT_CARDS_THEME").equals("DARK_THEME")) {
 			genresFlippedListView.setDivider(getResources().getDrawable(R.drawable.list_divider));
 			genresFlippedListView.setDividerHeight(1);
         } else {

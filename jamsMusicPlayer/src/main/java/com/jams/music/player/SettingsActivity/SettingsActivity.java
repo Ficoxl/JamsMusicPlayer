@@ -130,8 +130,7 @@ public class SettingsActivity extends PreferenceActivity {
         sharedPreferences = this.getSharedPreferences("com.jams.music.player", Context.MODE_PRIVATE);
     	
     	//Set the UI theme.
-    	if (sharedPreferences.getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_THEME") ||
-    		sharedPreferences.getString("SELECTED_THEME", "LIGHT_CARDS_THEME").equals("DARK_CARDS_THEME")) {
+    	if (mApp.getCurrentTheme()==Common.DARK_THEME) {
     		this.setTheme(R.style.AppThemeNoActionBar);
     	} else {
     		this.setTheme(R.style.AppThemeNoActionBarLight);
