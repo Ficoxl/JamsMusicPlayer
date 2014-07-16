@@ -56,19 +56,17 @@ public class NavigationDrawerLibrariesAdapter extends SimpleCursorAdapter {
 		//Highlight the background view based on the current library.
 		try {
 			int[] colors = UIElementsHelper.getQuickScrollColors(mContext);
+            String allLibraries = mContext.getResources().getString(R.string.all_libraries);
 			if (libraryName.equals(mContext.getResources().getString(R.string.all_libraries)) && 
-					sharedPreferences.getString("CURRENT_LIBRARY", mContext.getResources().getString(R.string.all_libraries)).equals("ALL_LIBRARIES")) {
-					convertView.setBackgroundColor(colors[0]);
-					holder.title.setTextColor(colors[2]);
+					sharedPreferences.getString("CURRENT_LIBRARY", allLibraries).equals("ALL_LIBRARIES")) {
+					holder.title.setTextColor(colors[0]);
 					
 				} else if (libraryName.equals(mContext.getResources().getString(R.string.google_play_music_no_asterisk)) && 
-				    sharedPreferences.getString("CURRENT_LIBRARY", mContext.getResources().getString(R.string.all_libraries)).equals(DBAccessHelper.GMUSIC)) {
-					convertView.setBackgroundColor(colors[0]);
-					holder.title.setTextColor(colors[2]);
+				    sharedPreferences.getString("CURRENT_LIBRARY", allLibraries).equals(DBAccessHelper.GMUSIC)) {
+					holder.title.setTextColor(colors[0]);
 					
-				} else if (libraryName.equals(sharedPreferences.getString("CURRENT_LIBRARY", mContext.getResources().getString(R.string.all_libraries)))) {
-					convertView.setBackgroundColor(colors[0]);
-					holder.title.setTextColor(colors[2]);
+				} else if (libraryName.equals(sharedPreferences.getString("CURRENT_LIBRARY", allLibraries))) {
+					holder.title.setTextColor(colors[0]);
 					
 				}
 			
@@ -82,7 +80,7 @@ public class NavigationDrawerLibrariesAdapter extends SimpleCursorAdapter {
 		
 		holder.title.setText(libraryName);
 
-		holder.title.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Light"));
+		holder.title.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
 		holder.title.setPaintFlags(holder.title.getPaintFlags() | 
 								   Paint.SUBPIXEL_TEXT_FLAG | 
 								   Paint.ANTI_ALIAS_FLAG);

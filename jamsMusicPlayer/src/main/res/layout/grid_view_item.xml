@@ -1,12 +1,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/shadow">
+    android:background="@drawable/shadow" >
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/card_gridview_dark"
         android:id="@+id/gridViewItemLayout" >
 
         <ImageView
@@ -15,15 +14,16 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:adjustViewBounds="true"
+            android:src="@drawable/empty_color_patch"
             android:scaleType="centerCrop" />
 
         <RelativeLayout
+            android:id="@+id/gridViewTextLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/gridViewImage" >
 
             <LinearLayout
-                android:id="@+id/gridViewTextLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -66,7 +66,6 @@
                 android:layout_centerVertical="true"
                 android:layout_alignParentRight="true"
                 android:src="@drawable/ic_action_overflow_light"
-                android:layout_marginRight="5dp"
                 android:scaleX="0.75"
                 android:scaleY="0.75" />
 

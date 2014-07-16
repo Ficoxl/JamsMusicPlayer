@@ -39,7 +39,7 @@
         android:lines="1" 
        	android:ellipsize="end" 
         android:gravity="left"
-        android:text="Google Play Music"
-        android:textAppearance="?android:attr/textAppearanceListItemSmall" />
+        android:text="Library"
+        android:textSize="16sp" />
 
 </RelativeLayout>

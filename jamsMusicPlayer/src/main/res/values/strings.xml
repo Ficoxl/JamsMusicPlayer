@@ -811,5 +811,6 @@
     <string name="title_activity_horizontal_list_sub">HorizontalListSubActivity</string>
     <string name="horiz_list_sub_activity">HorizListSubActivity</string>
     <string name="queue_empty_info">Your current songs queue will appear here when you\'re playing music.</string>
+    <string name="play_all_caps">PLAY ALL</string>
 
 </resources>

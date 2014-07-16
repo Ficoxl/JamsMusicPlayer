@@ -1,55 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/fragment_grid_view_root_container"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:descendantFocusability="beforeDescendants"
 	android:focusableInTouchMode="true" >
 
     <RelativeLayout
-        android:id="@+id/gridViewBgColorFill"
+        android:id="@+id/actionbar_bleed"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true" />
-    
-    <RelativeLayout
-        android:id="@+id/search_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/card_light"
+        android:layout_height="160dp"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:visibility="gone" >
-        
-        <EditText
-            android:id="@+id/search_field"
+        android:background="#0099CC" >
+
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@null"
-            android:padding="15dp"
-            android:layout_centerInParent="true" />
-        
+            android:layout_height="70dp"
+            android:layout_alignParentTop="true" >
+
+            <TextView
+                android:id="@+id/fragment_grid_view_header_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Header Text"
+                android:layout_marginLeft="16dp"
+                android:textSize="18sp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:textColor="#FFFFFF" />
+
+            <TextView
+                android:id="@+id/fragment_grid_view_play_all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/play_all_caps"
+                android:paddingRight="16dp"
+                android:paddingLeft="16dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:layout_marginRight="16dp"
+                android:textSize="12sp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:background="?android:selectableItemBackground"
+                android:textColor="#FFFFFF" />
+
+        </RelativeLayout>
+
     </RelativeLayout>
-    
+
  	<RelativeLayout
         android:id="@+id/fragment_grid_view_frontal_layout"
 	    android:layout_width="match_parent"
-	    android:layout_height="match_parent"
+	    android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="70dp"
         android:layout_marginLeft="6dp"
-        android:layout_marginRight="6dp"
-	    android:layout_below="@+id/search_layout" >
+        android:layout_marginRight="6dp" >
 	    
  	   	<GridView
  	   	    android:id="@+id/generalGridView"
- 	   	    android:layout_width="fill_parent"
+ 	   	    android:layout_width="match_parent"
  	   	    android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
  	   	    android:drawSelectorOnTop="true"
             android:verticalSpacing="3dp"
-            android:horizontalSpacing="3dp"
- 	   	    android:layout_centerInParent="true" />
+            android:horizontalSpacing="3dp" />
  	    
  	    <com.andraskindler.quickscroll.QuickScrollGridView
 			android:id="@+id/quickscrollgrid"
@@ -58,8 +76,8 @@
 			android:layout_alignParentRight="true"
 			android:layout_alignParentTop="true"
 			android:layout_alignParentBottom="true"
-			android:layout_marginTop="20dp"
-			android:layout_marginBottom="20dp"
+			android:layout_marginTop="30dp"
+			android:layout_marginBottom="30dp"
 			android:layout_marginRight="5dp"
 			android:visibility="invisible" />
 	    
@@ -77,5 +95,5 @@
         android:layout_marginRight="25dp"
         android:textColor="#0099CC"
         android:textAppearance="?android:attr/textAppearanceMedium" />
-    
+
 </RelativeLayout>

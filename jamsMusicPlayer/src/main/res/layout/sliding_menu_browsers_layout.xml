@@ -2,10 +2,9 @@
     android:id="@+id/nav_drawer_item_title"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:textAppearance="?android:attr/textAppearanceListItemSmall"
+    android:textSize="16sp"
     android:gravity="center_vertical"
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
-    android:textColor="#fff"
-    android:background="?android:attr/activatedBackgroundIndicator"
-    android:minHeight="70dp"/>
+    android:textColor="#FFFFFF"
+    android:minHeight="64dp"/>

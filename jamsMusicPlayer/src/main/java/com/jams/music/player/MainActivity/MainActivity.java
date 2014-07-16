@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -11,7 +12,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.Menu;
@@ -20,14 +20,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
-import com.jams.music.player.Drawers.QueueDrawerFragment;
-import com.jams.music.player.R;
 import com.jams.music.player.Drawers.NavigationDrawerFragment;
+import com.jams.music.player.Drawers.QueueDrawerFragment;
 import com.jams.music.player.GridViewFragment.GridViewFragment;
 import com.jams.music.player.Helpers.UIElementsHelper;
 import com.jams.music.player.ListViewFragment.ListViewFragment;
+import com.jams.music.player.R;
 import com.jams.music.player.SettingsActivity.SettingsActivity;
 import com.jams.music.player.Utils.Common;
 
@@ -58,6 +57,7 @@ public class MainActivity extends FragmentActivity {
 	public static final String PLAYLISTS_FRAGMENT_LAYOUT = "PlaylistsFragmentLayout";
 	public static final String GENRES_FRAGMENT_LAYOUT = "GenresFragmentLayout";
 	public static final String FOLDERS_FRAGMENT_LAYOUT = "FoldersFragmentLayout";
+    public static final String FRAGMENT_HEADER = "FragmentHeader";
 	public static final int LIST_LAYOUT = 0;
 	public static final int GRID_LAYOUT = 1;
 	
@@ -249,30 +249,37 @@ public class MainActivity extends FragmentActivity {
 		case Common.ARTISTS_FRAGMENT:
 			mCurrentFragmentLayout = mApp.getSharedPreferences().getInt(ARTISTS_FRAGMENT_LAYOUT, GRID_LAYOUT);
 			bundle.putInt(Common.FRAGMENT_ID, Common.ARTISTS_FRAGMENT);
+            bundle.putString(FRAGMENT_HEADER, mContext.getResources().getString(R.string.artists));
 			break;
 		case Common.ALBUM_ARTISTS_FRAGMENT:
 			mCurrentFragmentLayout = mApp.getSharedPreferences().getInt(ALBUM_ARTISTS_FRAGMENT_LAYOUT, GRID_LAYOUT);
 			bundle.putInt(Common.FRAGMENT_ID, Common.ALBUM_ARTISTS_FRAGMENT);
+            bundle.putString(FRAGMENT_HEADER, mContext.getResources().getString(R.string.album_artists));
 			break;
 		case Common.ALBUMS_FRAGMENT:
 			mCurrentFragmentLayout = mApp.getSharedPreferences().getInt(ALBUMS_FRAGMENT_LAYOUT, GRID_LAYOUT);
 			bundle.putInt(Common.FRAGMENT_ID, Common.ALBUMS_FRAGMENT);
+            bundle.putString(FRAGMENT_HEADER, mContext.getResources().getString(R.string.albums));
 			break;
 		case Common.SONGS_FRAGMENT:
 			mCurrentFragmentLayout = LIST_LAYOUT;
 			bundle.putInt(Common.FRAGMENT_ID, Common.SONGS_FRAGMENT);
+            bundle.putString(FRAGMENT_HEADER, mContext.getResources().getString(R.string.songs));
 			break;
 		case Common.PLAYLISTS_FRAGMENT:
 			mCurrentFragmentLayout = mApp.getSharedPreferences().getInt(PLAYLISTS_FRAGMENT_LAYOUT, LIST_LAYOUT);
 			bundle.putInt(Common.FRAGMENT_ID, Common.PLAYLISTS_FRAGMENT);
+            bundle.putString(FRAGMENT_HEADER, mContext.getResources().getString(R.string.playlists));
 			break;
 		case Common.GENRES_FRAGMENT:
 			mCurrentFragmentLayout = mApp.getSharedPreferences().getInt(GENRES_FRAGMENT_LAYOUT, GRID_LAYOUT);
 			bundle.putInt(Common.FRAGMENT_ID, Common.GENRES_FRAGMENT);
+            bundle.putString(FRAGMENT_HEADER, mContext.getResources().getString(R.string.genres));
 			break;
 		case Common.FOLDERS_FRAGMENT:
 			mCurrentFragmentLayout = mApp.getSharedPreferences().getInt(FOLDERS_FRAGMENT_LAYOUT, LIST_LAYOUT);
 			bundle.putInt(Common.FRAGMENT_ID, Common.FOLDERS_FRAGMENT);
+            bundle.putString(FRAGMENT_HEADER, mContext.getResources().getString(R.string.folders));
 			break;
 		}		
 				
@@ -343,23 +350,12 @@ public class MainActivity extends FragmentActivity {
 		MenuInflater inflater = getMenuInflater();
 	    inflater.inflate(R.menu.main_activity, menu);
 	    
-	    //Set the ActionBar drawable.
-	    getActionBar().setBackgroundDrawable(UIElementsHelper.getGeneralActionBarBackground(getApplicationContext()));
-	    
-	    //Set the ActionBar title text color.
-	    int titleId = getResources().getIdentifier("action_bar_title", "id", "android");
-		TextView abTitle = (TextView) findViewById(titleId);
-		
-		if (mApp.getSharedPreferences().getString("NOW_PLAYING_COLOR", "BLUE").equals("WHITE")) 
-			abTitle.setTextColor(0xFF444444);
-		else
-			abTitle.setTextColor(0xFFFFFFFF);
-		
-		if (menu!=null && mApp.getSharedPreferences().getString("NOW_PLAYING_COLOR", "BLUE").equals("WHITE")) {
-			menu.getItem(0).setIcon(getResources().getDrawable(R.drawable.search));
-			menu.getItem(1).setIcon(getResources().getDrawable(R.drawable.queue_drawer));
-		}
-	    
+	    //Set the ActionBar background
+	    getActionBar().setBackgroundDrawable(UIElementsHelper.getGeneralActionBarBackground(mContext));
+        getActionBar().setTitle(null);
+	    getActionBar().setDisplayUseLogoEnabled(true);
+        getActionBar().setLogo(R.drawable.text_logo);
+
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -377,11 +373,11 @@ public class MainActivity extends FragmentActivity {
 		case R.id.action_search:
 			//ArtistsFragment.showSearch();
 			return true;
-	    case R.id.action_settings:
+/*	    case R.id.action_settings:
 	        Intent intent = new Intent(mContext, SettingsActivity.class);
 	        intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 	        startActivity(intent);
-	        return true;
+	        return true;*/
 	    case R.id.action_queue_drawer:
 	    	if (mDrawerLayout!=null && mCurrentQueueDrawerLayout!=null) {
 		    	if (mDrawerLayout.isDrawerOpen(mCurrentQueueDrawerLayout)) {
@@ -392,12 +388,12 @@ public class MainActivity extends FragmentActivity {
 		    	
 	    	}
 	    	return true;
-	    case R.id.action_play_all:
+/*	    case R.id.action_play_all:
 	    	playAll(false);
 	    	return true;
 	    case R.id.action_shuffle_all:
 	    	playAll(true);
-	    	return true;
+	    	return true;*/
 	    default:
 	        return super.onOptionsItemSelected(item);
 	    }

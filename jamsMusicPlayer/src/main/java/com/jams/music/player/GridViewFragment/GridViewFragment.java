@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -44,6 +45,7 @@ import com.jams.music.player.Helpers.PauseOnScrollHelper;
 import com.jams.music.player.Helpers.TypefaceHelper;
 import com.jams.music.player.Helpers.UIElementsHelper;
 import com.jams.music.player.BrowserInnerSubFragment.BrowserInnerSubFragment;
+import com.jams.music.player.MainActivity.MainActivity;
 import com.jams.music.player.R;
 import com.jams.music.player.Utils.Common;
 import com.nhaarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
@@ -61,7 +63,10 @@ public class GridViewFragment extends Fragment {
 	private GridViewFragment mFragment;
 	private Common mApp;
 	private View mRootView;
-    private RelativeLayout mBgColorFillLayout;
+    private RelativeLayout mActionBarBleed;
+    private RelativeLayout mGridViewContainer;
+    private TextView mHeaderText;
+    private TextView mPlayAllText;
 	private int mFragmentId;
 	
 	private QuickScrollGridView mQuickScroll;
@@ -69,9 +74,6 @@ public class GridViewFragment extends Fragment {
 	private HashMap<Integer, String> mDBColumnsMap;
 	private GridView mGridView;
 	private TextView mEmptyTextView;
-	
-	private RelativeLayout mSearchLayout;
-	private EditText mSearchEditText;
 	
 	public Handler mHandler = new Handler();
 	private Cursor mCursor;
@@ -86,35 +88,34 @@ public class GridViewFragment extends Fragment {
 
         //Set the background color and the partial color bleed.
         mRootView.setBackgroundColor(UIElementsHelper.getBackgroundColor(mContext));
-        mBgColorFillLayout = (RelativeLayout) mRootView.findViewById(R.id.gridViewBgColorFill);
-        DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mBgColorFillLayout.getLayoutParams();
-        params.height = (metrics.widthPixels/2);
-        mBgColorFillLayout.setLayoutParams(params);
+        mActionBarBleed = (RelativeLayout) mRootView.findViewById(R.id.actionbar_bleed);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
-            mBgColorFillLayout.setBackground(UIElementsHelper.getGeneralActionBarBackground(mContext));
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN)
+            mActionBarBleed.setBackgroundDrawable(UIElementsHelper.getGeneralActionBarBackground(mContext));
         else
-            mBgColorFillLayout.setBackgroundDrawable(UIElementsHelper.getGeneralActionBarBackground(mContext));
-        
+            mActionBarBleed.setBackground(UIElementsHelper.getGeneralActionBarBackground(mContext));
+
+        //Set the header text.
+        mHeaderText = (TextView) mRootView.findViewById(R.id.fragment_grid_view_header_text);
+        mHeaderText.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
+        mHeaderText.setText(getArguments().getString(MainActivity.FRAGMENT_HEADER));
+
+        /* Style the "PLAY ALL" text.
+        *
+        * NOTE: The "PLAY ALL" text should be replaced by a floating action
+        * button in Android L (API 21). */
+        mPlayAllText = (TextView) mRootView.findViewById(R.id.fragment_grid_view_play_all);
+        mPlayAllText.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Medium"));
+
         //Grab the fragment. This will determine which data to load into the cursor.
         mFragmentId = getArguments().getInt(Common.FRAGMENT_ID);
         mDBColumnsMap = new HashMap<Integer, String>();
-        
-	    //Init the search fields.
-	    mSearchLayout = (RelativeLayout) mRootView.findViewById(R.id.search_layout);
-	    mSearchEditText = (EditText) mRootView.findViewById(R.id.search_field);
-	    
-	    mSearchEditText.setTypeface(TypefaceHelper.getTypeface(mContext, "RobotoCondensed-Regular"));
-	    mSearchEditText.setPaintFlags(mSearchEditText.getPaintFlags() | Paint.ANTI_ALIAS_FLAG | Paint.SUBPIXEL_TEXT_FLAG);
-	    mSearchEditText.setTextColor(UIElementsHelper.getThemeBasedTextColor(mContext));
-	    mSearchEditText.setFocusable(true);
-	    mSearchEditText.setCursorVisible(true);
 	    
         mQuickScroll = (QuickScrollGridView) mRootView.findViewById(R.id.quickscrollgrid);
 
 		//Set the adapter for the outer gridview.
         mGridView = (GridView) mRootView.findViewById(R.id.generalGridView);
+        mGridViewContainer = (RelativeLayout) mRootView.findViewById(R.id.fragment_grid_view_frontal_layout);
         mGridView.setVerticalScrollBarEnabled(false);
 
         //Set the number of gridview columns based on the orientation.
@@ -123,7 +124,7 @@ public class GridViewFragment extends Fragment {
         } else {
             mGridView.setNumColumns(4);
         }
-        
+
         //KitKat translucent navigation/status bar.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
         	int topPadding = Common.getStatusBarHeight(mContext);
@@ -136,12 +137,10 @@ public class GridViewFragment extends Fragment {
             }
             
             mGridView.setClipToPadding(false);
-            mGridView.setPadding(0, topPadding, 0, navigationBarHeight);
-            mQuickScroll.setPadding(0, topPadding, 0, navigationBarHeight);
-            
-            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) mSearchLayout.getLayoutParams();
-            layoutParams.setMargins(15, topPadding + 15, 15, 0);
-            mSearchLayout.setLayoutParams(layoutParams);
+            mGridView.setPadding(0, 0, 0, navigationBarHeight);
+            mHeaderText.setPadding(0, topPadding, 0, 0);
+            mPlayAllText.setPadding(0, topPadding, 0, 0);
+            mQuickScroll.setPadding(0, 0, 0, navigationBarHeight);
             
         }
 
@@ -172,79 +171,18 @@ public class GridViewFragment extends Fragment {
 		}
     	
     };
-    
+
     /**
-     * Displays the search field.
+     * Click listener for the "PLAY ALL" text.
      */
-    private void showSearch() {
-    	mSearchLayout.setVisibility(View.VISIBLE);
-    	final TranslateAnimation searchAnim = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0f, 
-    														   		 Animation.RELATIVE_TO_SELF, 0f, 
-    														   		 Animation.RELATIVE_TO_SELF, -2f, 
-    														   		 Animation.RELATIVE_TO_SELF, 0f);
-    	searchAnim.setDuration(500l);
-    	searchAnim.setInterpolator(new AccelerateDecelerateInterpolator());
-    	
-    	final TranslateAnimation gridListAnim = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0f, 
-		   		 													   Animation.RELATIVE_TO_SELF, 0f, 
-		   		 													   Animation.RELATIVE_TO_SELF, 0f, 
-		   		 													   Animation.RELATIVE_TO_SELF, 2f);
+    private View.OnClickListener playAllClickListener = new View.OnClickListener() {
 
-    	gridListAnim.setDuration(500l);
-    	gridListAnim.setInterpolator(new LinearInterpolator());
-    	
-    	gridListAnim.setAnimationListener(new AnimationListener() {
+        @Override
+        public void onClick(View v) {
 
-			@Override
-			public void onAnimationEnd(Animation animation) {
-				mGridView.setAdapter(null);
-				
-			}
+        }
 
-			@Override
-			public void onAnimationRepeat(Animation animation) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onAnimationStart(Animation animation) {
-				mSearchLayout.startAnimation(searchAnim);
-				mSearchLayout.setVisibility(View.VISIBLE);
-				
-			}
-    		
-    	});
-    	
-    	searchAnim.setAnimationListener(new AnimationListener() {
-
-			@Override
-			public void onAnimationEnd(Animation animation) {
-				if (mSearchEditText.requestFocus()) {
-				    mFragment.getActivity()
-				    		.getWindow()
-				    		.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-				}
-				
-			}
-
-			@Override
-			public void onAnimationRepeat(Animation animation) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onAnimationStart(Animation animation) {
-				// TODO Auto-generated method stub
-				
-			}
-    		
-    	});
-    	
-    	mGridView.startAnimation(gridListAnim);
-    	
-    }
+    };
     
     /**
      * Item click listener for the GridView/ListView.
@@ -379,26 +317,26 @@ public class GridViewFragment extends Fragment {
 					  											  Animation.RELATIVE_TO_SELF, 2.0f,
 					  											  Animation.RELATIVE_TO_SELF, 0.0f);
 
-			animation.setDuration(600);
+			animation.setDuration(150);
 			animation.setInterpolator(new AccelerateDecelerateInterpolator());
 
             mGridViewAdapter = new GridViewCardsAdapter(mContext, mFragment,
                                                         mApp.getOrientation()==Common.ORIENTATION_LANDSCAPE,
                                                         mDBColumnsMap);
-            mGridView.setAdapter(mGridViewAdapter);
+            //mGridView.setAdapter(mGridViewAdapter);
 
             //GridView animation adapter.
-         /* SwingBottomInAnimationAdapter animationAdapter = new SwingBottomInAnimationAdapter(mGridViewAdapter, 100, 150);
+            final SwingBottomInAnimationAdapter animationAdapter = new SwingBottomInAnimationAdapter(mGridViewAdapter, 100, 150);
             animationAdapter.setShouldAnimate(true);
             animationAdapter.setShouldAnimateFromPosition(0);
             animationAdapter.setAbsListView(mGridView);
-            mGridView.setAdapter(animationAdapter); */
+            mGridView.setAdapter(animationAdapter);
 
             //Init the quick scroll widget.
             mQuickScroll.init(QuickScrollGridView.TYPE_INDICATOR_WITH_HANDLE,
-                    mGridView,
-                    (GridViewCardsAdapter) mGridViewAdapter,
-                    QuickScrollGridView.STYLE_HOLO);
+                              mGridView,
+                              (GridViewCardsAdapter) mGridViewAdapter,
+                              QuickScrollGridView.STYLE_HOLO);
 
             int[] quickScrollColors = UIElementsHelper.getQuickScrollColors(mContext);
             PauseOnScrollHelper scrollHelper = new PauseOnScrollHelper(mApp.getPicasso(), null, false, true);
@@ -414,6 +352,7 @@ public class GridViewFragment extends Fragment {
 				@Override
 				public void onAnimationEnd(Animation arg0) {
 					mQuickScroll.setVisibility(View.VISIBLE);
+                    //animationAdapter.setShouldAnimate(false);
 
 				}
 

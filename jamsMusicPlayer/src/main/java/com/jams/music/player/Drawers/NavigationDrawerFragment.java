@@ -6,8 +6,10 @@ import java.util.List;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Paint;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -20,12 +22,14 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.jams.music.player.Helpers.UIElementsHelper;
 import com.jams.music.player.R;
 import com.jams.music.player.FoldersFragment.FilesFoldersFragment;
 import com.jams.music.player.GenresFragment.GenresFragment;
 import com.jams.music.player.Helpers.TypefaceHelper;
 import com.jams.music.player.MainActivity.MainActivity;
 import com.jams.music.player.PlaylistsFragment.PlaylistsFragment;
+import com.jams.music.player.SettingsActivity.SettingsActivity;
 import com.jams.music.player.Utils.Common;
 
 public class NavigationDrawerFragment extends Fragment {
@@ -35,7 +39,6 @@ public class NavigationDrawerFragment extends Fragment {
 	
 	private ListView browsersListView;
 	private ListView librariesListView;
-	private TextView browsersHeaderText;
 	private TextView librariesHeaderText;
 	
 	private Cursor cursor;
@@ -53,30 +56,14 @@ public class NavigationDrawerFragment extends Fragment {
 		mHandler = new Handler();
 
 		View rootView = inflater.inflate(R.layout.navigation_drawer_layout, null);
-		if (mApp.getCurrentTheme()==Common.LIGHT_THEME) {
-			rootView.setBackgroundColor(0xFFFFFFFF);
-		} else {
-			rootView.setBackgroundColor(0xFF191919);
-		}
+		rootView.setBackgroundColor(UIElementsHelper.getBackgroundColor(mContext));
 
 		browsersListView = (ListView) rootView.findViewById(R.id.browsers_list_view);
 		librariesListView = (ListView) rootView.findViewById(R.id.libraries_list_view);
-		browsersHeaderText = (TextView) rootView.findViewById(R.id.browsers_header_text);
 		librariesHeaderText = (TextView) rootView.findViewById(R.id.libraries_header_text);
 		
 		//Set the header text fonts/colors.
-		browsersHeaderText.setTypeface(TypefaceHelper.getTypeface(getActivity(), "RobotoCondensed-Bold"));
-		librariesHeaderText.setTypeface(TypefaceHelper.getTypeface(getActivity(), "RobotoCondensed-Bold"));
-		
-		browsersHeaderText.setPaintFlags(browsersHeaderText.getPaintFlags() 
-										 | Paint.ANTI_ALIAS_FLAG 
-										 | Paint.FAKE_BOLD_TEXT_FLAG 
-										 | Paint.SUBPIXEL_TEXT_FLAG);
-		
-		librariesHeaderText.setPaintFlags(librariesHeaderText.getPaintFlags() 
-										  | Paint.ANTI_ALIAS_FLAG 
-										  | Paint.FAKE_BOLD_TEXT_FLAG 
-										  | Paint.SUBPIXEL_TEXT_FLAG);
+		librariesHeaderText.setTypeface(TypefaceHelper.getTypeface(getActivity(), "Roboto-Regular"));
 		
 		//Apply the Browser ListView's adapter.
 		List<String> titles = Arrays.asList(getActivity().getResources().getStringArray(R.array.sliding_menu_array));
@@ -92,17 +79,24 @@ public class NavigationDrawerFragment extends Fragment {
         librariesListView.setOnItemClickListener(librariesClickListener);
         setListViewHeightBasedOnChildren(librariesListView);
 
-        //Apply the ListViews' dividers.
-        if (mApp.getCurrentTheme()==Common.DARK_THEME) {
-            browsersListView.setDivider(mContext.getResources().getDrawable(R.drawable.list_divider));
-            librariesListView.setDivider(mContext.getResources().getDrawable(R.drawable.list_divider));
-        } else {
-            browsersListView.setDivider(mContext.getResources().getDrawable(R.drawable.list_divider_light));
-            librariesListView.setDivider(mContext.getResources().getDrawable(R.drawable.list_divider_light));
-        }
+        browsersListView.setDividerHeight(0);
+        librariesListView.setDividerHeight(0);
 
-        browsersListView.setDividerHeight(1);
-        librariesListView.setDividerHeight(1);
+/*        //KitKat padding.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            int topPadding = Common.getStatusBarHeight(mContext);
+
+            //Calculate navigation bar height.
+            int navigationBarHeight = 0;
+            int resourceId = getResources().getIdentifier("navigation_bar_height", "dimen", "android");
+            if (resourceId > 0) {
+                navigationBarHeight = getResources().getDimensionPixelSize(resourceId);
+            }
+
+            browsersListView.setClipToPadding(false);
+            browsersListView.setPadding(0, topPadding, 0, navigationBarHeight);
+
+        }*/
 
 		return rootView;
 	}
@@ -159,6 +153,10 @@ public class NavigationDrawerFragment extends Fragment {
 			case 6:
 				((MainActivity) getActivity()).setCurrentFragmentId(Common.FOLDERS_FRAGMENT);
 				break;
+            case 7:
+                Intent intent = new Intent(getActivity(), SettingsActivity.class);
+                startActivity(intent);
+                break;
 			}
 			
 			//Update the adapter to reflect the new fragment.

@@ -8,6 +8,7 @@
         <item>Playlists</item>
         <item>Genres</item>
         <item>Folders</item>
+        <item>Settings</item>
     </string-array>
     
     <string-array name="animations">

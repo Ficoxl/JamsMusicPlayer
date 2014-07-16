@@ -162,7 +162,20 @@ public class UIElementsHelper {
         if (mApp.getCurrentTheme()==Common.DARK_THEME) {
             return 0xFF232323;
         } else {
-            return 0xFFEEEEEE;
+            return 0xFFFFFFFF;
+        }
+
+    }
+
+    /**
+     * Returns a semitransparent color layer that can be used as
+     * background for text that needs to be overlayed on an image.
+     */
+    public static int getSemiTransparentLayerColor(Context context) {
+        if (mApp.getCurrentTheme()==Common.DARK_THEME) {
+            return 0xEE232323;
+        } else {
+            return 0xEEFFFFFF;
         }
 
     }
@@ -303,36 +316,25 @@ public class UIElementsHelper {
 		
 		mApp = (Common) context.getApplicationContext();
 		
-		Drawable drawable = null;
+		Drawable drawable = new ColorDrawable(0xFFB0120A);
 		if (mApp.getSharedPreferences().getString(NOW_PLAYING_COLOR, BLUE).equals(BLUE)) {
 			drawable = new ColorDrawable(0xFF0099CC);
 			
 		} else if (mApp.getSharedPreferences().getString(NOW_PLAYING_COLOR, BLUE).equals(RED)) {
-			drawable = new ColorDrawable(0xFFCC0000);
+			drawable = new ColorDrawable(0xFFB0120A);
 			
 		} else if (mApp.getSharedPreferences().getString(NOW_PLAYING_COLOR, BLUE).equals(GREEN)) {
-			drawable = new ColorDrawable(0xFF669900);
+			drawable = new ColorDrawable(0xFF0A7E07);
 			
 		} else if (mApp.getSharedPreferences().getString(NOW_PLAYING_COLOR, BLUE).equals(ORANGE)) {
-			drawable = new ColorDrawable(0xFFFF8800);
+			drawable = new ColorDrawable(0xFFEF6C00);
 			
 		} else if (mApp.getSharedPreferences().getString(NOW_PLAYING_COLOR, BLUE).equals(PURPLE)) {
-			drawable = new ColorDrawable(0xFF9933CC);
+			drawable = new ColorDrawable(0xFF6A1B9A);
 			
 		} else if (mApp.getSharedPreferences().getString(NOW_PLAYING_COLOR, BLUE).equals(MAGENTA)) {
-			drawable = new ColorDrawable(0xFFCE0059);
+			drawable = new ColorDrawable(0xFFC2185B);
 			
-		} else if (mApp.getSharedPreferences().getString(NOW_PLAYING_COLOR, BLUE).equals(GRAY)) {
-			drawable = new ColorDrawable(0xFFAAAAAA);
-			
-		}  else if (mApp.getSharedPreferences().getString(NOW_PLAYING_COLOR, BLUE).equals(WHITE)) {
-			drawable = context.getResources().getDrawable(R.drawable.ab_solid_light_holo);
-			
-		} else if (mApp.getSharedPreferences().getString(NOW_PLAYING_COLOR, BLUE).equals(BLACK)) {
-			drawable = context.getResources().getDrawable(R.drawable.holo_gray_selector);
-			
-		} else {
-			drawable = context.getResources().getDrawable(R.drawable.holo_gray_selector);
 		}
 		
 		return drawable;
@@ -343,59 +345,43 @@ public class UIElementsHelper {
 	 * Returns an array of color values for the QuickScroll view.
 	 */
 	public static int[] getQuickScrollColors(Context context) {
+
 		int[] colors = new int[3];
+        colors[0] = 0xFFB0120A;
+        colors[1] = 0x99B0120A;
+        colors[2] = Color.WHITE;
 		
 		mApp = (Common) context.getApplicationContext();
-		
 		if (mApp.getSharedPreferences().getString(NOW_PLAYING_COLOR, BLUE).equals(BLUE)) {
 			colors[0] = 0xFF0099CC;
 			colors[1] = 0x990099CC;
 			colors[2] = Color.WHITE;
 			
 		} else if (mApp.getSharedPreferences().getString(NOW_PLAYING_COLOR, BLUE).equals(RED)) {
-			colors[0] = 0xFFCC0000;
-			colors[1] = 0x99CC0000;
+			colors[0] = 0xFFB0120A;
+			colors[1] = 0x99B0120A;
 			colors[2] = Color.WHITE;
 			
 		} else if (mApp.getSharedPreferences().getString(NOW_PLAYING_COLOR, BLUE).equals(GREEN)) {
-			colors[0] = 0xFF669900;
-			colors[1] = 0x99669900;
+			colors[0] = 0xFF0A7E07;
+			colors[1] = 0x990A7E07;
 			colors[2] = Color.WHITE;
 			
 		} else if (mApp.getSharedPreferences().getString(NOW_PLAYING_COLOR, BLUE).equals(ORANGE)) {
-			colors[0] = 0xFFFF8800;
-			colors[1] = 0x99FF8800;
+			colors[0] = 0xFFEF6C00;
+			colors[1] = 0x99EF6C00;
 			colors[2] = Color.WHITE;
 			
 		} else if (mApp.getSharedPreferences().getString(NOW_PLAYING_COLOR, BLUE).equals(PURPLE)) {
-			colors[0] = 0xFF9933CC;
-			colors[1] = 0x999933CC;
+			colors[0] = 0xFF6A1B9A;
+			colors[1] = 0x996A1B9A;
 			colors[2] = Color.WHITE;
 			
 		} else if (mApp.getSharedPreferences().getString(NOW_PLAYING_COLOR, BLUE).equals(MAGENTA)) {
-			colors[0] = 0xFFCE0059;
-			colors[1] = 0x99CE0059;
+			colors[0] = 0xFFC2185B;
+			colors[1] = 0x99C2185B;
 			colors[2] = Color.WHITE;
 			
-		} else if (mApp.getSharedPreferences().getString(NOW_PLAYING_COLOR, BLUE).equals(GRAY)) {
-			colors[0] = 0xFFAAAAAA;
-			colors[1] = 0x99AAAAAA;
-			colors[2] = Color.WHITE;
-			
-		}  else if (mApp.getSharedPreferences().getString(NOW_PLAYING_COLOR, BLUE).equals(WHITE)) {
-			colors[0] = 0xFF8C8C8C;
-			colors[1] = 0x998C8C8C;
-			colors[2] = Color.BLACK;
-			
-		} else if (mApp.getSharedPreferences().getString(NOW_PLAYING_COLOR, BLUE).equals(BLACK)) {
-			colors[0] = 0xFF000000;
-			colors[1] = 0x99000000;
-			colors[2] = Color.WHITE;
-			
-		} else {
-			colors[0] = 0xFFC4C4C4;
-			colors[1] = 0x99C4C4C4;
-			colors[2] = Color.BLACK;
 		}
 		
 		return colors;

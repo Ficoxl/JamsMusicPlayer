@@ -43,45 +43,33 @@ public class NavigationDrawerAdapter extends ArrayAdapter<String> {
 		    holder = (SongsListViewHolder) convertView.getTag();
 		}
 
-		holder.title.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Light"));
-		holder.title.setPaintFlags(holder.title.getPaintFlags()
-								   | Paint.ANTI_ALIAS_FLAG
-								   | Paint.SUBPIXEL_TEXT_FLAG);		
-		
+		holder.title.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
 		holder.title.setText(mTitlesList.get(position));
 		holder.title.setTextColor(UIElementsHelper.getThemeBasedTextColor(mContext));
 		
 		//Highlight the current browser.
 		int[] colors = UIElementsHelper.getQuickScrollColors(mContext);
-		
 		if (MainActivity.mCurrentFragmentId==Common.ARTISTS_FRAGMENT && 
 			mTitlesList.get(position).equals(mContext.getResources().getString(R.string.artists))) {
-			convertView.setBackgroundColor(colors[0]);
-			holder.title.setTextColor(colors[2]);
+			holder.title.setTextColor(colors[0]);
 		} else if (MainActivity.mCurrentFragmentId==Common.ALBUM_ARTISTS_FRAGMENT &&
 				   mTitlesList.get(position).equals(mContext.getResources().getString(R.string.album_artists))) {
-			convertView.setBackgroundColor(colors[0]);
-			holder.title.setTextColor(colors[2]);
+			holder.title.setTextColor(colors[0]);
 		} else if (MainActivity.mCurrentFragmentId==Common.ALBUMS_FRAGMENT &&
 				   mTitlesList.get(position).equals(mContext.getResources().getString(R.string.albums))) {
-			convertView.setBackgroundColor(colors[0]);
-			holder.title.setTextColor(colors[2]);
+			holder.title.setTextColor(colors[0]);
 		} else if (MainActivity.mCurrentFragmentId==Common.SONGS_FRAGMENT &&
 				   mTitlesList.get(position).equals(mContext.getResources().getString(R.string.songs))) {
-			convertView.setBackgroundColor(colors[0]);
-			holder.title.setTextColor(colors[2]);
+			holder.title.setTextColor(colors[0]);
 		} else if (MainActivity.mCurrentFragmentId==Common.PLAYLISTS_FRAGMENT &&
 				   mTitlesList.get(position).equals(mContext.getResources().getString(R.string.playlists))) {
-			convertView.setBackgroundColor(colors[0]);
-			holder.title.setTextColor(colors[2]);
+			holder.title.setTextColor(colors[0]);
 		} else if (MainActivity.mCurrentFragmentId==Common.GENRES_FRAGMENT &&
 				   mTitlesList.get(position).equals(mContext.getResources().getString(R.string.genres))) {
-			convertView.setBackgroundColor(colors[0]);
-			holder.title.setTextColor(colors[2]);
+			holder.title.setTextColor(colors[0]);
 		} else if (MainActivity.mCurrentFragmentId==Common.FOLDERS_FRAGMENT &&
 				   mTitlesList.get(position).equals(mContext.getResources().getString(R.string.folders))) {
-			convertView.setBackgroundColor(colors[0]);
-			holder.title.setTextColor(colors[2]);
+			holder.title.setTextColor(colors[0]);
 		}
 		
 		return convertView;

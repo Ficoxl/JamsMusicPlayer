@@ -123,7 +123,7 @@ public class GridViewCardsAdapter extends SimpleCursorAdapter implements Scrolla
             convertView = LayoutInflater.from(mContext).inflate(R.layout.grid_view_item, parent, false);
 
             mHolder.background = (RelativeLayout) convertView.findViewById(R.id.gridViewItemLayout);
-            mHolder.textLayout = (LinearLayout) convertView.findViewById(R.id.gridViewTextLayout);
+            mHolder.textLayout = (RelativeLayout) convertView.findViewById(R.id.gridViewTextLayout);
 			mHolder.gridViewArt = (ImageView) convertView.findViewById(R.id.gridViewImage);
 			mHolder.titleText = (TextView) convertView.findViewById(R.id.gridViewTitleText);
             mHolder.subText = (TextView) convertView.findViewById(R.id.gridViewSubText);
@@ -139,7 +139,8 @@ public class GridViewCardsAdapter extends SimpleCursorAdapter implements Scrolla
 			
 	        mHolder.gridViewArt.setScaleType(ImageView.ScaleType.CENTER_CROP);
             mHolder.gridViewArt.setImageResource(UIElementsHelper.getEmptyColorPatch(mContext));
-            mHolder.background.setBackgroundColor(UIElementsHelper.getGridViewBackground(mContext));
+            //mHolder.textLayout.setBackgroundColor(UIElementsHelper.getGridViewBackground(mContext));
+            //mHolder.overflowButton.setBackgroundColor(UIElementsHelper.getGridViewBackground(mContext));
             mHolder.titleText.setTextColor(UIElementsHelper.getThemeBasedTextColor(mContext));
             mHolder.subText.setTextColor(UIElementsHelper.getSmallTextColor(mContext));
 
@@ -326,7 +327,7 @@ public class GridViewCardsAdapter extends SimpleCursorAdapter implements Scrolla
 	    public TextView titleText;
         public TextView subText;
 	    public RelativeLayout background;
-	    public LinearLayout textLayout;
+	    public RelativeLayout textLayout;
         public ImageButton overflowButton;
 
 	}
