@@ -35,9 +35,11 @@ public class NavigationDrawerLibrariesAdapter extends SimpleCursorAdapter {
 		if (convertView == null) {
 			convertView = LayoutInflater.from(mContext).inflate(R.layout.sliding_menu_list_layout, parent, false);
 			holder = new LibrariesListViewHolder();
-			holder.browserIcon = (ImageView) convertView.findViewById(R.id.sliding_menu_list_icon);
 			holder.tagColor = (ImageView) convertView.findViewById(R.id.sliding_menu_libraries_icon);
+
 			holder.title = (TextView) convertView.findViewById(R.id.sliding_menu_list_item);
+            holder.title.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
+            holder.title.setTextColor(UIElementsHelper.getThemeBasedTextColor(mContext));
 			convertView.setTag(holder);
 		} else {
 		    holder = (LibrariesListViewHolder) convertView.getTag();
@@ -49,9 +51,6 @@ public class NavigationDrawerLibrariesAdapter extends SimpleCursorAdapter {
 		
 		//Construct the library color tag drawable from the given color code string.
 		int colorCodeDrawableID = mContext.getResources().getIdentifier(libraryColorCode, "drawable", mContext.getPackageName());
-		
-		//Set the library name.
-		holder.title.setTextColor(UIElementsHelper.getThemeBasedTextColor(mContext));
 		
 		//Highlight the background view based on the current library.
 		try {
@@ -80,21 +79,12 @@ public class NavigationDrawerLibrariesAdapter extends SimpleCursorAdapter {
 		
 		holder.title.setText(libraryName);
 
-		holder.title.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
-		holder.title.setPaintFlags(holder.title.getPaintFlags() | 
-								   Paint.SUBPIXEL_TEXT_FLAG | 
-								   Paint.ANTI_ALIAS_FLAG);
-		
-		holder.tagColor.setVisibility(View.VISIBLE);
-		holder.browserIcon.setVisibility(View.INVISIBLE);
 		holder.tagColor.setImageResource(colorCodeDrawableID);
-        
 		return convertView;
 	}
 
 	static class LibrariesListViewHolder {
 	    public ImageView tagColor;
-	    public ImageView browserIcon;
 	    public TextView title;
 	}
 	

@@ -160,7 +160,7 @@ public class UIElementsHelper {
      */
     public static int getGridViewBackground(Context context) {
         if (mApp.getCurrentTheme()==Common.DARK_THEME) {
-            return 0xFF232323;
+            return 0xFF131313;
         } else {
             return 0xFFFFFFFF;
         }
@@ -254,61 +254,6 @@ public class UIElementsHelper {
 		return hexColor;
 	}
 
-    /**
-     * Returns the opposite ColorDrawable (complementary color) of the current
-     * ActionBar color. The commented object assignments are the original
-     * ActionBar colors.
-     */
-    public static Drawable getComplementaryActionBarBackground(Context context) {
-
-        mApp = (Common) context.getApplicationContext();
-
-        Drawable drawable = null;
-        if (mApp.getSharedPreferences().getString(NOW_PLAYING_COLOR, BLUE).equals(BLUE)) {
-            //drawable = new ColorDrawable(0xFF0099CC);
-            drawable = new ColorDrawable(0xFFFF8800);
-
-        } else if (mApp.getSharedPreferences().getString(NOW_PLAYING_COLOR, BLUE).equals(RED)) {
-            //drawable = new ColorDrawable(0xFFCC0000);
-            drawable = new ColorDrawable(0xFF669900);
-
-        } else if (mApp.getSharedPreferences().getString(NOW_PLAYING_COLOR, BLUE).equals(GREEN)) {
-            //drawable = new ColorDrawable(0xFF669900);
-            drawable = new ColorDrawable(0xFFCC0000);
-
-        } else if (mApp.getSharedPreferences().getString(NOW_PLAYING_COLOR, BLUE).equals(ORANGE)) {
-            //drawable = new ColorDrawable(0xFFFF8800);
-            drawable = new ColorDrawable(0xFF0099CC);
-
-        } else if (mApp.getSharedPreferences().getString(NOW_PLAYING_COLOR, BLUE).equals(PURPLE)) {
-            //drawable = new ColorDrawable(0xFF9933CC);
-            drawable = new ColorDrawable(0xFF65CC32);
-
-        } else if (mApp.getSharedPreferences().getString(NOW_PLAYING_COLOR, BLUE).equals(MAGENTA)) {
-            //drawable = new ColorDrawable(0xFFCE0059);
-            drawable = new ColorDrawable(0xFF0099CC);
-
-        } else if (mApp.getSharedPreferences().getString(NOW_PLAYING_COLOR, BLUE).equals(GRAY)) {
-            //drawable = new ColorDrawable(0xFFAAAAAA);
-            drawable = new ColorDrawable(0xFFFFFFFF);
-
-        }  else if (mApp.getSharedPreferences().getString(NOW_PLAYING_COLOR, BLUE).equals(WHITE)) {
-            //drawable = context.getResources().getDrawable(R.drawable.ab_solid_light_holo);
-            drawable = context.getResources().getDrawable(R.drawable.holo_gray_selector);
-
-        } else if (mApp.getSharedPreferences().getString(NOW_PLAYING_COLOR, BLUE).equals(BLACK)) {
-            //drawable = context.getResources().getDrawable(R.drawable.holo_gray_selector);
-            drawable = context.getResources().getDrawable(R.drawable.ab_solid_light_holo);
-
-        } else {
-            //drawable = context.getResources().getDrawable(R.drawable.holo_gray_selector);
-            drawable = context.getResources().getDrawable(R.drawable.ab_solid_light_holo);
-        }
-
-        return drawable;
-
-    }
-	
 	/**
 	 * Returns the ActionBar color based on the selected color theme (not used for the player).
 	 */

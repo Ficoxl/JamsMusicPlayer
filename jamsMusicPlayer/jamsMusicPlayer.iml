@@ -73,6 +73,8 @@
     <orderEntry type="library" exported="" name="dashclock-api-r2.0" level="project" />
     <orderEntry type="library" exported="" name="support-v4-20.0.0" level="project" />
     <orderEntry type="library" exported="" name="commons-lang3-3.1" level="project" />
+    <orderEntry type="library" exported="" name="1_renderscript-v8" level="project" />
+    <orderEntry type="library" exported="" name="renderscript-v8" level="project" />
     <orderEntry type="library" exported="" name="google-http-client-android-1.16.0-rc" level="project" />
     <orderEntry type="library" exported="" name="commons-logging" level="project" />
     <orderEntry type="library" exported="" name="play-services-5.0.77" level="project" />

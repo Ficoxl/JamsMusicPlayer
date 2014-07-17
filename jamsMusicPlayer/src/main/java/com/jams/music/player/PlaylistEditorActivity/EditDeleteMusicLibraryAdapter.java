@@ -34,9 +34,9 @@ public class EditDeleteMusicLibraryAdapter extends SimpleCursorAdapter {
 		if (convertView == null) {
 			convertView = LayoutInflater.from(mContext).inflate(R.layout.sliding_menu_list_layout, parent, false);
 			holder = new LibrariesListViewHolder();
-			holder.browserIcon = (ImageView) convertView.findViewById(R.id.sliding_menu_list_icon);
 			holder.tagColor = (ImageView) convertView.findViewById(R.id.sliding_menu_libraries_icon);
 			holder.title = (TextView) convertView.findViewById(R.id.sliding_menu_list_item);
+            holder.title.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
 			convertView.setTag(holder);
 		} else {
 		    holder = (LibrariesListViewHolder) convertView.getTag();
@@ -55,14 +55,6 @@ public class EditDeleteMusicLibraryAdapter extends SimpleCursorAdapter {
 		
 		//Set the library name.
 		holder.title.setText(libraryName);
-
-		holder.title.setTypeface(TypefaceHelper.getTypeface(mContext, "RobotoCondensed-Light"));
-		holder.title.setPaintFlags(holder.title.getPaintFlags() | 
-								   Paint.SUBPIXEL_TEXT_FLAG | 
-								   Paint.ANTI_ALIAS_FLAG);
-		
-		holder.tagColor.setVisibility(View.VISIBLE);
-		holder.browserIcon.setVisibility(View.INVISIBLE);
 		holder.tagColor.setImageResource(colorCodeDrawableID);
         
 		return convertView;
@@ -70,7 +62,6 @@ public class EditDeleteMusicLibraryAdapter extends SimpleCursorAdapter {
 
 	static class LibrariesListViewHolder {
 	    public ImageView tagColor;
-	    public ImageView browserIcon;
 	    public TextView title;
 	}
 	

@@ -34,6 +34,19 @@
         <item name="android:windowContentOverlay">@null</item>
     </style>
 
+    <style name="NowPlayingTheme" parent="android:Theme.Holo.NoActionBar.TranslucentDecor">
+        <item name="android:actionBarItemBackground">@drawable/selectable_background_apptheme</item>
+        <item name="android:actionBarTabStyle">@style/ActionBarTabStyle.Apptheme</item>
+        <item name="android:actionDropDownStyle">@style/DropDownNav.Apptheme</item>
+        <item name="android:actionBarStyle">@style/ActionBar.Solid.Apptheme</item>
+        <item name="android:actionModeBackground">@drawable/cab_background_top_apptheme</item>
+        <item name="android:actionModeSplitBackground">@drawable/cab_background_bottom_apptheme</item>
+        <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Apptheme</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">false</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
     <style name="AppThemeNoTranslucentNav" parent="android:Theme.Holo">
         <item name="android:actionBarItemBackground">@drawable/selectable_background_apptheme</item>
         <item name="android:actionBarTabStyle">@style/ActionBarTabStyle.Apptheme</item>
@@ -108,6 +121,19 @@
     	<item name="android:windowIsFloating">true</item>
     	<item name="android:backgroundDimEnabled">false</item>
   	</style>
+
+    <style name="AppThemeNoActionBar" parent="android:Theme.Holo.NoActionBar.TranslucentDecor">
+        <item name="android:actionBarItemBackground">@drawable/selectable_background_apptheme</item>
+        <item name="android:actionBarTabStyle">@style/ActionBarTabStyle.Apptheme</item>
+        <item name="android:actionDropDownStyle">@style/DropDownNav.Apptheme</item>
+        <item name="android:actionBarStyle">@style/ActionBar.Solid.Apptheme</item>
+        <item name="android:actionModeBackground">@drawable/cab_background_top_apptheme</item>
+        <item name="android:actionModeSplitBackground">@drawable/cab_background_bottom_apptheme</item>
+        <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Apptheme</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
   	
 	<!-- Application Theme (Light) -->
 	<style name="AppThemeLight" parent="@android:style/Theme.Holo.Light">
@@ -121,6 +147,20 @@
         <item name="android:windowTranslucentStatus">true</item>
 		<item name="android:windowTranslucentNavigation">true</item>
 		<item name="android:windowContentOverlay">@null</item>
+
+    </style>
+
+    <style name="NowPlayingThemeLight" parent="@android:style/Theme.Holo.Light.NoActionBar.TranslucentDecor">
+        <item name="android:actionBarItemBackground">@drawable/selectable_background_apptheme</item>
+        <item name="android:actionBarTabStyle">@style/ActionBarTabStyle.Apptheme</item>
+        <item name="android:actionDropDownStyle">@style/DropDownNav.Apptheme</item>
+        <item name="android:actionBarStyle">@style/ActionBar.Solid.Apptheme</item>
+        <item name="android:actionModeBackground">@drawable/cab_background_top_apptheme</item>
+        <item name="android:actionModeSplitBackground">@drawable/cab_background_bottom_apptheme</item>
+        <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Apptheme</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">false</item>
+        <item name="android:windowContentOverlay">@null</item>
 
     </style>
     
@@ -176,18 +216,23 @@
         <item name="android:background">@drawable/btn_cab_done_appthemelight</item>
     </style>
 
+    <style name="AppThemeLightNoActionBar" parent="android:Theme.Holo.Light.NoActionBar.TranslucentDecor">
+        <item name="android:actionBarItemBackground">@drawable/selectable_background_apptheme</item>
+        <item name="android:actionBarTabStyle">@style/ActionBarTabStyle.Apptheme</item>
+        <item name="android:actionDropDownStyle">@style/DropDownNav.Apptheme</item>
+        <item name="android:actionBarStyle">@style/ActionBar.Solid.Apptheme</item>
+        <item name="android:actionModeBackground">@drawable/cab_background_top_apptheme</item>
+        <item name="android:actionModeSplitBackground">@drawable/cab_background_bottom_apptheme</item>
+        <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Apptheme</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
     <!-- this style is only referenced in a Light.DarkActionBar based theme -->
     <style name="Theme.Appthemelight.Widget" parent="@android:style/Theme.Holo">
         <item name="android:popupMenuStyle">@style/PopupMenu.Appthemelight</item>
         <item name="android:dropDownListViewStyle">@style/DropDownListView.Appthemelight</item>
-    </style>
-	
-  	<style name="AppThemeNoActionBar" parent="android:Theme.Holo.NoActionBar">
-        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
-    </style>
-    
-    <style name="AppThemeNoActionBarLight" parent="android:Theme.Holo.Light.NoActionBar">
-        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
     
     <!-- Notification bar actions -->

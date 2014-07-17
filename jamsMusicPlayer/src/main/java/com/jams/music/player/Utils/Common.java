@@ -483,7 +483,7 @@ public class Common extends Application {
     }
     
     /*
-     * UI Elements Provider.
+     * Returns the status bar height for the current layout configuration.
      */
     public static int getStatusBarHeight(Context context) {
     	int result = 0;
@@ -494,6 +494,20 @@ public class Common extends Application {
     	
     	return result;
     }
+
+    /*
+     * Returns the navigation bar height for the current layout configuration.
+     */
+    public static int getNavigationBarHeight(Context context) {
+        Resources resources = context.getResources();
+        int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            return resources.getDimensionPixelSize(resourceId);
+        }
+
+        return 0;
+    }
+
 	
     /*
      * Download Manager implementation for pinning songs.

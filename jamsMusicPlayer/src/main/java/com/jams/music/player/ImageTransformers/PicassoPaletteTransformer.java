@@ -1,4 +1,4 @@
-package com.jams.music.player.Utils;
+package com.jams.music.player.ImageTransformers;
 
 import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
@@ -8,13 +8,13 @@ import android.view.View;
 
 import com.squareup.picasso.Transformation;
 
-public class PicassoPaletteTransformation implements Transformation {
+public class PicassoPaletteTransformer implements Transformation {
 
     View mView;
     ColorDrawable bgDrawable;
     String mId;
 
-    public PicassoPaletteTransformation(View view, String id) {
+    public PicassoPaletteTransformer(View view, String id) {
         mView = view;
         mId = id;
     }

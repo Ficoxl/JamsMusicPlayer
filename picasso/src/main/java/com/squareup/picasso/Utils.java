@@ -287,8 +287,8 @@ final class Utils {
     if (largeHeap && SDK_INT >= HONEYCOMB) {
       memoryClass = ActivityManagerHoneycomb.getLargeMemoryClass(am);
     }
-    // Target ~15% of the available heap.
-    return 1024 * 1024 * memoryClass / 7;
+    // Target ~33% of the available heap.
+    return 1024 * 1024 * memoryClass / 3;
   }
 
   static boolean isAirplaneModeOn(Context context) {

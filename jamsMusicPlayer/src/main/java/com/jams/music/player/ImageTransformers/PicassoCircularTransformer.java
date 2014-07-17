@@ -1,4 +1,4 @@
-package com.jams.music.player.Utils;
+package com.jams.music.player.ImageTransformers;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
@@ -7,7 +7,7 @@ import android.graphics.Paint;
 
 import com.squareup.picasso.Transformation;
 
-public class PicassoCircularTransformation implements Transformation {
+public class PicassoCircularTransformer implements Transformation {
 
     @Override
     public Bitmap transform(Bitmap source) {

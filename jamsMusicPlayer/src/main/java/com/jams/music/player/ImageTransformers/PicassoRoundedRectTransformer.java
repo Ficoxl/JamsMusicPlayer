@@ -1,4 +1,4 @@
-package com.jams.music.player.Utils;
+package com.jams.music.player.ImageTransformers;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
@@ -9,14 +9,14 @@ import android.graphics.Shader;
 
 import com.squareup.picasso.Transformation;
 
-public class PicassoRoundedRectTransformation implements com.squareup.picasso.Transformation {
+public class PicassoRoundedRectTransformer implements com.squareup.picasso.Transformation {
     private final int radius;
     private final int margin;  // dp
     private String key;
 
     // radius is corner radii in dp
     // margin is the board in dp
-    public PicassoRoundedRectTransformation(final int radius, final int margin) {
+    public PicassoRoundedRectTransformer(final int radius, final int margin) {
         this.radius = radius;
         this.margin = margin;
         this.key = "rounded(radius=" + radius + ", margin=" + margin + ")";

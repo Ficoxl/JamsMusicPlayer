@@ -84,7 +84,7 @@ public final class R {
 		public static final int default_title_indicator_top_padding = 0x7f0b0020;
 	}
 	public static final class drawable {
-		public static final int ic_launcher = 0x7f0200e7;
+		public static final int ic_launcher = 0x7f0200e5;
 		public static final int vpi__tab_indicator = 0x7f0201a9;
 		public static final int vpi__tab_selected_focused_holo = 0x7f0201aa;
 		public static final int vpi__tab_selected_holo = 0x7f0201ab;
@@ -113,11 +113,11 @@ public final class R {
 	public static final class style {
 		public static final int AppBaseTheme = 0x7f0e0008;
 		public static final int AppTheme = 0x7f0e0009;
-		public static final int TextAppearance_TabPageIndicator = 0x7f0e001f;
-		public static final int Theme_PageIndicatorDefaults = 0x7f0e0023;
-		public static final int Widget = 0x7f0e0028;
-		public static final int Widget_IconPageIndicator = 0x7f0e0029;
-		public static final int Widget_TabPageIndicator = 0x7f0e002a;
+		public static final int TextAppearance_TabPageIndicator = 0x7f0e0021;
+		public static final int Theme_PageIndicatorDefaults = 0x7f0e0025;
+		public static final int Widget = 0x7f0e002a;
+		public static final int Widget_IconPageIndicator = 0x7f0e002b;
+		public static final int Widget_TabPageIndicator = 0x7f0e002c;
 	}
 	public static final class styleable {
 		public static final int[] VelocityCirclePageIndicator = { 0x010100c4, 0x010100d4, 0x7f010000, 0x7f010002, 0x7f010031, 0x7f010032, 0x7f010033, 0x7f010034, 0x7f010035 };

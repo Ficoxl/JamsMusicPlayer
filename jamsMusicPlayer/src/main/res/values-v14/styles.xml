@@ -32,6 +32,17 @@
         <item name="android:windowContentOverlay">@null</item>
     </style>
 
+    <style name="NowPlayingTheme" parent="android:Theme.Holo.NoActionBar">
+        <item name="android:actionBarItemBackground">@drawable/selectable_background_apptheme</item>
+        <item name="android:actionBarTabStyle">@style/ActionBarTabStyle.Apptheme</item>
+        <item name="android:actionDropDownStyle">@style/DropDownNav.Apptheme</item>
+        <item name="android:actionBarStyle">@style/ActionBar.Solid.Apptheme</item>
+        <item name="android:actionModeBackground">@drawable/cab_background_top_apptheme</item>
+        <item name="android:actionModeSplitBackground">@drawable/cab_background_bottom_apptheme</item>
+        <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Apptheme</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
     <style name="ActionBar.Solid.Apptheme" parent="@android:style/Widget.Holo.ActionBar.Solid">
         <item name="android:background">@drawable/ab_background_textured_apptheme</item>
         <item name="android:backgroundStacked">@drawable/ab_stacked_solid_apptheme</item>
@@ -96,6 +107,17 @@
   	
 	<!-- Application Theme (Light) -->
 	<style name="AppThemeLight" parent="@android:style/Theme.Holo.Light">
+        <item name="android:actionBarItemBackground">@drawable/selectable_background_appthemelight</item>
+        <item name="android:actionBarTabStyle">@style/ActionBarTabStyle.Appthemelight</item>
+        <item name="android:actionBarStyle">@style/ActionBar.Solid.Appthemelight</item>
+        <item name="android:actionModeBackground">@drawable/cab_background_top_appthemelight</item>
+        <item name="android:actionModeSplitBackground">@drawable/cab_background_bottom_appthemelight</item>
+        <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Appthemelight</item>
+        <item name="android:windowContentOverlay">@null</item>
+
+    </style>
+
+    <style name="NowPlayingThemeLight" parent="@android:style/Theme.Holo.Light.NoActionBar">
         <item name="android:actionBarItemBackground">@drawable/selectable_background_appthemelight</item>
         <item name="android:actionBarTabStyle">@style/ActionBarTabStyle.Appthemelight</item>
         <item name="android:actionBarStyle">@style/ActionBar.Solid.Appthemelight</item>

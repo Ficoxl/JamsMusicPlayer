@@ -1,31 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingTop="15dp"
-    android:paddingBottom="15dp" >
-
-    <ImageView
-        android:id="@+id/sliding_menu_list_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:scaleX="0.75"
-        android:scaleY="0.75"
-        android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true" 
-        android:layout_marginLeft="10dp"
-        android:src="@drawable/genres"/>
+    android:layout_height="64dp" >
     
     <ImageView
         android:id="@+id/sliding_menu_libraries_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:scaleX="0.5"
-        android:scaleY="0.5"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"
         android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true" 
-        android:layout_marginLeft="10dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="16dp"
         android:src="@drawable/circle_yellow_dark"/>
 
     <TextView
@@ -33,13 +19,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="10dp"
-        android:layout_toRightOf="@+id/sliding_menu_list_icon"
+        android:layout_toRightOf="@+id/sliding_menu_libraries_icon"
         android:layout_marginRight="5dp"
-        android:lines="1" 
-       	android:ellipsize="end" 
+        android:singleLine="true"
+       	android:ellipsize="marquee"
         android:gravity="left"
         android:text="Library"
+        android:layout_marginLeft="16dp"
         android:textSize="16sp" />
 
 </RelativeLayout>

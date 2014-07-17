@@ -2,7 +2,6 @@ package com.jams.music.player.ListViewFragment;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SimpleCursorAdapter;
@@ -27,7 +26,7 @@ import com.jams.music.player.Helpers.TypefaceHelper;
 import com.jams.music.player.Helpers.UIElementsHelper;
 import com.jams.music.player.R;
 import com.jams.music.player.Utils.Common;
-import com.jams.music.player.Utils.PicassoCircularTransformation;
+import com.jams.music.player.ImageTransformers.PicassoCircularTransformer;
 
 import java.util.HashMap;
 
@@ -180,7 +179,7 @@ public class ListViewCardsAdapter extends SimpleCursorAdapter implements Scrolla
 
 		//Load the album art.
         mApp.getPicasso().load(artworkPath)
-                         .transform(new PicassoCircularTransformation())
+                         .transform(new PicassoCircularTransformer())
                          .placeholder(UIElementsHelper.getEmptyCircularColorPatch(mContext))
                          .resizeDimen(R.dimen.list_view_left_icon_size, R.dimen.list_view_left_icon_size)
                          .into(mHolder.leftImage);

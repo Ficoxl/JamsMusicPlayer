@@ -8,6 +8,10 @@ android {
         applicationId "com.jams.music.player"
         minSdkVersion 14
         targetSdkVersion 19
+
+        //RenderScript backward compatibility for guassian blurs.
+        renderscriptTargetApi 19
+        renderscriptSupportMode true
     }
 
     buildTypes {
@@ -32,7 +36,7 @@ repositories {
 }
 
 dependencies {
-    //Project libraries with source code.
+
     compile project(':licensesdialoglibrary')
     compile project(':quickScroll')
     compile project(':velocityviewpagerlibrary')
@@ -41,7 +45,6 @@ dependencies {
     compile project(':circularImageView')
     compile project(':picasso')
     compile project(':fadingActionBar')
-    //JAR file libraries.
     compile files('libs/android-async-http-1.4.2-66-g4b6eb97.jar')
     compile files('libs/commons-io-2.4.jar')
     compile files('libs/commons-lang3-3.1.jar')
@@ -52,9 +55,9 @@ dependencies {
     compile files('libs/jaudiotagger-2.0.4-20111207.115108-15.jar')
     compile files('libs/libGoogleAnalyticsServices.jar')
     compile files('libs/universal-image-loader-1.9.2-with-sources.jar')
-    //Maven libraries.
-    compile 'com.android.support:support-v4:+'
-    compile 'com.google.android.gms:play-services:+'
     compile files('libs/com.haarman.listviewanimations-2.6.0.jar')
     compile files('libs/nineoldandroids-2.4.0.jar')
+    compile files('libs/renderscript-v8.jar')
+    compile 'com.android.support:support-v4:+'
+    compile 'com.google.android.gms:play-services:+'
 }

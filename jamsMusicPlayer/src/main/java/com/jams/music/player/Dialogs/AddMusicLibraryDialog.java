@@ -46,8 +46,7 @@ public class AddMusicLibraryDialog extends DialogFragment {
 			public void onClick(View v) {
 				
 				//Create a new array with a list of all the library labels.
-				final Drawable[] labelsArray = { getActivity().getResources().getDrawable(R.drawable.circle_black),
-											   	 getActivity().getResources().getDrawable(R.drawable.circle_blue_dark), 
+				final Drawable[] labelsArray = { getActivity().getResources().getDrawable(R.drawable.circle_blue_dark),
 											   	 getActivity().getResources().getDrawable(R.drawable.circle_blue_light),
 											   	 getActivity().getResources().getDrawable(R.drawable.circle_green_dark),
 											   	 getActivity().getResources().getDrawable(R.drawable.circle_green_light),
@@ -55,13 +54,11 @@ public class AddMusicLibraryDialog extends DialogFragment {
 											   	 getActivity().getResources().getDrawable(R.drawable.circle_purple_light),
 											   	 getActivity().getResources().getDrawable(R.drawable.circle_red_dark),
 											   	 getActivity().getResources().getDrawable(R.drawable.circle_red_light),
-											   	 getActivity().getResources().getDrawable(R.drawable.circle_white),
 											   	 getActivity().getResources().getDrawable(R.drawable.circle_yellow_dark),
 											   	 getActivity().getResources().getDrawable(R.drawable.circle_yellow_light) };
 				
 				//Create a new array with a list of all the library labels.
-				final String[] labelsIdsArray = { "circle_black",
-											   	  "circle_blue_dark", 
+				final String[] labelsIdsArray = { "circle_blue_dark",
 											   	  "circle_blue_light",
 											   	  "circle_green_dark",
 											   	  "circle_green_light",
@@ -69,7 +66,6 @@ public class AddMusicLibraryDialog extends DialogFragment {
 											   	  "circle_purple_light",
 											   	  "circle_red_dark",
 											   	  "circle_red_light",
-											   	  "circle_white",
 											   	  "circle_yellow_dark",
 											   	  "circle_yellow_light" };
 				
