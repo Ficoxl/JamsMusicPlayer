@@ -32,4 +32,4 @@
     <item android:state_focused="true" android:state_selected="false" android:state_pressed="true" android:drawable="@drawable/vpi__tab_unselected_pressed_holo" />
     <item android:state_focused="true" android:state_selected="true"  android:state_pressed="true" android:drawable="@drawable/vpi__tab_selected_pressed_holo" />
 </selector>
-<!-- From: file:/C:/Users/Saravan/Android%20Workspace/Jams%20Music%20Player/viewpagerindicatorlibrary/src/main/res/drawable/vpi__tab_indicator.xml -->
+<!-- From: file:/C:/Users/Saravan%20Pantham/Android%20Workspace/Jams%20Music%20Player/viewpagerindicatorlibrary/src/main/res/drawable/vpi__tab_indicator.xml -->

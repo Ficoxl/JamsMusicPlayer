@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- From: file:/C:/Users/Saravan/Android%20Workspace/Jams%20Music%20Player/viewpagerindicatorlibrary/src/main/res/values/vpi__attrs.xml -->
+    <!-- From: file:/C:/Users/Saravan%20Pantham/Android%20Workspace/Jams%20Music%20Player/viewpagerindicatorlibrary/src/main/res/values/vpi__attrs.xml -->
     <eat-comment />
 
     <attr name="centered" format="boolean" />
     <attr name="selectedColor" format="color" />
     <attr name="strokeWidth" format="dimension" />
     <attr name="unselectedColor" format="color" />
-    <!-- From: file:/C:/Users/Saravan/Android%20Workspace/Jams%20Music%20Player/viewpagerindicatorlibrary/src/main/res/values/vpi__defaults.xml -->
+    <!-- From: file:/C:/Users/Saravan%20Pantham/Android%20Workspace/Jams%20Music%20Player/viewpagerindicatorlibrary/src/main/res/values/vpi__defaults.xml -->
     <eat-comment />
 
     <bool name="default_circle_indicator_centered">true</bool>
@@ -26,7 +26,7 @@
     <color name="default_title_indicator_selected_color">#FFFFFFFF</color>
     <color name="default_title_indicator_text_color">#BBFFFFFF</color>
     <color name="default_underline_indicator_selected_color">#FF33B5E5</color>
-    <!-- From: file:/C:/Users/Saravan/Android%20Workspace/Jams%20Music%20Player/viewpagerindicatorlibrary/src/main/res/values/vpi__colors.xml -->
+    <!-- From: file:/C:/Users/Saravan%20Pantham/Android%20Workspace/Jams%20Music%20Player/viewpagerindicatorlibrary/src/main/res/values/vpi__colors.xml -->
     <eat-comment />
 
     <color name="vpi__background_holo_dark">#ff000000</color>
@@ -37,7 +37,7 @@
     <color name="vpi__bright_foreground_holo_light">@color/vpi__background_holo_dark</color>
     <color name="vpi__bright_foreground_inverse_holo_dark">@color/vpi__bright_foreground_holo_light</color>
     <color name="vpi__bright_foreground_inverse_holo_light">@color/vpi__bright_foreground_holo_dark</color>
-    <!-- From: file:/C:/Users/Saravan/Android%20Workspace/Jams%20Music%20Player/viewpagerindicatorlibrary/src/main/res/values/vpi__attrs.xml -->
+    <!-- From: file:/C:/Users/Saravan%20Pantham/Android%20Workspace/Jams%20Music%20Player/viewpagerindicatorlibrary/src/main/res/values/vpi__attrs.xml -->
     <eat-comment />
 
     <declare-styleable name="VelocityCirclePageIndicator">
@@ -146,7 +146,7 @@
         <!-- Style of the underline indicator. -->
         <attr name="vpiUnderlinePageIndicatorStyle" format="reference" />
     </declare-styleable>
-    <!-- From: file:/C:/Users/Saravan/Android%20Workspace/Jams%20Music%20Player/viewpagerindicatorlibrary/src/main/res/values/vpi__defaults.xml -->
+    <!-- From: file:/C:/Users/Saravan%20Pantham/Android%20Workspace/Jams%20Music%20Player/viewpagerindicatorlibrary/src/main/res/values/vpi__defaults.xml -->
     <eat-comment />
 
     <dimen name="default_circle_indicator_radius">3dp</dimen>
@@ -168,7 +168,7 @@
     <integer name="default_title_indicator_line_position">0</integer>
     <integer name="default_underline_indicator_fade_delay">300</integer>
     <integer name="default_underline_indicator_fade_length">400</integer>
-    <!-- From: file:/C:/Users/Saravan/Android%20Workspace/Jams%20Music%20Player/viewpagerindicatorlibrary/src/main/res/values/vpi__styles.xml -->
+    <!-- From: file:/C:/Users/Saravan%20Pantham/Android%20Workspace/Jams%20Music%20Player/viewpagerindicatorlibrary/src/main/res/values/vpi__styles.xml -->
     <eat-comment />
 
     <style name="TextAppearance.TabPageIndicator" parent="Widget">

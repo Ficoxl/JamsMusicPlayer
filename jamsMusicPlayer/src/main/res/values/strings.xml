@@ -575,7 +575,7 @@
     <string name="audio_settings">Audio Settings</string>
     <string name="headphones_unplug_action">Headphones Unplug Action</string>
     <string name="crossfade_tracks">Crossfade Tracks</string>
-    <string name="current_queue">Current Queue</string>
+    <string name="current_queue">Current queue</string>
     <string name="close_other_audio_apps">Close any other apps that may be playing audio.</string>
     <string name="unable_to_stream_song">Error streaming song.</string>
 
@@ -699,10 +699,10 @@
     <string name="jams_is_building_library_info">Feel free to close the app during this process. Swipe down your notification drawer at any time to check the current progress.</string>
     <string name="jams_is_caching_artwork">Jams is caching album art.</string>
     <string name="on_this_device">On This Device</string>
-    <string name="show_songs_by_this_artist">Show songs by this artist</string>
-    <string name="show_songs_in_this_album">Show songs in this album</string>
-    <string name="show_songs_in_this_genre">Show songs in this genre</string>
-    <string name="show_songs_by_this_album_artist">Show songs by this album artist</string>
+    <string name="go_to_this_artist">Go to this artist</string>
+    <string name="go_to_this_album">Go to this album</string>
+    <string name="go_to_this_genre">Go to this genre</string>
+    <string name="go_to_this_album_artist">Go to this album artist</string>
     <string name="startup_screen">Startup Screen</string>
     <string name="artists_layout">Artists Layout</string>
     <string name="album_artists_layout">Album Artists Layout</string>
@@ -812,5 +812,6 @@
     <string name="horiz_list_sub_activity">HorizListSubActivity</string>
     <string name="queue_empty_info">Your current songs queue will appear here when you\'re playing music.</string>
     <string name="play_all_caps">PLAY ALL</string>
+    <string name="a_b_repeat">A-B Repeat</string>
 
 </resources>

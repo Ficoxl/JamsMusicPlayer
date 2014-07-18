@@ -2056,7 +2056,7 @@ public class AudioPlaybackService extends Service {
 											  Common.UPDATE_EQ_FRAGMENT };
 		
 		String[] flagValues = new String[] { getCurrentSongIndex() + "", 
-											 "", 
+											 "",
 											 "", 
 											 getMediaPlayer().getDuration() + "", 
 											 "" };

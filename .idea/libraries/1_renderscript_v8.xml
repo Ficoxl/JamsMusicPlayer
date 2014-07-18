@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="1_renderscript-v8">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/jamsMusicPlayer/libs/renderscript-v8.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

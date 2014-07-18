@@ -65,21 +65,11 @@ public class RepeatSongRangeDialog extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         View view = getActivity().getLayoutInflater().inflate(R.layout.fragment_repeat_song_range_dialog, null);
         currentSongIndex = mApp.getService().getCurrentSongIndex();
-        
-        TextView instructions = (TextView) view.findViewById(R.id.repeat_song_range_instructions);
+
         repeatSongATime = (TextView) view.findViewById(R.id.repeat_song_range_A_time);
         repeatSongBTime = (TextView) view.findViewById(R.id.repeat_song_range_B_time);
-        
-        instructions.setTypeface(TypefaceHelper.getTypeface(getActivity(), "RobotoCondensed-Light"));
-        repeatSongATime.setTypeface(TypefaceHelper.getTypeface(getActivity(), "RobotoCondensed-Light"));
-        repeatSongBTime.setTypeface(TypefaceHelper.getTypeface(getActivity(), "RobotoCondensed-Light"));
-        
-        instructions.setPaintFlags(instructions.getPaintFlags() | Paint.ANTI_ALIAS_FLAG | Paint.SUBPIXEL_TEXT_FLAG);
-        repeatSongATime.setPaintFlags(instructions.getPaintFlags() | Paint.ANTI_ALIAS_FLAG | Paint.SUBPIXEL_TEXT_FLAG);
-        repeatSongBTime.setPaintFlags(instructions.getPaintFlags() | Paint.ANTI_ALIAS_FLAG | Paint.SUBPIXEL_TEXT_FLAG);
-        
-        mApp.getService().getCursor().moveToPosition(currentSongIndex);
-        currentSongDuration = mApp.getService().getCursor().getInt(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_DURATION));
+
+        currentSongDuration = (int) (mApp.getService().getCurrentSong().getDuration());
         
         //Remove the placeholder seekBar and replace it with the RangeSeekBar.
         seekBar = (SeekBar) view.findViewById(R.id.repeat_song_range_placeholder_seekbar);
@@ -117,7 +107,7 @@ public class RepeatSongRangeDialog extends DialogFragment {
         });
         
         //Set the dialog title.
-        builder.setTitle(R.string.repeat_song_range);
+        builder.setTitle(R.string.a_b_repeat);
         builder.setView(view);
         builder.setNegativeButton(R.string.cancel, new OnClickListener() {
 
@@ -126,7 +116,7 @@ public class RepeatSongRangeDialog extends DialogFragment {
 				// TODO Auto-generated method stub
 				
 			}
-        	
+
         });
         
         builder.setPositiveButton(R.string.repeat, new OnClickListener() {

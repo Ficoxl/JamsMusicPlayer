@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- From: file:/C:/Users/Saravan/Android%20Workspace/Jams%20Music%20Player/licensesdialoglibrary/src/main/res/values/strings.xml -->
+    <!-- From: file:/C:/Users/Saravan%20Pantham/Android%20Workspace/Jams%20Music%20Player/licensesdialoglibrary/src/main/res/values/strings.xml -->
     <eat-comment />
 
     <string name="notices_close">Close</string>
-    <!-- From: file:/C:/Users/Saravan/Android%20Workspace/Jams%20Music%20Player/licensesdialoglibrary/src/main/res/values/base_html.xml -->
+    <!-- From: file:/C:/Users/Saravan%20Pantham/Android%20Workspace/Jams%20Music%20Player/licensesdialoglibrary/src/main/res/values/base_html.xml -->
     <eat-comment />
 
     <string name="notices_default_style">        p.license {
@@ -19,7 +19,7 @@
         padding: 1em;
         white-space: pre-wrap;
         }</string>
-    <!-- From: file:/C:/Users/Saravan/Android%20Workspace/Jams%20Music%20Player/licensesdialoglibrary/src/main/res/values/strings.xml -->
+    <!-- From: file:/C:/Users/Saravan%20Pantham/Android%20Workspace/Jams%20Music%20Player/licensesdialoglibrary/src/main/res/values/strings.xml -->
     <eat-comment />
 
     <string name="notices_title">Notices</string>

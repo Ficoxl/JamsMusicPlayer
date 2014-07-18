@@ -22,4 +22,4 @@
     <!--item android:state_activated="true" android:color="@color/vpi__bright_foreground_holo_dark"/-->
     <item android:color="@color/vpi__bright_foreground_holo_dark"/> <!-- not selected -->
 </selector>
-<!-- From: file:/C:/Users/Saravan/Android%20Workspace/Jams%20Music%20Player/viewpagerindicatorlibrary/src/main/res/color/vpi__dark_theme.xml -->
+<!-- From: file:/C:/Users/Saravan%20Pantham/Android%20Workspace/Jams%20Music%20Player/viewpagerindicatorlibrary/src/main/res/color/vpi__dark_theme.xml -->

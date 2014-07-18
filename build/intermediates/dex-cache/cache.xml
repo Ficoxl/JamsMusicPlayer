@@ -2,154 +2,178 @@
 <pre-dex-items>
 
     <item
-        dex="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\support-annotations-20.0.0-79e42da7c2657068d681cf877be8b4cc06e3cb7a.jar"
+        dex="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\commons-logging-cfe5e11f6de74e7187460f428bd5ca3913fb90d9.jar"
+        jar="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\jamsMusicPlayer\libs\commons-logging.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="2d859791fbf7d880591864bd4004d8442a8a3b81"/>
+    <item
+        dex="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\support-annotations-20.0.0-79e42da7c2657068d681cf877be8b4cc06e3cb7a.jar"
         jar="C:\Program Files (x86)\Android\android-studio\sdk\extras\android\m2repository\com\android\support\support-annotations\20.0.0\support-annotations-20.0.0.jar"
         jumboMode="false"
         revision="20.0.0"
         sha1="9d9013e9ff35fc3756411e62873c363c70c638fa"/>
     <item
-        dex="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\classes-6e40531246237486dcf8f624dd11aa0f36560460.jar"
-        jar="C:\Users\Saravan\Android Workspace\Jams Music Player\build\intermediates\exploded-aar\Jams Music Player\velocityviewpagerlibrary\unspecified\classes.jar"
-        jumboMode="false"
-        revision="20.0.0"
-        sha1="410bc45a45d6c4c3f4d7e353790f249ae1be2326"/>
-    <item
-        dex="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\libGoogleAnalyticsServices-d159061d32af62e5aad6440104bdded74e78ee06.jar"
-        jar="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\libs\libGoogleAnalyticsServices.jar"
-        jumboMode="false"
-        revision="20.0.0"
-        sha1="e887c6c9b31b39a39b0eaba981448b78902ea813"/>
-    <item
-        dex="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\classes-e90c23ccd666545a98964b378ddca31200d1c6d4.jar"
-        jar="C:\Users\Saravan\Android Workspace\Jams Music Player\build\intermediates\exploded-aar\Jams Music Player\picasso\unspecified\classes.jar"
-        jumboMode="false"
-        revision="20.0.0"
-        sha1="7b2a5b2a9abfc0a795842024a0ece937b8f26044"/>
-    <item
-        dex="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\classes-cdc3e4b78a36a95253e960c9f39e4447a8ea6e53.jar"
-        jar="C:\Users\Saravan\Android Workspace\Jams Music Player\build\intermediates\exploded-aar\Jams Music Player\licensesdialoglibrary\unspecified\classes.jar"
-        jumboMode="false"
-        revision="20.0.0"
-        sha1="75e5293efef4e8f89fdb1b989e5cb9b9634ce42d"/>
-    <item
-        dex="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\classes-c5707b20904cd5fc97c02a3dcaf87a99bd481595.jar"
-        jar="C:\Users\Saravan\Android Workspace\Jams Music Player\build\intermediates\exploded-aar\Jams Music Player\viewpagerindicatorlibrary\unspecified\classes.jar"
-        jumboMode="false"
-        revision="20.0.0"
-        sha1="a246729ce19a01d9f9d28835978c802ec617e7be"/>
-    <item
-        dex="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\dashclock-api-r2.0-4cbb1374cc69982a3f6abe22912925d0a2332521.jar"
-        jar="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\libs\dashclock-api-r2.0.jar"
-        jumboMode="false"
-        revision="20.0.0"
-        sha1="7e5decd5bbd057c1a2903be64bfe6f725603cc72"/>
-    <item
-        dex="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\annotations-12.0-ca5c960868135a1c6700fb088cebec463a9b6c82.jar"
-        jar="C:\Users\Saravan\Android Workspace\Jams Music Player\build\intermediates\exploded-aar\Jams Music Player\picasso\unspecified\libs\annotations-12.0.jar"
+        dex="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\annotations-12.0-f57e0209e80d0dd7d0c9f0938c11632830d1a33d.jar"
+        jar="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\build\intermediates\exploded-aar\Jams Music Player\picasso\unspecified\libs\annotations-12.0.jar"
         jumboMode="false"
         revision="20.0.0"
         sha1="bbcf6448f6d40abe506e2c83b70a3e8bfd2b4539"/>
     <item
-        dex="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\google-http-client-1.16.0-rc-7bc9276c018156acd8bda95697044fc6a5401793.jar"
-        jar="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\libs\google-http-client-1.16.0-rc.jar"
-        jumboMode="false"
-        revision="20.0.0"
-        sha1="28ed56f20e8a214ec05d190d6ec4b13656f332a7"/>
-    <item
-        dex="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\okio-1.0.0-7c20844d3e219f8d0fc0f9b7e93511a8667e2511.jar"
-        jar="C:\Users\Saravan\Android Workspace\Jams Music Player\build\intermediates\exploded-aar\Jams Music Player\picasso\unspecified\libs\okio-1.0.0.jar"
-        jumboMode="false"
-        revision="20.0.0"
-        sha1="02534c458682c73f5b9871131ab3098d3f987ca3"/>
-    <item
-        dex="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\android-async-http-1.4.2-66-g4b6eb97-5fe8483be8d3a4f1c1a64358cacaab7be843a74b.jar"
-        jar="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\libs\android-async-http-1.4.2-66-g4b6eb97.jar"
-        jumboMode="false"
-        revision="20.0.0"
-        sha1="d3a2a199d6991050d86c3bb0745b7a1a6f54f471"/>
-    <item
-        dex="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\classes-b7fe6c4cab6438ec7bcfa640b1996ebb73e8ea8b.jar"
-        jar="C:\Users\Saravan\Android Workspace\Jams Music Player\build\intermediates\exploded-aar\com.android.support\support-v4\20.0.0\classes.jar"
-        jumboMode="false"
-        revision="20.0.0"
-        sha1="8694693636ab36910c8100ce527c258ff3ebece0"/>
-    <item
-        dex="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\universal-image-loader-1.9.2-with-sources-5e1406b2daecb0a0692e3a4b1a0949428ec4948d.jar"
-        jar="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\libs\universal-image-loader-1.9.2-with-sources.jar"
-        jumboMode="false"
-        revision="20.0.0"
-        sha1="111169c43b8a601f571585f75d998e6027e48ff4"/>
-    <item
-        dex="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\commons-logging-e75e8e8af215eb94289c44b9b79f0690ddaaa4f8.jar"
-        jar="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\libs\commons-logging.jar"
-        jumboMode="false"
-        revision="20.0.0"
-        sha1="2d859791fbf7d880591864bd4004d8442a8a3b81"/>
-    <item
-        dex="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\okhttp-2.0.0-25ad818854b852b2693f602966329d6bc55e202b.jar"
-        jar="C:\Users\Saravan\Android Workspace\Jams Music Player\build\intermediates\exploded-aar\Jams Music Player\picasso\unspecified\libs\okhttp-2.0.0.jar"
-        jumboMode="false"
-        revision="20.0.0"
-        sha1="4c8d1536dba3812cc1592090dc20c47a4ed3c35e"/>
-    <item
-        dex="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\classes-13c726832210e2b3c88d63fbd0567d50e9d7956c.jar"
-        jar="C:\Users\Saravan\Android Workspace\Jams Music Player\build\intermediates\exploded-aar\Jams Music Player\quickScroll\unspecified\classes.jar"
-        jumboMode="false"
-        revision="20.0.0"
-        sha1="48a95a7a2318b04065f41c238ba3ce52b8fd8546"/>
-    <item
-        dex="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\classes-6309cecc0b7b8c7ae3228e1e09e0852bb0405671.jar"
-        jar="C:\Users\Saravan\Android Workspace\Jams Music Player\build\intermediates\exploded-aar\Jams Music Player\dragsortlistviewlibrary\unspecified\classes.jar"
-        jumboMode="false"
-        revision="20.0.0"
-        sha1="1a51203b3baacba62e7182a6c4424f6fb7fb12ca"/>
-    <item
-        dex="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\classes-53919c074e9b32f8b4dcd40c6b421c5a1e21991c.jar"
-        jar="C:\Users\Saravan\Android Workspace\Jams Music Player\build\intermediates\exploded-aar\com.google.android.gms\play-services\5.0.77\classes.jar"
-        jumboMode="false"
-        revision="20.0.0"
-        sha1="b6a82434c1eca686607867cd906bcc80ed987837"/>
-    <item
-        dex="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\jaudiotagger-2.0.4-20111207.115108-15-bd384abb08fd898d65ec20440c6e68dd866d69ec.jar"
-        jar="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\libs\jaudiotagger-2.0.4-20111207.115108-15.jar"
-        jumboMode="false"
-        revision="20.0.0"
-        sha1="64a05cf9050623a0f71fa655ec5407915c481aa7"/>
-    <item
-        dex="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\classes-81830c4222dd685c6e3b6c9c8e08aa0eb30aa0fe.jar"
-        jar="C:\Users\Saravan\Android Workspace\Jams Music Player\build\intermediates\exploded-aar\Jams Music Player\circularImageView\unspecified\classes.jar"
-        jumboMode="false"
-        revision="20.0.0"
-        sha1="5914da1aebaa0b276422dc80526d0a7d2feef2f3"/>
-    <item
-        dex="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\internal_impl-20.0.0-724626e183d36bfaf605d7651789fbde4954c9c0.jar"
-        jar="C:\Users\Saravan\Android Workspace\Jams Music Player\build\intermediates\exploded-aar\com.android.support\support-v4\20.0.0\libs\internal_impl-20.0.0.jar"
-        jumboMode="false"
-        revision="20.0.0"
-        sha1="e40b3078e3fbd353c9f44da8df25a8fc0078209d"/>
-    <item
-        dex="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\okhttp-urlconnection-1.6.0-08b21f639bdff2262597e7edc41b1c0810604daa.jar"
-        jar="C:\Users\Saravan\Android Workspace\Jams Music Player\build\intermediates\exploded-aar\Jams Music Player\picasso\unspecified\libs\okhttp-urlconnection-1.6.0.jar"
-        jumboMode="false"
-        revision="20.0.0"
-        sha1="375c2206eb7e52976955d0f8737be5e0ec9cf667"/>
-    <item
-        dex="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\commons-lang3-3.1-f22ca2bd9a460aed4fe489824f1ba8dc49abfab9.jar"
-        jar="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\libs\commons-lang3-3.1.jar"
+        dex="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\commons-lang3-3.1-8bed71df70a344490d778e5e3aa80580e88f90f0.jar"
+        jar="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\jamsMusicPlayer\libs\commons-lang3-3.1.jar"
         jumboMode="false"
         revision="20.0.0"
         sha1="905075e6c80f206bbe6cf1e809d2caa69f420c76"/>
     <item
-        dex="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\commons-io-2.4-db3e9a3bddcc1f6eea4e4392338832adae95cd78.jar"
-        jar="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\libs\commons-io-2.4.jar"
+        dex="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\okhttp-urlconnection-1.6.0-c6539486bac7ab8a060a683323364c6c4f85d272.jar"
+        jar="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\build\intermediates\exploded-aar\Jams Music Player\picasso\unspecified\libs\okhttp-urlconnection-1.6.0.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="375c2206eb7e52976955d0f8737be5e0ec9cf667"/>
+    <item
+        dex="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\google-http-client-1.16.0-rc-635239ca119a2a19b210299a9813d1efc3dd77cb.jar"
+        jar="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\jamsMusicPlayer\libs\google-http-client-1.16.0-rc.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="28ed56f20e8a214ec05d190d6ec4b13656f332a7"/>
+    <item
+        dex="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\classes-69d75626a7a9f2dd9e5050d249e6c1fe4cad2492.jar"
+        jar="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\build\intermediates\exploded-aar\Jams Music Player\picasso\unspecified\classes.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="89160335d9ab1f98171f1a74c004a0dd484ef563"/>
+    <item
+        dex="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\android-async-http-1.4.2-66-g4b6eb97-f03c49a2acea2b1ab67305212edfa7a797b29be0.jar"
+        jar="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\jamsMusicPlayer\libs\android-async-http-1.4.2-66-g4b6eb97.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="d3a2a199d6991050d86c3bb0745b7a1a6f54f471"/>
+    <item
+        dex="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\com.haarman.listviewanimations-2.6.0-4b2ce1c78126302f24b42fa2a93d397bfb793d52.jar"
+        jar="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\jamsMusicPlayer\libs\com.haarman.listviewanimations-2.6.0.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="59351ccb0a1631d30358f6a92749a072f2df7602"/>
+    <item
+        dex="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\google-http-client-android-1.16.0-rc-3b1ce800a586943b2cb61ed581569ad63f399ccd.jar"
+        jar="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\jamsMusicPlayer\libs\google-http-client-android-1.16.0-rc.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="c2e8114029469943699b390ce14f6c0ff4565807"/>
+    <item
+        dex="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\classes-757625bcdf30c1b4acffef3350b16d6233148973.jar"
+        jar="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\build\intermediates\exploded-aar\Jams Music Player\viewpagerindicatorlibrary\unspecified\classes.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="059c8c19c4a88352ecc2fc87178c6cdd864fd80e"/>
+    <item
+        dex="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\universal-image-loader-1.9.2-with-sources-48d3c5fffb950bc972bd4efdb4979edb40865ceb.jar"
+        jar="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\jamsMusicPlayer\libs\universal-image-loader-1.9.2-with-sources.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="111169c43b8a601f571585f75d998e6027e48ff4"/>
+    <item
+        dex="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\okio-1.0.0-c5c544bf77661560a5333b317316c48451ced204.jar"
+        jar="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\build\intermediates\exploded-aar\Jams Music Player\picasso\unspecified\libs\okio-1.0.0.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="02534c458682c73f5b9871131ab3098d3f987ca3"/>
+    <item
+        dex="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\classes-4cd75e16df6afa2a82f8b92bb9011e20a3a215f8.jar"
+        jar="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\build\intermediates\exploded-aar\com.google.android.gms\play-services\5.0.77\classes.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="b6a82434c1eca686607867cd906bcc80ed987837"/>
+    <item
+        dex="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\classes-264bf649a331fd5a331f0ed9017511db47c2cec6.jar"
+        jar="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\build\intermediates\exploded-aar\Jams Music Player\dragsortlistviewlibrary\unspecified\classes.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="9e9b4d848d78cd1239f0ae3651bc9f3d645f3d03"/>
+    <item
+        dex="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\dashclock-api-r2.0-e135aa49cdcf35599c2a94b400f7f1f6b41de355.jar"
+        jar="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\jamsMusicPlayer\libs\dashclock-api-r2.0.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="7e5decd5bbd057c1a2903be64bfe6f725603cc72"/>
+    <item
+        dex="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\classes-15a1afa6fbdd81315789938cc2c0eb71bb2b2e91.jar"
+        jar="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\build\intermediates\exploded-aar\Jams Music Player\circularImageView\unspecified\classes.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="e2bcd709669ee7f43c8eb86ba4341baf8177191d"/>
+    <item
+        dex="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\libGoogleAnalyticsServices-2bfc381cde20c73de14df0fca5c29581cceb86e2.jar"
+        jar="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\jamsMusicPlayer\libs\libGoogleAnalyticsServices.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="e887c6c9b31b39a39b0eaba981448b78902ea813"/>
+    <item
+        dex="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\commons-io-2.4-01e88637d671bab2908c9a1f4ea07258a41b67b8.jar"
+        jar="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\jamsMusicPlayer\libs\commons-io-2.4.jar"
         jumboMode="false"
         revision="20.0.0"
         sha1="b1b6ea3b7e4aa4f492509a4952029cd8e48019ad"/>
     <item
-        dex="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\google-http-client-android-1.16.0-rc-5508274923204a88f336b6fc17c3ff7249b1d44b.jar"
-        jar="C:\Users\Saravan\Android Workspace\Jams Music Player\jamsMusicPlayer\libs\google-http-client-android-1.16.0-rc.jar"
+        dex="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\okhttp-2.0.0-14e9c7a63f810970174038a7cff37095b35e9776.jar"
+        jar="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\build\intermediates\exploded-aar\Jams Music Player\picasso\unspecified\libs\okhttp-2.0.0.jar"
         jumboMode="false"
         revision="20.0.0"
-        sha1="c2e8114029469943699b390ce14f6c0ff4565807"/>
+        sha1="4c8d1536dba3812cc1592090dc20c47a4ed3c35e"/>
+    <item
+        dex="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\classes-2725b56bc0f9e884af8d8b6a30da126663034241.jar"
+        jar="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\build\intermediates\exploded-aar\Jams Music Player\quickScroll\unspecified\classes.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="02f6e7d29936ef4e0a842fcdcf7f57b12a14f636"/>
+    <item
+        dex="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\renderscript-v8-66dd6338e7b1943cea93a605a00a8203df11f16b.jar"
+        jar="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\jamsMusicPlayer\libs\renderscript-v8.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="19d54695d29d5ca94dda30368a7df0b33ffc17d7"/>
+    <item
+        dex="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\nineoldandroids-2.4.0-ccf90f8484c51a5beac2e895de000eaab867f6b3.jar"
+        jar="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\jamsMusicPlayer\libs\nineoldandroids-2.4.0.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="59f19e43354d32de831379c23ce03bb259a4c2b7"/>
+    <item
+        dex="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\classes-b63ed500b5dc102c3c476645c3bdd3ebdb3e1bee.jar"
+        jar="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\build\intermediates\exploded-aar\Jams Music Player\licensesdialoglibrary\unspecified\classes.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="a1f1f944cdbd1cb73e19c8a7d336698ce1439d77"/>
+    <item
+        dex="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\internal_impl-20.0.0-08535dbea87f5d30e511184d31bae624abbe52a8.jar"
+        jar="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\build\intermediates\exploded-aar\com.android.support\support-v4\20.0.0\libs\internal_impl-20.0.0.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="e40b3078e3fbd353c9f44da8df25a8fc0078209d"/>
+    <item
+        dex="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\classes-842a146af1c486244b03ea2bb8074ee85127394b.jar"
+        jar="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\build\intermediates\exploded-aar\com.android.support\support-v4\20.0.0\classes.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="8694693636ab36910c8100ce527c258ff3ebece0"/>
+    <item
+        dex="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\classes-37ea098a21ffbba0f1526b142e72b3466c12b353.jar"
+        jar="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\build\intermediates\exploded-aar\Jams Music Player\velocityviewpagerlibrary\unspecified\classes.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="38527837c8b9b14bc6886efeaa8804a2265a3546"/>
+    <item
+        dex="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\jaudiotagger-2.0.4-20111207.115108-15-1d9afd4864efb9259888deec7cdf9e2458eb4019.jar"
+        jar="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\jamsMusicPlayer\libs\jaudiotagger-2.0.4-20111207.115108-15.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="64a05cf9050623a0f71fa655ec5407915c481aa7"/>
+    <item
+        dex="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\jamsMusicPlayer\build\intermediates\pre-dexed\debug\classes-12f04e2a5a3c340c3d23840269df4c5e96e17840.jar"
+        jar="C:\Users\Saravan Pantham\Android Workspace\Jams Music Player\build\intermediates\exploded-aar\Jams Music Player\fadingActionBar\unspecified\classes.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="f42a663eca96d8568824dbdbc7b297670fae30f3"/>
 
 </pre-dex-items>

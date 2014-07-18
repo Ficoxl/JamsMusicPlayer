@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- From: file:/C:/Users/Saravan/Android%20Workspace/Jams%20Music%20Player/velocityviewpagerlibrary/src/main/res/values-v14/styles.xml -->
+    <!-- From: file:/C:/Users/Saravan%20Pantham/Android%20Workspace/Jams%20Music%20Player/velocityviewpagerlibrary/src/main/res/values-v14/styles.xml -->
     <eat-comment />
 
     <style name="AppBaseTheme" parent="android:Theme.Holo.Light.DarkActionBar">

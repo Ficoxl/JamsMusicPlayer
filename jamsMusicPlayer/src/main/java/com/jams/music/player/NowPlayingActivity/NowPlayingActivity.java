@@ -20,16 +20,21 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.DrawerLayout.DrawerListener;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
 import android.view.animation.DecelerateInterpolator;
+import android.view.animation.RotateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
@@ -77,6 +82,7 @@ public class NowPlayingActivity extends FragmentActivity {
 	//Playback Controls.
 	private RelativeLayout mControlsLayoutHeader;
 	private ImageButton mPlayPauseButton;
+    private RelativeLayout mPlayPauseButtonBackground;
 	private ImageButton mNextButton;
 	private ImageButton mPreviousButton;
 	private ImageButton mShuffleButton;
@@ -103,6 +109,8 @@ public class NowPlayingActivity extends FragmentActivity {
     private NowPlayingActivityListener mNowPlayingActivityListener;
     public static final String START_SERVICE = "StartService";
     private boolean isCreating = true;
+    private boolean pauseButtonVisible = true;
+    private boolean playButtonVisible = false;
     
     @SuppressLint("NewApi")
 	@Override
@@ -136,6 +144,7 @@ public class NowPlayingActivity extends FragmentActivity {
     	
     	//Playback Controls
         mControlsLayoutHeader = (RelativeLayout) findViewById(R.id.now_playing_controls_header);
+        mPlayPauseButtonBackground = (RelativeLayout) findViewById(R.id.playPauseButtonBackground);
     	mPlayPauseButton = (ImageButton) findViewById(R.id.playPauseButton);
     	mNextButton = (ImageButton) findViewById(R.id.nextButton);
     	mPreviousButton = (ImageButton) findViewById(R.id.previousButton);
@@ -153,11 +162,8 @@ public class NowPlayingActivity extends FragmentActivity {
     		e.printStackTrace();
     	}
 
-        int resourceId = R.drawable.play_pause_transition_drawable_light;
-        TransitionDrawable drawable = (TransitionDrawable) mContext.getResources().getDrawable(resourceId);
-        drawable.setCrossFadeEnabled(true);
-        mPlayPauseButton.setImageDrawable(drawable);
-
+        mPlayPauseButtonBackground.setBackgroundResource(UIElementsHelper.getShadowedCircle(mContext));
+        mPlayPauseButton.setImageResource(R.drawable.play_pause_transition_drawable_light);
     	mNextButton.setImageResource(UIElementsHelper.getIcon(mContext, "btn_playback_next"));
     	mPreviousButton.setImageResource(UIElementsHelper.getIcon(mContext, "btn_playback_previous"));
     	
@@ -165,10 +171,6 @@ public class NowPlayingActivity extends FragmentActivity {
     		mNextButton.setAlpha(1f);
     		mPreviousButton.setAlpha(1f);
         }
-
-        //Get rid of the ActionBar.
-        if (getActionBar()!=null)
-            getActionBar().hide();
 
         //KitKat specific layout code.
         setKitKatTranslucentBars();
@@ -183,20 +185,10 @@ public class NowPlayingActivity extends FragmentActivity {
     	mSeekbar.setOnSeekBarChangeListener(seekBarChangeListener);
     	mNextButton.setOnClickListener(mOnClickNextListener);
     	mPreviousButton.setOnClickListener(mOnClickPreviousListener);
-    	mPlayPauseButton.setOnClickListener(mOnClickPlayPauseListener);
+    	mPlayPauseButton.setOnClickListener(playPauseClickListener);
+        mPlayPauseButtonBackground.setOnClickListener(playPauseClickListener);
     	mShuffleButton.setOnClickListener(shuffleButtonClickListener);
     	mRepeatButton.setOnClickListener(repeatButtonClickListener);
-    	mRepeatButton.setOnLongClickListener(new OnLongClickListener() {
-
-			@Override
-			public boolean onLongClick(View arg0) {
-				FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-				RepeatSongRangeDialog dialog = new RepeatSongRangeDialog();
-				dialog.show(ft, "repeatSongRangeDialog");
-				return false;
-			}
-    		
-    	});
 
     }
     
@@ -378,18 +370,19 @@ public class NowPlayingActivity extends FragmentActivity {
      * Sets the play/pause button states.
      */
     private void setPlayPauseButton() {
+        if (mApp.isServiceRunning()) {
+            if (mApp.getService().isPlayingMusic()) {
+                mPlayPauseButton.setImageResource(R.drawable.pause_light);
+                mPlayPauseButton.setPadding(0, 0, 0, 0);
+            } else {
+                mPlayPauseButton.setImageResource(R.drawable.play_light);
+                mPlayPauseButton.setPadding(0, 0, (int) mApp.convertDpToPixels(-5f, mContext), 0);
+            }
 
-        final TransitionDrawable drawable = (TransitionDrawable) (mPlayPauseButton.getDrawable());
-        if (mApp.isServiceRunning())
-            if (mApp.getService().isPlayingMusic())
-                drawable.reverseTransition(150);
-            else
-                drawable.startTransition(150);
+        }
 
-        else
-            drawable.startTransition(250);
     }
-    
+
     /**
      * Sets the repeat button icon based on the current repeat mode.
      */
@@ -549,7 +542,7 @@ public class NowPlayingActivity extends FragmentActivity {
 	/**
 	 * Click listener for the play/pause button.
 	 */
-    private View.OnClickListener mOnClickPlayPauseListener = new View.OnClickListener() {
+    private View.OnClickListener playPauseClickListener = new View.OnClickListener() {
 		
 		@Override
 		public void onClick(View arg0) {
@@ -896,7 +889,18 @@ public class NowPlayingActivity extends FragmentActivity {
 		}
 		
 	}
-	
+
+    /**
+     * Toggles the open/closed state of the current queue drawer.
+     */
+	public void toggleCurrentQueueDrawer() {
+        if (mDrawerLayout.isDrawerOpen(Gravity.END))
+            mDrawerLayout.closeDrawer(Gravity.END);
+        else
+            mDrawerLayout.openDrawer(Gravity.END);
+
+    }
+
 	/**
 	 * Converts millis to mins and secs and returns a 
 	 * formatted string.
@@ -1121,10 +1125,6 @@ public class NowPlayingActivity extends FragmentActivity {
 		return mViewPager;
 	}
 	
-	public ImageButton getPlayPauseButton() {
-		return mPlayPauseButton;
-	}
-	
 	public EqualizerFragment getEqualizerFragment() {
 		return mEqualizerFragment;
 	}
@@ -1150,19 +1150,7 @@ public class NowPlayingActivity extends FragmentActivity {
 		public void onNowPlayingActivityReady();
 		
 	}
-	
-	@Override
-	public void onPause() {
-		super.onPause();
-		
-	}
-	
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
 
-	}
-	
 	@Override
 	public void onResume() {
 		super.onResume();

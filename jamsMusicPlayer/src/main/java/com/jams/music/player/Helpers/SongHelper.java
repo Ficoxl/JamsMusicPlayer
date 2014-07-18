@@ -10,6 +10,7 @@ import com.jams.music.player.R;
 import com.jams.music.player.Utils.Common;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
+import com.squareup.picasso.Transformation;
 
 /**
  * Helper class for the current song.
@@ -60,8 +61,9 @@ public class SongHelper {
 	 * 
 	 * @param context Context used to get a new Common object.
 	 * @param index The index of the song.
+     * @param albumArtTransformer The transformer to apply to the album art bitmap;
 	 */
-	public void populateSongData(Context context, int index) {
+	public void populateSongData(Context context, int index, Transformation albumArtTransformer) {
 		
 		mSongHelper = this;
 		mApp = (Common) context.getApplicationContext();
@@ -84,10 +86,52 @@ public class SongHelper {
 			this.setLocalCopyPath(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.LOCAL_COPY_PATH)));	
 			this.setSavedPosition(mApp.getService().getCursor().getLong(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SAVED_POSITION)));
 
-            mApp.getPicasso().load(getAlbumArtPath()).into(imageLoadingTarget);
+            mApp.getPicasso()
+                .load(getAlbumArtPath())
+                .transform(albumArtTransformer)
+                .into(imageLoadingTarget);
+
 		}
 
 	}
+
+    /**
+     * Moves the specified cursor to the specified index and populates this
+     * helper object with new song data.
+     *
+     * @param context Context used to get a new Common object.
+     * @param index The index of the song.
+     */
+    public void populateSongData(Context context, int index) {
+
+        mSongHelper = this;
+        mApp = (Common) context.getApplicationContext();
+        mIndex = index;
+
+        if (mApp.isServiceRunning()) {
+            mApp.getService().getCursor().moveToPosition(mApp.getService().getPlaybackIndecesList().get(index));
+
+            this.setId(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_ID)));
+            this.setTitle(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_TITLE)));
+            this.setAlbum(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_ALBUM)));
+            this.setArtist(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_ARTIST)));
+            this.setAlbumArtist(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_ALBUM_ARTIST)));
+            this.setGenre(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_GENRE)));
+            this.setDuration(mApp.getService().getCursor().getLong(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_DURATION)));
+
+            this.setAlbumArtPath(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_ALBUM_ART_PATH)));
+            this.setFilePath(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_FILE_PATH)));
+            this.setSource(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_SOURCE)));
+            this.setLocalCopyPath(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.LOCAL_COPY_PATH)));
+            this.setSavedPosition(mApp.getService().getCursor().getLong(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SAVED_POSITION)));
+
+            mApp.getPicasso()
+                    .load(getAlbumArtPath())
+                    .into(imageLoadingTarget);
+
+        }
+
+    }
 
     /**
      * Moves the specified cursor to the specified index and populates this

@@ -85,13 +85,13 @@ public final class R {
 	}
 	public static final class drawable {
 		public static final int ic_launcher = 0x7f0200e5;
-		public static final int vpi__tab_indicator = 0x7f0201a9;
-		public static final int vpi__tab_selected_focused_holo = 0x7f0201aa;
-		public static final int vpi__tab_selected_holo = 0x7f0201ab;
-		public static final int vpi__tab_selected_pressed_holo = 0x7f0201ac;
-		public static final int vpi__tab_unselected_focused_holo = 0x7f0201ad;
-		public static final int vpi__tab_unselected_holo = 0x7f0201ae;
-		public static final int vpi__tab_unselected_pressed_holo = 0x7f0201af;
+		public static final int vpi__tab_indicator = 0x7f0201af;
+		public static final int vpi__tab_selected_focused_holo = 0x7f0201b0;
+		public static final int vpi__tab_selected_holo = 0x7f0201b1;
+		public static final int vpi__tab_selected_pressed_holo = 0x7f0201b2;
+		public static final int vpi__tab_unselected_focused_holo = 0x7f0201b3;
+		public static final int vpi__tab_unselected_holo = 0x7f0201b4;
+		public static final int vpi__tab_unselected_pressed_holo = 0x7f0201b5;
 	}
 	public static final class id {
 		public static final int bottom = 0x7f0a000c;
@@ -108,7 +108,7 @@ public final class R {
 		public static final int default_underline_indicator_fade_length = 0x7f0c0008;
 	}
 	public static final class string {
-		public static final int app_name = 0x7f0d0026;
+		public static final int app_name = 0x7f0d0027;
 	}
 	public static final class style {
 		public static final int AppBaseTheme = 0x7f0e0008;
