@@ -236,8 +236,6 @@ public class ListViewFragment extends Fragment {
                               Common.SONGS_FRAGMENT,
                               index,
                               true);
-
-            getActivity().overridePendingTransition(R.anim.slide_in_from_right, R.anim.fade_out);
 			
 		}
     	

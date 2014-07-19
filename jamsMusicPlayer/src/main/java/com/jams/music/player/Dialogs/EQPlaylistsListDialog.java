@@ -6,20 +6,20 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 
-import com.jams.music.player.EqualizerAudioFXActivity.EqualizerFragment;
+import com.jams.music.player.EqualizerActivity.EqualizerActivity;
 import com.jams.music.player.Utils.Common;
 
 public class EQPlaylistsListDialog extends DialogFragment {
 
 	private Common mApp;
 	private Activity parentActivity;
-	private EqualizerFragment mFragment;
+	private EqualizerActivity mFragment;
 	
 	public EQPlaylistsListDialog() {
 		super();
 	}
 	
-	public EQPlaylistsListDialog(EqualizerFragment fragment) {
+	public EQPlaylistsListDialog(EqualizerActivity fragment) {
 		mFragment = fragment;
 	}
 	

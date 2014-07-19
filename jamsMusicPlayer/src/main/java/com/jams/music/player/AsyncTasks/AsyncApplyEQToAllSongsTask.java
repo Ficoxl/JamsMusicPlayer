@@ -7,16 +7,16 @@ import android.widget.Toast;
 
 import com.jams.music.player.R;
 import com.jams.music.player.DBHelpers.DBAccessHelper;
-import com.jams.music.player.EqualizerAudioFXActivity.EqualizerFragment;
+import com.jams.music.player.EqualizerActivity.EqualizerActivity;
 import com.jams.music.player.Utils.Common;
 
 public class AsyncApplyEQToAllSongsTask extends AsyncTask<String, Void, Void> {
 	
     private Context mContext;
     private Common mApp;
-    private EqualizerFragment mEqualizerFragment;
+    private EqualizerActivity mEqualizerFragment;
     
-    public AsyncApplyEQToAllSongsTask(Context context, EqualizerFragment fragment) {
+    public AsyncApplyEQToAllSongsTask(Context context, EqualizerActivity fragment) {
     	mContext = context;
     	mEqualizerFragment = fragment;
     	mApp = (Common) context.getApplicationContext();

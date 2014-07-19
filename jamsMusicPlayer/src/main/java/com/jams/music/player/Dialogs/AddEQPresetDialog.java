@@ -12,7 +12,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.jams.music.player.R;
-import com.jams.music.player.EqualizerAudioFXActivity.EqualizerFragment;
+import com.jams.music.player.EqualizerActivity.EqualizerActivity;
 import com.jams.music.player.Helpers.TypefaceHelper;
 import com.jams.music.player.Utils.Common;
 
@@ -22,13 +22,13 @@ public class AddEQPresetDialog extends DialogFragment {
 	private AddEQPresetDialog dialog;
 	private View dialogView;
 	private EditText newPresetNameField;
-	private EqualizerFragment mEqualizerFragment;
+	private EqualizerActivity mEqualizerFragment;
 	
 	@Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
 		mApp = (Common) getActivity().getApplicationContext();
-		mEqualizerFragment = (EqualizerFragment) getParentFragment();
+		mEqualizerFragment = (EqualizerActivity) getActivity();
 		dialog = this;
 		
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());

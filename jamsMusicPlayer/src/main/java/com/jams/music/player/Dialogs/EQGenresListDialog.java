@@ -10,20 +10,20 @@ import android.support.v4.app.DialogFragment;
 import com.jams.music.player.R;
 import com.jams.music.player.AsyncTasks.AsyncApplyEQToGenreTask;
 import com.jams.music.player.DBHelpers.DBAccessHelper;
-import com.jams.music.player.EqualizerAudioFXActivity.EqualizerFragment;
+import com.jams.music.player.EqualizerActivity.EqualizerActivity;
 import com.jams.music.player.NowPlayingActivity.NowPlayingActivity;
 import com.jams.music.player.Utils.Common;
 
 public class EQGenresListDialog extends DialogFragment {
 
 	private Common mApp;
-	private EqualizerFragment mEqualizerFragment;
+	private EqualizerActivity mEqualizerFragment;
 	
 	@Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
 		mApp = (Common) getActivity().getApplicationContext();
-		mEqualizerFragment = ((NowPlayingActivity) getActivity()).getEqualizerFragment();	
+		mEqualizerFragment = (EqualizerActivity) getActivity();
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         //Get a cursor with the list of all the unique genres.

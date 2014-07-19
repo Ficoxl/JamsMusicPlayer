@@ -54,7 +54,8 @@ public class FadeAnimation extends AlphaAnimation {
 			this.setAnimationListener(fadeInListener);
 		
 		this.setDuration(mDuration);
-		this.setInterpolator(mInterpolator);
+        if (mInterpolator!=null)
+		    this.setInterpolator(mInterpolator);
 		mView.startAnimation(this);
 
 	}

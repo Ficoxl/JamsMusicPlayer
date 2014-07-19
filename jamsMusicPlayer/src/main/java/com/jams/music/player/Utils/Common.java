@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.webkit.WebView;
@@ -45,71 +46,71 @@ import java.net.URL;
 /**
  * Singleton class that provides access to common objects
  * and methods used in the application.
- * 
+ *
  * @author Saravan Pantham
  */
 public class Common extends Application {
 
 	//Context.
 	private Context mContext;
-	
+
 	//Service reference and flags.
 	private AudioPlaybackService mService;
 	private boolean mIsServiceRunning = false;
-	
+
 	//Playback kickstarter object.
 	private PlaybackKickstarter mPlaybackKickstarter;
-	
+
 	//NowPlayingActivity reference.
 	private NowPlayingActivity mNowPlayingActivity;
-	
+
 	//SharedPreferences.
 	private static SharedPreferences mSharedPreferences;
-	
+
 	//Database access helper object.
 	private static DBAccessHelper mDBAccessHelper;
 
     //Picasso instance.
     private Picasso mPicasso;
-	
+
 	//Indicates if the library is currently being built.
 	private boolean mIsBuildingLibrary = false;
 	private boolean mIsScanFinished = false;
-	
+
 	//Google Play Music access object.
 	private GMusicClientCalls mGMusicClientCalls;
 	private boolean mIsGMusicLoggedIn = false;
-	
+
 	//ImageManager for asynchronous image downloading.
 	private ImageManager mImageManager;
-	
+
 	//ImageLoader/ImageLoaderConfiguration objects for ListViews and GridViews.
 	private ImageLoader mImageLoader;
 	private ImageLoaderConfiguration mImageLoaderConfiguration;
-	
+
 	//Image display options.
 	private DisplayImageOptions mDisplayImageOptions;
-	
+
 	//Cursor that stores the songs that are currently queued for download.
 	private Cursor mPinnedSongsCursor;
-	
+
 	//Specifies whether the app is currently downloading pinned songs from the GMusic app.
 	private boolean mIsFetchingPinnedSongs = false;
-	
+
 	public static final String uid4 = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvFlvWGADp9cW2LPuOIjDPB";
 	public static final String uid2 = "ormNR2mpS8HR8utvhNHKs2AJzV8GLPh35m3rE6GPND4GsOdrbySPETG4+0fvagBr5E";
 	public static final String uid6 = "QgMR7z76DJlRqy+VyVzmx7cly2JiXo+ZnISYKKn71oP+Xw+dO/eRKFy3EFCO7khMxc";
 	public static final String uid1 = "6QouPH11nHJPzXspzdkJbTcifIIGFtEkquXjA0y19Gouab7Gir8yLOA4V3m0URRivP";
 	public static final String uid3 = "QeOx8JsY766F6FgU8uJABWRDZbqHEYRwT7iGmn7ukt7h5z+DOsYWSRmZxwJh3cpkGo";
 	public static final String uid5 = "Vyqp4UZWnzGiiq/fWFKs5rrc+m3obsEpUxteGavKAhhXJZKgwAGFgkUQIDAQAB";
-	
+
 	//GAnalytics flag.
 	private boolean mIsGAnalyticsEnabled = true;
-	
+
 	//Broadcast elements.
 	private LocalBroadcastManager mLocalBroadcastManager;
 	public static final String UPDATE_UI_BROADCAST = "com.jams.music.player.NEW_SONG_UPDATE_UI";
-	
+
 	//Update UI broadcast flags.
 	public static final String SHOW_AUDIOBOOK_TOAST = "AudiobookToast";
 	public static final String UPDATE_SEEKBAR_DURATION = "UpdateSeekbarDuration";
@@ -122,7 +123,7 @@ public class Common extends Application {
 	public static final String INIT_PAGER = "InitPager";
 	public static final String NEW_QUEUE_ORDER = "NewQueueOrder";
 	public static final String UPDATE_EQ_FRAGMENT = "UpdateEQFragment";
-	
+
 	//Contants for identifying each fragment/activity.
 	public static final String FRAGMENT_ID = "FragmentId";
 	public static final int ARTISTS_FRAGMENT = 0;
@@ -139,10 +140,24 @@ public class Common extends Application {
 	public static final int ALBUMS_FLIPPED_FRAGMENT = 11;
 	public static final int GENRES_FLIPPED_FRAGMENT = 12;
 	public static final int GENRES_FLIPPED_SONGS_FRAGMENT = 13;
-	
+
 	//Device orientation constants.
 	public static final int ORIENTATION_PORTRAIT = 0;
 	public static final int ORIENTATION_LANDSCAPE = 1;
+
+    //Device screen size/orientation identifiers.
+    public static final String REGULAR = "regular";
+    public static final String SMALL_TABLET = "small_tablet";
+    public static final String LARGE_TABLET = "large_tablet";
+    public static final String XLARGE_TABLET = "xlarge_tablet";
+    public static final int REGULAR_SCREEN_PORTRAIT = 0;
+    public static final int REGULAR_SCREEN_LANDSCAPE = 1;
+    public static final int SMALL_TABLET_PORTRAIT = 2;
+    public static final int SMALL_TABLET_LANDSCAPE = 3;
+    public static final int LARGE_TABLET_PORTRAIT = 4;
+    public static final int LARGE_TABLET_LANDSCAPE = 5;
+    public static final int XLARGE_TABLET_PORTRAIT = 6;
+    public static final int XLARGE_TABLET_LANDSCAPE = 7;
 
     //Miscellaneous flags/identifiers.
     public static final String SONG_ID = "SongId";
@@ -153,20 +168,20 @@ public class Common extends Application {
     public static final String CURRENT_THEME = "CurrentTheme";
     public static final int DARK_THEME = 0;
     public static final int LIGHT_THEME = 1;
-	
+
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		
+
 		//Application context.
 		mContext = getApplicationContext();
-		
+
 		//SharedPreferences.
 		mSharedPreferences = this.getSharedPreferences("com.jams.music.player", Context.MODE_PRIVATE);
-		
+
 		//Init the database.
 		mDBAccessHelper = new DBAccessHelper(mContext);
-    	
+
     	//Playback kickstarter.
     	mPlaybackKickstarter = new PlaybackKickstarter();
 
@@ -181,13 +196,13 @@ public class Common extends Application {
     														   .imageDownloader(new ByteArrayUniversalImageLoader(mContext))
     														   .build();
     	mImageLoader.init(mImageLoaderConfiguration);
-    	
+
         //Init DisplayImageOptions.
         initDisplayImageOptions();
-    	
+
 		//Log the user into Google Play Music only if the account is currently set up and active.
 		if (mSharedPreferences.getBoolean("GOOGLE_PLAY_MUSIC_ENABLED", false)==true) {
-			
+
 			//Create a temp WebView to retrieve the user agent string.
 			String userAgentString = "";
 			if (mSharedPreferences.getBoolean("GOT_USER_AGENT", false)==false) {
@@ -199,17 +214,17 @@ public class Common extends Application {
 				mSharedPreferences.edit().putString("USER_AGENT", userAgentString).commit();
 				webView = null;
 			}
-			
+
 			setGMusicClientCalls(GMusicClientCalls.getInstance(getApplicationContext()));
 			GMusicClientCalls.setWebClientUserAgent(userAgentString);
 			String accountName = mSharedPreferences.getString("GOOGLE_PLAY_MUSIC_ACCOUNT", "");
-			
+
 			//Authenticate with Google.
 			AsyncGoogleMusicAuthenticationTask task = new AsyncGoogleMusicAuthenticationTask(mContext, false, accountName);
 			task.execute();
-			
+
 		}
-		
+
 	}
 
     /**
@@ -242,7 +257,7 @@ public class Common extends Application {
     }
 
 	/**
-	 * Sends out a local broadcast that notifies all receivers to update 
+	 * Sends out a local broadcast that notifies all receivers to update
 	 * their respective UI elements.
 	 */
 	public void broadcastUpdateUICommand(String[] updateFlags, String[] flagValues) {
@@ -250,19 +265,19 @@ public class Common extends Application {
 		for (int i=0; i < updateFlags.length; i++) {
 			intent.putExtra(updateFlags[i], flagValues[i]);
 		}
-		
+
 		mLocalBroadcastManager = LocalBroadcastManager.getInstance(mContext);
 		mLocalBroadcastManager.sendBroadcast(intent);
-		
+
 	}
-	
+
 	/**
 	 * Toggles the equalizer.
 	 */
 	public void toggleEqualizer() {
 		if (isEqualizerEnabled()) {
 			getSharedPreferences().edit().putBoolean("EQUALIZER_ENABLED", true).commit();
-			
+
 			if (isServiceRunning()) {
 				try {
 					getService().getEqualizerHelper().getEqualizer().setEnabled(false);
@@ -271,12 +286,12 @@ public class Common extends Application {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
+
 			}
-			
+
 		} else {
 			getSharedPreferences().edit().putBoolean("EQUALIZER_ENABLED", true).commit();
-			
+
 			if (isServiceRunning()) {
 				try {
 					getService().getEqualizerHelper().getEqualizer().setEnabled(true);
@@ -285,11 +300,11 @@ public class Common extends Application {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
+
 			}
-			
+
 		}
-		
+
 		//Reload the EQ settings.
 		if (isServiceRunning()) {
 			try {
@@ -299,11 +314,11 @@ public class Common extends Application {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
 		}
-		
+
 	}
-	
+
  	/**
 	 * Used to downsample a bitmap that's been downloaded from the internet.
 	 */
@@ -325,7 +340,7 @@ public class Common extends Application {
 
 	/**
 	 * Retrieves the image dimensions of the input file.
-	 * 
+	 *
 	 * @param url Url of the input file.
 	 * @return A BitmapFactory.Options object with the output image dimensions.
 	 * @throws FileNotFoundException
@@ -342,14 +357,14 @@ public class Common extends Application {
 
         return outDimens;
     }
-    
+
     /**
      * Resamples a resource image to avoid OOM errors.
-     * 
+     *
      * @param resID Resource ID of the image to be downsampled.
      * @param reqWidth Width of output image.
      * @param reqHeight Height of output image.
-     * 
+     *
      * @return A bitmap of the resampled image.
      */
     public Bitmap decodeSampledBitmapFromResource(int resID, int reqWidth, int reqHeight) {
@@ -359,23 +374,23 @@ public class Common extends Application {
 	    options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
 	    options.inJustDecodeBounds = false;
 	    options.inPurgeable = true;
-	
+
 	    return BitmapFactory.decodeResource(mContext.getResources(), resID, options);
     }
-    
+
     /**
      * Resamples the specified input image file to avoid OOM errors.
-     * 
+     *
      * @param inputFile Input file to be downsampled
      * @param reqWidth Width of the output file.
      * @param reqHeight Height of the output file.
      * @return The downsampled bitmap.
      */
     public Bitmap decodeSampledBitmapFromFile(File inputFile, int reqWidth, int reqHeight) {
-    	
+
     	InputStream is = null;
         try {
-        	
+
         	try {
 				is = new FileInputStream(inputFile);
 			} catch (Exception e) {
@@ -397,7 +412,7 @@ public class Common extends Application {
 				//Return a null bitmap if there's an error reading the file.
 				return null;
 			}
-            
+
             return BitmapFactory.decodeStream(is, null, options);
         } finally {
             try {
@@ -407,14 +422,14 @@ public class Common extends Application {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            
+
         }
-        
+
     }
 
     /**
      * Calculates the sample size for the resampling process.
-     * 
+     *
      * @param options
      * @param reqWidth
      * @param reqHeight
@@ -424,7 +439,7 @@ public class Common extends Application {
 	    final int height = options.outHeight;
 	    final int width = options.outWidth;
 	    int inSampleSize = 1;
-	
+
 	    if (height > reqHeight || width > reqWidth) {
 	        if (width > height) {
 	            inSampleSize = Math.round((float) height / (float) reqHeight);
@@ -432,7 +447,7 @@ public class Common extends Application {
 	            inSampleSize = Math.round((float) width / (float) reqWidth);
 	        }
 	    }
-	
+
 	    return inSampleSize;
 	}
 
@@ -462,7 +477,7 @@ public class Common extends Application {
     }
 
     /**
-     * 
+     *
      * @param url
      * @param sampleSize
      * @return
@@ -481,7 +496,7 @@ public class Common extends Application {
 
         return resizedBitmap;
     }
-    
+
     /*
      * Returns the status bar height for the current layout configuration.
      */
@@ -491,7 +506,7 @@ public class Common extends Application {
     	if (resourceId > 0) {
     		result = context.getResources().getDimensionPixelSize(resourceId);
     	}
-    	
+
     	return result;
     }
 
@@ -508,14 +523,14 @@ public class Common extends Application {
         return 0;
     }
 
-	
+
     /*
      * Download Manager implementation for pinning songs.
      */
     public void queueSongsToPin(boolean getAllPinnedSongs, boolean pinPlaylist, String selection) {
     	//If the current cursor is empty or null, retrieve the cursor using the selection parameter.
     	if (mPinnedSongsCursor==null || mPinnedSongsCursor.getCount()<=0) {
-    		
+
     		if (getAllPinnedSongs==true) {
     			mPinnedSongsCursor = null;
     			mIsFetchingPinnedSongs = true;
@@ -537,12 +552,12 @@ public class Common extends Application {
     	        	//Not playing from a smart playlist. Just use a regular db query that searches songs.
         			mPinnedSongsCursor = mDBAccessHelper.getAllSongsSearchable(selection);
     	        }
-    			
+
     		}
 
     		Intent intent = new Intent(this, PinGMusicSongsService.class);
     		startService(intent);
-    		
+
     	} else {
     		//mPinnedSongsCursor already has songs queued, so append a new intermCursor;
     		Cursor intermCursor = null;
@@ -572,14 +587,14 @@ public class Common extends Application {
     		Cursor[] cursorArray = { mPinnedSongsCursor, intermCursor };
      		MergeCursor mergeCursor = new MergeCursor(cursorArray);
      		mPinnedSongsCursor = (Cursor) mergeCursor;
-     		
+
     	}
-    	
+
     }
-    
+
     /**
      * Rebuilds the service cursor.
-     * 
+     *
      * @param context The context to use for this operation.
      */
 /*    public static void rebuildServiceCursor(Context context) {
@@ -596,10 +611,10 @@ public class Common extends Application {
 		task.execute();
 		
     }*/
-    
+
     /**
-     * Converts dp unit to equivalent pixels, depending on device density. 
-     * 
+     * Converts dp unit to equivalent pixels, depending on device density.
+     *
      * @param dp A value in dp (density independent pixels) unit. Which we need to convert into pixels
      * @param context Context to get resources and device specific display metrics
      * @return A float value to represent px equivalent to dp depending on device density
@@ -613,7 +628,7 @@ public class Common extends Application {
 
     /**
      * Converts device specific pixels to density independent pixels.
-     * 
+     *
      * @param px A value in px (pixels) unit. Which we need to convert into db
      * @param context Context to get resources and device specific display metrics
      * @return A float value to represent dp equivalent to px value
@@ -624,18 +639,83 @@ public class Common extends Application {
         float dp = px / (metrics.densityDpi / 160f);
         return dp;
     }
-    
+
     /**
      * Returns the orientation of the device.
      */
     public int getOrientation() {
-        if (getResources().getDisplayMetrics().widthPixels > 
-           getResources().getDisplayMetrics().heightPixels) { 
+        if (getResources().getDisplayMetrics().widthPixels >
+            getResources().getDisplayMetrics().heightPixels) {
             return ORIENTATION_LANDSCAPE;
         } else {
             return ORIENTATION_PORTRAIT;
-        }     
-        
+        }
+
+    }
+
+    /**
+     * Returns the current screen configuration of the device.
+     */
+    public int getDeviceScreenConfiguration() {
+        String screenSize = getResources().getString(R.string.screen_size);
+        boolean landscape = getResources().getBoolean(R.bool.landscape);
+
+        if (screenSize.equals(REGULAR) && !landscape)
+            return REGULAR_SCREEN_PORTRAIT;
+        else if (screenSize.equals(REGULAR) && landscape)
+            return REGULAR_SCREEN_LANDSCAPE;
+        else if (screenSize.equals(SMALL_TABLET) && !landscape)
+            return SMALL_TABLET_PORTRAIT;
+        else if (screenSize.equals(SMALL_TABLET) && landscape)
+            return SMALL_TABLET_LANDSCAPE;
+        else if (screenSize.equals(LARGE_TABLET) && !landscape)
+            return LARGE_TABLET_PORTRAIT;
+        else if (screenSize.equals(LARGE_TABLET) && landscape)
+            return LARGE_TABLET_LANDSCAPE;
+        else if (screenSize.equals(XLARGE_TABLET) && !landscape)
+            return XLARGE_TABLET_PORTRAIT;
+        else if (screenSize.equals(XLARGE_TABLET) && landscape)
+            return XLARGE_TABLET_LANDSCAPE;
+        else
+            return REGULAR_SCREEN_PORTRAIT;
+    }
+
+    public boolean isTabletInLandscape() {
+        int screenConfig = getDeviceScreenConfiguration();
+        if (screenConfig==SMALL_TABLET_LANDSCAPE ||
+            screenConfig==LARGE_TABLET_LANDSCAPE ||
+            screenConfig==XLARGE_TABLET_LANDSCAPE)
+            return true;
+        else
+            return false;
+
+    }
+
+    public boolean isTabletInPortrait() {
+        int screenConfig = getDeviceScreenConfiguration();
+        if (screenConfig==SMALL_TABLET_PORTRAIT ||
+            screenConfig==LARGE_TABLET_PORTRAIT ||
+            screenConfig==XLARGE_TABLET_PORTRAIT)
+            return true;
+        else
+            return false;
+
+    }
+
+    public boolean isPhoneInLandscape() {
+        int screenConfig = getDeviceScreenConfiguration();
+        if (screenConfig==REGULAR_SCREEN_LANDSCAPE)
+            return true;
+        else
+            return false;
+    }
+
+    public boolean isPhoneInPortrait() {
+        int screenConfig = getDeviceScreenConfiguration();
+        if (screenConfig==REGULAR_SCREEN_PORTRAIT)
+            return true;
+        else
+            return false;
     }
 
     //Resamples an input stream bitmap to avoid OOM errors.
@@ -800,7 +880,7 @@ public class Common extends Application {
     public PlaybackKickstarter getPlaybackKickstarter() {
     	return mPlaybackKickstarter;
     }
-    
+
 	/*
 	 * Setter methods.
 	 */

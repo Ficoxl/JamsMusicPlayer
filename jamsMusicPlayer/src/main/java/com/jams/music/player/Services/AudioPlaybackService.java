@@ -136,6 +136,7 @@ public class AudioPlaybackService extends Service {
 	public static final int mNotificationId = 1080; //NOTE: Using 0 as a notification ID causes Android to ignore the notification call.
 	
 	//Custom actions for media player controls via the notification bar.
+    public static final String LAUNCH_NOW_PLAYING_ACTION = "com.jams.music.player.LAUNCH_NOW_PLAYING_ACTION";
 	public static final String PREVIOUS_ACTION = "com.jams.music.player.PREVIOUS_ACTION";
 	public static final String PLAY_PAUSE_ACTION = "com.jams.music.player.PLAY_PAUSE_ACTION";
 	public static final String NEXT_ACTION = "com.jams.music.player.NEXT_ACTION";
@@ -751,10 +752,10 @@ public class AudioPlaybackService extends Service {
 		mNotificationBuilder.setSmallIcon(R.drawable.notif_icon);
 		
 		//Open up the player screen when the user taps on the notification.
-        Intent notificationIntent = new Intent(mContext, NowPlayingActivity.class);
-        notificationIntent.setFlags(notificationIntent.getFlags() | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-        PendingIntent notificationPendingIntent = PendingIntent.getActivity(mContext, 0, notificationIntent, 0);
-        mNotificationBuilder.setContentIntent(notificationPendingIntent);
+        Intent launchNowPlayingIntent = new Intent();
+        launchNowPlayingIntent.setAction(AudioPlaybackService.LAUNCH_NOW_PLAYING_ACTION);
+        PendingIntent launchNowPlayingPendingIntent = PendingIntent.getBroadcast(mContext.getApplicationContext(), 0, launchNowPlayingIntent, 0);
+        mNotificationBuilder.setContentIntent(launchNowPlayingPendingIntent);
 		
         //Grab the notification layouts.
 		RemoteViews notificationView = new RemoteViews(mContext.getPackageName(), R.layout.notification_custom_layout);
@@ -879,10 +880,10 @@ public class AudioPlaybackService extends Service {
 		mNotificationBuilder.setSmallIcon(R.drawable.notif_icon);
 		
 		//Open up the player screen when the user taps on the notification.
-        Intent notificationIntent = new Intent(mContext, NowPlayingActivity.class);
-        notificationIntent.setFlags(notificationIntent.getFlags() | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-        PendingIntent notificationPendingIntent = PendingIntent.getActivity(mContext, 0, notificationIntent, 0);
-        mNotificationBuilder.setContentIntent(notificationPendingIntent);
+        Intent launchNowPlayingIntent = new Intent();
+        launchNowPlayingIntent.setAction(AudioPlaybackService.LAUNCH_NOW_PLAYING_ACTION);
+        PendingIntent launchNowPlayingPendingIntent = PendingIntent.getBroadcast(mContext.getApplicationContext(), 0, launchNowPlayingIntent, 0);
+        mNotificationBuilder.setContentIntent(launchNowPlayingPendingIntent);
 		
         //Grab the notification layout.
 		RemoteViews notificationView = new RemoteViews(mContext.getPackageName(), R.layout.notification_custom_layout);
@@ -997,40 +998,24 @@ public class AudioPlaybackService extends Service {
 	 */
 	public void updateRemoteControlClients(SongHelper songHelper) {
 		try {
-			//Check if the album art has been cached for this song.
-	        File albumArtFile = new File(mContext.getExternalCacheDir() + "/current_album_art.jpg");
-	        Bitmap remoteControlArtwork = null;
-	        if (albumArtFile.exists()) {
-	        	//Decode a subsampled version of the cached album art.
-	        	remoteControlArtwork = mApp.decodeSampledBitmapFromFile(albumArtFile, 800, 800);
-	        } else {
-	        	//Decode a subsampled version of the default album art.
-	            remoteControlArtwork = mApp.decodeSampledBitmapFromResource(R.drawable.transparent_drawable, 800, 800);
-	        }
+            //Update the remote controls
+            mRemoteControlClientCompat.editMetadata(true)
+                    .putString(MediaMetadataRetriever.METADATA_KEY_ARTIST, getCurrentSong().getArtist())
+                    .putString(MediaMetadataRetriever.METADATA_KEY_TITLE, getCurrentSong().getTitle())
+                    .putString(MediaMetadataRetriever.METADATA_KEY_ALBUM, getCurrentSong().getAlbum())
+                    .putLong(MediaMetadataRetriever.METADATA_KEY_DURATION, getCurrentSong().getDuration())
+                    .putBitmap(RemoteControlClientCompat.MetadataEditorCompat.METADATA_KEY_ARTWORK, getCurrentSong().getAlbumArt())
+                    .apply();
 
-	        try {
-	        	//Update the remote controls
-	        	mRemoteControlClientCompat.editMetadata(true)
-	        						  	  .putString(MediaMetadataRetriever.METADATA_KEY_ARTIST, getCurrentSong().getArtist())
-	        						  	  .putString(MediaMetadataRetriever.METADATA_KEY_TITLE, getCurrentSong().getTitle())
-	        						  	  .putString(MediaMetadataRetriever.METADATA_KEY_ALBUM, getCurrentSong().getAlbum())
-	        						  	  .putLong(MediaMetadataRetriever.METADATA_KEY_DURATION, getCurrentSong().getDuration())
-	        						  	  .putBitmap(RemoteControlClientCompat.MetadataEditorCompat.METADATA_KEY_ARTWORK, remoteControlArtwork)
-	        						  	  .apply();
-		     
-	        	if (mRemoteControlClientCompat!=null) {
-	        		
-	        		if (getCurrentMediaPlayer().isPlaying())
-	        			mRemoteControlClientCompat.setPlaybackState(RemoteControlClient.PLAYSTATE_PLAYING);
-	        		else
-	        			mRemoteControlClientCompat.setPlaybackState(RemoteControlClient.PLAYSTATE_PAUSED);
-	        		
-	        	}
-			     
-		     } catch (Exception e) {
-		    	 e.printStackTrace();
-		     }
-	        
+            if (mRemoteControlClientCompat!=null) {
+
+                if (getCurrentMediaPlayer().isPlaying())
+                    mRemoteControlClientCompat.setPlaybackState(RemoteControlClient.PLAYSTATE_PLAYING);
+                else
+                    mRemoteControlClientCompat.setPlaybackState(RemoteControlClient.PLAYSTATE_PAUSED);
+
+            }
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -118,11 +118,13 @@ public class GridViewFragment extends Fragment {
         mGridViewContainer = (RelativeLayout) mRootView.findViewById(R.id.fragment_grid_view_frontal_layout);
         mGridView.setVerticalScrollBarEnabled(false);
 
-        //Set the number of gridview columns based on the orientation.
-        if (mApp.getOrientation()==Common.ORIENTATION_PORTRAIT) {
-            mGridView.setNumColumns(2);
-        } else {
+        //Set the number of gridview columns based on the screen density and orientation.
+        if (mApp.isPhoneInLandscape() || mApp.isTabletInLandscape()) {
             mGridView.setNumColumns(4);
+        } else if (mApp.isPhoneInPortrait()) {
+            mGridView.setNumColumns(2);
+        } else if (mApp.isTabletInPortrait()) {
+            mGridView.setNumColumns(3);
         }
 
         //KitKat translucent navigation/status bar.
@@ -320,9 +322,7 @@ public class GridViewFragment extends Fragment {
 			animation.setDuration(150);
 			animation.setInterpolator(new AccelerateDecelerateInterpolator());
 
-            mGridViewAdapter = new GridViewCardsAdapter(mContext, mFragment,
-                                                        mApp.getOrientation()==Common.ORIENTATION_LANDSCAPE,
-                                                        mDBColumnsMap);
+            mGridViewAdapter = new GridViewCardsAdapter(mContext, mFragment, mDBColumnsMap);
             //mGridView.setAdapter(mGridViewAdapter);
 
             //GridView animation adapter.

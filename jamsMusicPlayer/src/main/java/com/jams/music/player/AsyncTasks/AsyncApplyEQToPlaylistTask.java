@@ -6,11 +6,11 @@ import android.os.AsyncTask;
 import android.widget.Toast;
 
 import com.jams.music.player.R;
-import com.jams.music.player.EqualizerAudioFXActivity.EqualizerFragment;
+import com.jams.music.player.EqualizerActivity.EqualizerActivity;
 
 public class AsyncApplyEQToPlaylistTask extends AsyncTask<String, Void, Boolean> {
     private Context mContext;
-    private EqualizerFragment mEqualizerFragment;
+    private EqualizerActivity mEqualizerFragment;
     private ProgressDialog pd;
     
 	int max = 10000;
@@ -21,7 +21,7 @@ public class AsyncApplyEQToPlaylistTask extends AsyncTask<String, Void, Boolean>
 	String titlePlaylist = "";
     String songAlbum = "";
 	
-    public AsyncApplyEQToPlaylistTask(Context context, EqualizerFragment fragment, String playlistName) {
+    public AsyncApplyEQToPlaylistTask(Context context, EqualizerActivity fragment, String playlistName) {
     	mContext = context;
     	mEqualizerFragment = fragment;
     	titlePlaylist = playlistName;

@@ -44,7 +44,6 @@ public class GridViewCardsAdapter extends SimpleCursorAdapter implements Scrolla
 	
 	private Context mContext;
 	private Common mApp;
-	private boolean mLandscape = false;
 	private GridViewFragment mGridViewFragment;
     public static GridViewHolder mHolder = null;
     private String mName = "";
@@ -63,25 +62,29 @@ public class GridViewCardsAdapter extends SimpleCursorAdapter implements Scrolla
     public static final int FIELD_4 = 7;
     public static final int FIELD_5 = 8;
     
-    public GridViewCardsAdapter(Context context, GridViewFragment gridViewFragment, 
-    					        boolean landscape, HashMap<Integer, String> dbColumnsMap) {
+    public GridViewCardsAdapter(Context context, GridViewFragment gridViewFragment,
+                                HashMap<Integer, String> dbColumnsMap) {
     	
         super(context, -1, gridViewFragment.getCursor(), new String[] {}, new int[] {}, 0);
         mContext = context;
         mGridViewFragment = gridViewFragment;
         mApp = (Common) mContext.getApplicationContext();
-        mLandscape = landscape;
         mDBColumnsMap = dbColumnsMap;
 
         //Calculate the height and width of each item image.
         DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
-        if (!landscape) {
-            //Two column layout.
-            mWidth = (metrics.widthPixels)/2;
-            mHeight = mWidth + (mWidth/3);
-        } else {
-            //Four column layout.
+
+        if (mApp.isTabletInPortrait()) {
+            //3 column layout.
+            mWidth = (metrics.widthPixels)/3;
+            mHeight = mWidth + (mWidth/4);
+        } else if (mApp.isPhoneInLandscape() || mApp.isTabletInLandscape()) {
+            //4 column layout.
             mWidth = (metrics.widthPixels)/4;
+            mHeight = mWidth + (mWidth/5);
+        } else {
+            //2 column layout.
+            mWidth = (metrics.widthPixels)/2;
             mHeight = mWidth + (mWidth/3);
         }
 
@@ -95,10 +98,8 @@ public class GridViewCardsAdapter extends SimpleCursorAdapter implements Scrolla
     	Cursor c = (Cursor) getItem(childPosition);
     	String title = c.getString(c.getColumnIndex(mDBColumnsMap.get(TITLE_TEXT)));
     	if (title!=null && title.length() > 1)
-    		return "  " + title.substring(0, 2) + "  ";
-    	else if (title!=null && title.length() > 0)
-    		return "  " + title.substring(0, 1) + "  ";
-    	else
+    		return "  " + title.substring(0, 1);
+        else
     		return "  N/A  ";
     }
     

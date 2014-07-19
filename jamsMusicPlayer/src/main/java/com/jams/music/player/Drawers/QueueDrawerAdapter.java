@@ -45,15 +45,9 @@ public class QueueDrawerAdapter extends ArrayAdapter<Integer> {
             holder.removeSong = (ImageView) convertView.findViewById(R.id.queue_remove_song);
 
             holder.songTitleText.setTextColor(UIElementsHelper.getThemeBasedTextColor(mContext));
-            holder.songTitleText.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Light"));
-            holder.songTitleText.setPaintFlags(holder.songTitleText.getPaintFlags()
-                                               | Paint.ANTI_ALIAS_FLAG
-                                               | Paint.SUBPIXEL_TEXT_FLAG);
-
-            holder.artistText.setTypeface(TypefaceHelper.getTypeface(mContext, "RobotoCondensed-Regular"));
-            holder.artistText.setPaintFlags(holder.artistText.getPaintFlags()
-                                            | Paint.ANTI_ALIAS_FLAG
-                                            | Paint.SUBPIXEL_TEXT_FLAG);
+            holder.artistText.setTextColor(UIElementsHelper.getSmallTextColor(mContext));
+            holder.songTitleText.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
+            holder.artistText.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
 
             convertView.setTag(holder);
         } else {
@@ -69,23 +63,14 @@ public class QueueDrawerAdapter extends ArrayAdapter<Integer> {
 
         //Apply the item's colors.
         if (position==mApp.getService().getCurrentSongIndex()) {
-            convertView.setBackgroundColor(mColors[0]);
-            holder.songTitleText.setTextColor(mColors[2]);
-            holder.artistText.setTextColor(mColors[2]);
-            holder.removeSong.setImageResource(R.drawable.cross_light);
-
+            holder.songTitleText.setTextColor(mColors[0]);
+            holder.artistText.setTextColor(mColors[0]);
         } else if (mApp.getCurrentTheme()==Common.LIGHT_THEME) {
-            convertView.setBackgroundColor(0xFFFFFFFF);
             holder.songTitleText.setTextColor(UIElementsHelper.getThemeBasedTextColor(mContext));
             holder.artistText.setTextColor(UIElementsHelper.getSmallTextColor(mContext));
-            holder.removeSong.setImageResource(R.drawable.cross);
-
         } else if (mApp.getCurrentTheme()==Common.DARK_THEME) {
-            convertView.setBackgroundColor(0xFF191919);
             holder.songTitleText.setTextColor(UIElementsHelper.getThemeBasedTextColor(mContext));
             holder.artistText.setTextColor(UIElementsHelper.getSmallTextColor(mContext));
-            holder.removeSong.setImageResource(R.drawable.cross_light);
-
         }
 
         return convertView;

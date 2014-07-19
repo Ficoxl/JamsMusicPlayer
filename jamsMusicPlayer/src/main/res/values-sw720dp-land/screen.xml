@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <string name="screen_type">Large-Tablet</string>
-  <bool name="tablet_in_landscape">true</bool>
+  <string name="screen_size">large_tablet</string>
+  <bool name="landscape">true</bool>
 </resources>

@@ -16,6 +16,7 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -42,6 +43,7 @@ import com.jams.music.player.Animations.TranslateAnimation;
 import com.jams.music.player.ArtistsFlippedActivity.ArtistsFlippedActivity;
 import com.jams.music.player.DBHelpers.DBAccessHelper;
 import com.jams.music.player.Dialogs.RepeatSongRangeDialog;
+import com.jams.music.player.EqualizerActivity.EqualizerActivity;
 import com.jams.music.player.GenresFlippedActivity.GenresFlippedActivity;
 import com.jams.music.player.Helpers.SongHelper;
 import com.jams.music.player.Helpers.SongHelper.AlbumArtLoadedListener;
@@ -67,7 +69,9 @@ public class PlaylistPagerFragment extends Fragment implements AlbumArtLoadedLis
 	private int mPosition;
 	private SongHelper mSongHelper;
 	private PopupMenu popup;
-	
+
+    private RelativeLayout bottomDarkPatch;
+    private RelativeLayout songInfoLayout;
 	private TextView songNameTextView;
 	private TextView artistAlbumNameTextView;
 	private ImageView coverArt;
@@ -89,6 +93,8 @@ public class PlaylistPagerFragment extends Fragment implements AlbumArtLoadedLis
 
         overflowIcon = (ImageView) mRootView.findViewById(R.id.now_playing_overflow_icon);
     	coverArt = (ImageView) mRootView.findViewById(R.id.coverArt);
+        bottomDarkPatch = (RelativeLayout) mRootView.findViewById(R.id.bottomDarkPatch);
+        songInfoLayout = (RelativeLayout) mRootView.findViewById(R.id.songInfoLayout);
         songNameTextView = (TextView) mRootView.findViewById(R.id.songName);
     	artistAlbumNameTextView = (TextView) mRootView.findViewById(R.id.artistAlbumName);
     	
@@ -112,11 +118,38 @@ public class PlaylistPagerFragment extends Fragment implements AlbumArtLoadedLis
 
         mSongHelper = new SongHelper();
         mSongHelper.setAlbumArtLoadedListener(this);
-        mSongHelper.populateSongData(mContext, mPosition, new PicassoMirrorReflectionTransformer());
-		
+
+        if (mApp.getOrientation()==Common.ORIENTATION_LANDSCAPE)
+            mSongHelper.populateSongData(mContext, mPosition);
+		else
+            mSongHelper.populateSongData(mContext, mPosition, new PicassoMirrorReflectionTransformer());
+
     	songNameTextView.setText(mSongHelper.getTitle());
     	artistAlbumNameTextView.setText(mSongHelper.getAlbum() + " - " + mSongHelper.getArtist());
         overflowIcon.setOnClickListener(overflowClickListener);
+
+        //Kitkat padding.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            int navigationBarHeight = Common.getNavigationBarHeight(mContext);
+            int bottomPadding = songInfoLayout.getPaddingBottom();
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) bottomDarkPatch.getLayoutParams();
+
+            if (navigationBarHeight > 0) {
+                /* The nav bar already has padding, so remove the extra 15dp
+                 * padding that was applied in the layout file.
+                 */
+                int marginPixelsValue = (int) mApp.convertDpToPixels(15, mContext);
+                bottomPadding -= marginPixelsValue;
+                params.height -= marginPixelsValue;
+            }
+
+            bottomPadding += navigationBarHeight;
+            songInfoLayout.setPadding(0, 0, 0, bottomPadding);
+
+            params.height += navigationBarHeight;
+            bottomDarkPatch.setLayoutParams(params);
+
+        }
     	
         return mRootView;
     }
@@ -128,6 +161,11 @@ public class PlaylistPagerFragment extends Fragment implements AlbumArtLoadedLis
 
         @Override
         public void onClick(View v) {
+
+            //Hide the "Current queue" item if it's already visible.
+            if (mApp.isTabletInLandscape())
+                popup.getMenu().findItem(R.id.current_queue).setVisible(false);
+
             popup.show();
         }
 
@@ -142,6 +180,10 @@ public class PlaylistPagerFragment extends Fragment implements AlbumArtLoadedLis
         public boolean onMenuItemClick(MenuItem item) {
 
             switch (item.getItemId()) {
+                case R.id.equalizer:
+                    Intent intent = new Intent(getActivity(), EqualizerActivity.class);
+                    startActivity(intent);
+                    break;
                 case R.id.save_clear_current_position:
                     if (item.getTitle().equals(mContext.getResources().getString(R.string.save_current_position))) {
                         item.setTitle(R.string.clear_saved_position);

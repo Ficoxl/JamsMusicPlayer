@@ -1,7 +1,8 @@
-package com.jams.music.player.EqualizerAudioFXActivity;
+package com.jams.music.player.EqualizerActivity;
 
 import java.util.ArrayList;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -10,26 +11,35 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Paint;
+import android.graphics.drawable.ColorDrawable;
 import android.media.audiofx.PresetReverb;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
-import android.view.LayoutInflater;
+import android.util.Log;
+import android.util.TypedValue;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.jams.music.player.R;
 import com.jams.music.player.AsyncTasks.AsyncApplyEQToAllSongsTask;
@@ -39,16 +49,19 @@ import com.jams.music.player.Dialogs.EQArtistsListDialog;
 import com.jams.music.player.Dialogs.EQGenresListDialog;
 import com.jams.music.player.Helpers.TypefaceHelper;
 import com.jams.music.player.Helpers.UIElementsHelper;
-import com.jams.music.player.NowPlayingActivity.NowPlayingActivity;
+import com.jams.music.player.SettingsActivity.SettingsActivity;
 import com.jams.music.player.Utils.Common;
 import com.jams.music.player.Utils.VerticalSeekBar;
 
-public class EqualizerFragment extends Fragment {
+public class EqualizerActivity extends FragmentActivity {
 
 	//Context.
 	protected Context mContext;
 	private Common mApp;
-	private EqualizerFragment mFragment;
+    private EqualizerActivity mFragment;
+
+    //Equalizer container elements.
+    private ScrollView mScrollView;
 
 	// 50Hz equalizer controls.
 	private VerticalSeekBar equalizer50HzSeekBar;
@@ -114,70 +127,76 @@ public class EqualizerFragment extends Fragment {
 	private TextView virtualizerTitle;
 	private TextView bassBoostTitle;
 	private TextView reverbTitle;
-	
-	@Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_equalizer, container, false);
 
+    //Misc flags.
+    private boolean mDoneButtonPressed = false;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
         //Context.
-        mContext = getActivity();
+        mContext = getApplicationContext();
         mApp = (Common) mContext.getApplicationContext();
         mFragment = this;
-        
-        //Set the background color.
-        rootView.setBackgroundResource(UIElementsHelper.getNowPlayingControlsBackground(getActivity()));
-        
-    	//50Hz equalizer controls.
-        equalizer50HzSeekBar = (VerticalSeekBar) rootView.findViewById(R.id.equalizer50Hz);
-        text50HzGainTextView = (TextView) rootView.findViewById(R.id.text50HzGain);
-        text50Hz = (TextView) rootView.findViewById(R.id.text50Hz);
-    	
-    	//130Hz equalizer controls.
-        equalizer130HzSeekBar = (VerticalSeekBar) rootView.findViewById(R.id.equalizer130Hz);
-        text130HzGainTextView = (TextView) rootView.findViewById(R.id.text130HzGain);
-        text130Hz = (TextView) rootView.findViewById(R.id.text130Hz);
-    	
-    	//320Hz equalizer controls.
-        equalizer320HzSeekBar = (VerticalSeekBar) rootView.findViewById(R.id.equalizer320Hz);
-        text320HzGainTextView = (TextView) rootView.findViewById(R.id.text320HzGain);
-        text320Hz = (TextView) rootView.findViewById(R.id.text320Hz);
-    	
-    	//800Hz equalizer controls.
-        equalizer800HzSeekBar = (VerticalSeekBar) rootView.findViewById(R.id.equalizer800Hz);
-        text800HzGainTextView = (TextView) rootView.findViewById(R.id.text800HzGain);
-        text800Hz = (TextView) rootView.findViewById(R.id.text800Hz);
-    	
-    	//2kHz equalizer controls.
-        equalizer2kHzSeekBar = (VerticalSeekBar) rootView.findViewById(R.id.equalizer2kHz);
-        text2kHzGainTextView = (TextView) rootView.findViewById(R.id.text2kHzGain);
-        text2kHz = (TextView) rootView.findViewById(R.id.text2kHz);
-    	
-    	//5kHz equalizer controls.
-        equalizer5kHzSeekBar = (VerticalSeekBar) rootView.findViewById(R.id.equalizer5kHz);
-        text5kHzGainTextView = (TextView) rootView.findViewById(R.id.text5kHzGain);
-        text5kHz = (TextView) rootView.findViewById(R.id.text5kHz);
-    	
-    	//12.5kHz equalizer controls.
-        equalizer12_5kHzSeekBar = (VerticalSeekBar) rootView.findViewById(R.id.equalizer12_5kHz);
-        text12_5kHzGainTextView = (TextView) rootView.findViewById(R.id.text12_5kHzGain);
-        text12_5kHz = (TextView) rootView.findViewById(R.id.text12_5kHz);
-    	
-    	//Equalizer preset controls.
-        loadPresetButton = (RelativeLayout) rootView.findViewById(R.id.loadPresetButton);
-        saveAsPresetButton = (RelativeLayout) rootView.findViewById(R.id.saveAsPresetButton);
-        resetAllButton = (RelativeLayout) rootView.findViewById(R.id.resetAllButton);
-        loadPresetText = (TextView) rootView.findViewById(R.id.load_preset_text);
-        savePresetText = (TextView) rootView.findViewById(R.id.save_as_preset_text);
-        resetAllText = (TextView) rootView.findViewById(R.id.reset_all_text);
-        
+
+        setTheme();
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_equalizer);
+
+        //Equalizer container elements.
+        mScrollView = (ScrollView) findViewById(R.id.equalizerScrollView);
+        mScrollView.setBackgroundColor(UIElementsHelper.getBackgroundColor(mContext));
+
+        //50Hz equalizer controls.
+        equalizer50HzSeekBar = (VerticalSeekBar) findViewById(R.id.equalizer50Hz);
+        text50HzGainTextView = (TextView) findViewById(R.id.text50HzGain);
+        text50Hz = (TextView) findViewById(R.id.text50Hz);
+
+        //130Hz equalizer controls.
+        equalizer130HzSeekBar = (VerticalSeekBar) findViewById(R.id.equalizer130Hz);
+        text130HzGainTextView = (TextView) findViewById(R.id.text130HzGain);
+        text130Hz = (TextView) findViewById(R.id.text130Hz);
+
+        //320Hz equalizer controls.
+        equalizer320HzSeekBar = (VerticalSeekBar) findViewById(R.id.equalizer320Hz);
+        text320HzGainTextView = (TextView) findViewById(R.id.text320HzGain);
+        text320Hz = (TextView) findViewById(R.id.text320Hz);
+
+        //800Hz equalizer controls.
+        equalizer800HzSeekBar = (VerticalSeekBar) findViewById(R.id.equalizer800Hz);
+        text800HzGainTextView = (TextView) findViewById(R.id.text800HzGain);
+        text800Hz = (TextView) findViewById(R.id.text800Hz);
+
+        //2kHz equalizer controls.
+        equalizer2kHzSeekBar = (VerticalSeekBar) findViewById(R.id.equalizer2kHz);
+        text2kHzGainTextView = (TextView) findViewById(R.id.text2kHzGain);
+        text2kHz = (TextView) findViewById(R.id.text2kHz);
+
+        //5kHz equalizer controls.
+        equalizer5kHzSeekBar = (VerticalSeekBar) findViewById(R.id.equalizer5kHz);
+        text5kHzGainTextView = (TextView) findViewById(R.id.text5kHzGain);
+        text5kHz = (TextView) findViewById(R.id.text5kHz);
+
+        //12.5kHz equalizer controls.
+        equalizer12_5kHzSeekBar = (VerticalSeekBar) findViewById(R.id.equalizer12_5kHz);
+        text12_5kHzGainTextView = (TextView) findViewById(R.id.text12_5kHzGain);
+        text12_5kHz = (TextView) findViewById(R.id.text12_5kHz);
+
+        //Equalizer preset controls.
+        loadPresetButton = (RelativeLayout) findViewById(R.id.loadPresetButton);
+        saveAsPresetButton = (RelativeLayout) findViewById(R.id.saveAsPresetButton);
+        resetAllButton = (RelativeLayout) findViewById(R.id.resetAllButton);
+        loadPresetText = (TextView) findViewById(R.id.load_preset_text);
+        savePresetText = (TextView) findViewById(R.id.save_as_preset_text);
+        resetAllText = (TextView) findViewById(R.id.reset_all_text);
+
         //Audio FX elements.
-        virtualizerSeekBar = (SeekBar) rootView.findViewById(R.id.virtualizer_seekbar);
-        bassBoostSeekBar = (SeekBar) rootView.findViewById(R.id.bass_boost_seekbar);
-        reverbSpinner = (Spinner) rootView.findViewById(R.id.reverb_spinner);
-        virtualizerTitle = (TextView) rootView.findViewById(R.id.virtualizer_title_text);
-        bassBoostTitle = (TextView) rootView.findViewById(R.id.bass_boost_title_text);
-        reverbTitle = (TextView) rootView.findViewById(R.id.reverb_title_text);
-		
+        virtualizerSeekBar = (SeekBar) findViewById(R.id.virtualizer_seekbar);
+        bassBoostSeekBar = (SeekBar) findViewById(R.id.bass_boost_seekbar);
+        reverbSpinner = (Spinner) findViewById(R.id.reverb_spinner);
+        virtualizerTitle = (TextView) findViewById(R.id.virtualizer_title_text);
+        bassBoostTitle = (TextView) findViewById(R.id.bass_boost_title_text);
+        reverbTitle = (TextView) findViewById(R.id.reverb_title_text);
+
         text50HzGainTextView.setTypeface(TypefaceHelper.getTypeface(mContext, "RobotoCondensed-Regular"));
         text130HzGainTextView.setTypeface(TypefaceHelper.getTypeface(mContext, "RobotoCondensed-Regular"));
         text320HzGainTextView.setTypeface(TypefaceHelper.getTypeface(mContext, "RobotoCondensed-Regular"));
@@ -192,47 +211,47 @@ public class EqualizerFragment extends Fragment {
         text2kHz.setTypeface(TypefaceHelper.getTypeface(mContext, "RobotoCondensed-Regular"));
         text5kHz.setTypeface(TypefaceHelper.getTypeface(mContext, "RobotoCondensed-Regular"));
         text12_5kHz.setTypeface(TypefaceHelper.getTypeface(mContext, "RobotoCondensed-Regular"));
-        
+
         loadPresetText.setTypeface(TypefaceHelper.getTypeface(mContext, "RobotoCondensed-Bold"));
         savePresetText.setTypeface(TypefaceHelper.getTypeface(mContext, "RobotoCondensed-Bold"));
         resetAllText.setTypeface(TypefaceHelper.getTypeface(mContext, "RobotoCondensed-Bold"));
-		
+
         text50HzGainTextView.setPaintFlags(text50HzGainTextView.getPaintFlags() | Paint.SUBPIXEL_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
         text130HzGainTextView.setPaintFlags(text130HzGainTextView.getPaintFlags() | Paint.SUBPIXEL_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
         text320HzGainTextView.setPaintFlags(text320HzGainTextView.getPaintFlags() | Paint.SUBPIXEL_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
-		text800HzGainTextView.setPaintFlags(text130HzGainTextView.getPaintFlags() | Paint.SUBPIXEL_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
-		text2kHzGainTextView.setPaintFlags(text320HzGainTextView.getPaintFlags() | Paint.SUBPIXEL_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
-		text5kHzGainTextView.setPaintFlags(text130HzGainTextView.getPaintFlags() | Paint.SUBPIXEL_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
-		text12_5kHzGainTextView.setPaintFlags(text320HzGainTextView.getPaintFlags() | Paint.SUBPIXEL_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
-		text50Hz.setPaintFlags(text50Hz.getPaintFlags() | Paint.SUBPIXEL_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
-		text130Hz.setPaintFlags(text130Hz.getPaintFlags() | Paint.SUBPIXEL_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
-		text320Hz.setPaintFlags(text320Hz.getPaintFlags() | Paint.SUBPIXEL_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
-		text800Hz.setPaintFlags(text800Hz.getPaintFlags() | Paint.SUBPIXEL_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
-		text2kHz.setPaintFlags(text2kHz.getPaintFlags() | Paint.SUBPIXEL_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
-		text5kHz.setPaintFlags(text5kHz.getPaintFlags() | Paint.SUBPIXEL_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
-		text12_5kHz.setPaintFlags(text12_5kHz.getPaintFlags() | Paint.SUBPIXEL_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
-		
-		loadPresetText.setPaintFlags(text50HzGainTextView.getPaintFlags() | Paint.SUBPIXEL_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
+        text800HzGainTextView.setPaintFlags(text130HzGainTextView.getPaintFlags() | Paint.SUBPIXEL_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
+        text2kHzGainTextView.setPaintFlags(text320HzGainTextView.getPaintFlags() | Paint.SUBPIXEL_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
+        text5kHzGainTextView.setPaintFlags(text130HzGainTextView.getPaintFlags() | Paint.SUBPIXEL_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
+        text12_5kHzGainTextView.setPaintFlags(text320HzGainTextView.getPaintFlags() | Paint.SUBPIXEL_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
+        text50Hz.setPaintFlags(text50Hz.getPaintFlags() | Paint.SUBPIXEL_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
+        text130Hz.setPaintFlags(text130Hz.getPaintFlags() | Paint.SUBPIXEL_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
+        text320Hz.setPaintFlags(text320Hz.getPaintFlags() | Paint.SUBPIXEL_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
+        text800Hz.setPaintFlags(text800Hz.getPaintFlags() | Paint.SUBPIXEL_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
+        text2kHz.setPaintFlags(text2kHz.getPaintFlags() | Paint.SUBPIXEL_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
+        text5kHz.setPaintFlags(text5kHz.getPaintFlags() | Paint.SUBPIXEL_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
+        text12_5kHz.setPaintFlags(text12_5kHz.getPaintFlags() | Paint.SUBPIXEL_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
+
+        loadPresetText.setPaintFlags(text50HzGainTextView.getPaintFlags() | Paint.SUBPIXEL_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
         savePresetText.setPaintFlags(text50HzGainTextView.getPaintFlags() | Paint.SUBPIXEL_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
         resetAllText.setPaintFlags(text50HzGainTextView.getPaintFlags() | Paint.SUBPIXEL_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
-        
+
         text50HzGainTextView.setTextColor(UIElementsHelper.getSmallTextColor(mContext));
         text130HzGainTextView.setTextColor(UIElementsHelper.getSmallTextColor(mContext));
         text320HzGainTextView.setTextColor(UIElementsHelper.getSmallTextColor(mContext));
-		text800HzGainTextView.setTextColor(UIElementsHelper.getSmallTextColor(mContext));
-		text2kHzGainTextView.setTextColor(UIElementsHelper.getSmallTextColor(mContext));
-		text5kHzGainTextView.setTextColor(UIElementsHelper.getSmallTextColor(mContext));
-		text12_5kHzGainTextView.setTextColor(UIElementsHelper.getSmallTextColor(mContext));
-		text50Hz.setTextColor(UIElementsHelper.getSmallTextColor(mContext));
-		text130Hz.setTextColor(UIElementsHelper.getSmallTextColor(mContext));
-		text320Hz.setTextColor(UIElementsHelper.getSmallTextColor(mContext));
-		text800Hz.setTextColor(UIElementsHelper.getSmallTextColor(mContext));
-		text2kHz.setTextColor(UIElementsHelper.getSmallTextColor(mContext));
-		text5kHz.setTextColor(UIElementsHelper.getSmallTextColor(mContext));
-		text12_5kHz.setTextColor(UIElementsHelper.getSmallTextColor(mContext));
-		
-		//Init reverb presets.
-		ArrayList<String> reverbPresets = new ArrayList<String>();
+        text800HzGainTextView.setTextColor(UIElementsHelper.getSmallTextColor(mContext));
+        text2kHzGainTextView.setTextColor(UIElementsHelper.getSmallTextColor(mContext));
+        text5kHzGainTextView.setTextColor(UIElementsHelper.getSmallTextColor(mContext));
+        text12_5kHzGainTextView.setTextColor(UIElementsHelper.getSmallTextColor(mContext));
+        text50Hz.setTextColor(UIElementsHelper.getSmallTextColor(mContext));
+        text130Hz.setTextColor(UIElementsHelper.getSmallTextColor(mContext));
+        text320Hz.setTextColor(UIElementsHelper.getSmallTextColor(mContext));
+        text800Hz.setTextColor(UIElementsHelper.getSmallTextColor(mContext));
+        text2kHz.setTextColor(UIElementsHelper.getSmallTextColor(mContext));
+        text5kHz.setTextColor(UIElementsHelper.getSmallTextColor(mContext));
+        text12_5kHz.setTextColor(UIElementsHelper.getSmallTextColor(mContext));
+
+        //Init reverb presets.
+        ArrayList<String> reverbPresets = new ArrayList<String>();
         reverbPresets.add("None");
         reverbPresets.add("Large Hall");
         reverbPresets.add("Large Room");
@@ -241,89 +260,110 @@ public class EqualizerFragment extends Fragment {
         reverbPresets.add("Small Room");
         reverbPresets.add("Plate");
 
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, reverbPresets);
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, reverbPresets);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         reverbSpinner.setAdapter(dataAdapter);
-        
+
         //Set the max values for the seekbars.
         virtualizerSeekBar.setMax(1000);
         bassBoostSeekBar.setMax(1000);
-        
+
         virtualizerTitle.setTypeface(TypefaceHelper.getTypeface(mContext, "RobotoCondensed-Regular"));
         virtualizerTitle.setTextColor(UIElementsHelper.getSmallTextColor(mContext));
         virtualizerTitle.setPaintFlags(virtualizerTitle.getPaintFlags() | Paint.ANTI_ALIAS_FLAG | Paint.SUBPIXEL_TEXT_FLAG);
-        
+
         bassBoostTitle.setTypeface(TypefaceHelper.getTypeface(mContext, "RobotoCondensed-Regular"));
         bassBoostTitle.setTextColor(UIElementsHelper.getSmallTextColor(mContext));
         bassBoostTitle.setPaintFlags(bassBoostTitle.getPaintFlags() | Paint.ANTI_ALIAS_FLAG | Paint.SUBPIXEL_TEXT_FLAG);
-        
+
         reverbTitle.setTypeface(TypefaceHelper.getTypeface(mContext, "RobotoCondensed-Regular"));
         reverbTitle.setTextColor(UIElementsHelper.getSmallTextColor(mContext));
         reverbTitle.setPaintFlags(reverbTitle.getPaintFlags() | Paint.ANTI_ALIAS_FLAG | Paint.SUBPIXEL_TEXT_FLAG);
-        
-		resetAllButton.setOnClickListener(new OnClickListener() {
 
-			@Override
-			public void onClick(View v) {
-				//Reset all sliders to 0.
-				equalizer50HzSeekBar.setProgressAndThumb(16);
-				equalizer130HzSeekBar.setProgressAndThumb(16);
-				equalizer320HzSeekBar.setProgressAndThumb(16);
-				equalizer800HzSeekBar.setProgressAndThumb(16);
-				equalizer2kHzSeekBar.setProgressAndThumb(16);
-				equalizer5kHzSeekBar.setProgressAndThumb(16);
-				equalizer12_5kHzSeekBar.setProgressAndThumb(16);
-		        virtualizerSeekBar.setProgress(0);
-		        bassBoostSeekBar.setProgress(0);
-		        reverbSpinner.setSelection(0, false);
-		        
-		        //Apply the new setings to the service.
-		        applyCurrentEQSettings();
-		        
-		        //Show a confirmation toast.
-		        Toast.makeText(mContext, R.string.eq_reset, Toast.LENGTH_SHORT).show();
-				
-			}
-			
-		});
-		
-		loadPresetButton.setOnClickListener(new OnClickListener() {
+        resetAllButton.setOnClickListener(new OnClickListener() {
 
-			@Override
-			public void onClick(View v) {
-				buildLoadPresetDialog().show();
-				
-			}
-			
-		});
-		
-		saveAsPresetButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Reset all sliders to 0.
+                equalizer50HzSeekBar.setProgressAndThumb(16);
+                equalizer130HzSeekBar.setProgressAndThumb(16);
+                equalizer320HzSeekBar.setProgressAndThumb(16);
+                equalizer800HzSeekBar.setProgressAndThumb(16);
+                equalizer2kHzSeekBar.setProgressAndThumb(16);
+                equalizer5kHzSeekBar.setProgressAndThumb(16);
+                equalizer12_5kHzSeekBar.setProgressAndThumb(16);
+                virtualizerSeekBar.setProgress(0);
+                bassBoostSeekBar.setProgress(0);
+                reverbSpinner.setSelection(0, false);
 
-			@Override
-			public void onClick(View v) {
-				buildSavePresetDialog().show();
-				
-			}
-			
-		});
+                //Apply the new setings to the service.
+                applyCurrentEQSettings();
 
-		equalizer50HzSeekBar.setOnSeekBarChangeListener(equalizer50HzListener);
-		equalizer130HzSeekBar.setOnSeekBarChangeListener(equalizer130HzListener);
-		equalizer320HzSeekBar.setOnSeekBarChangeListener(equalizer320HzListener);
-		equalizer800HzSeekBar.setOnSeekBarChangeListener(equalizer800HzListener);
-		equalizer2kHzSeekBar.setOnSeekBarChangeListener(equalizer2kHzListener);
-		equalizer5kHzSeekBar.setOnSeekBarChangeListener(equalizer5kHzListener);
-		equalizer12_5kHzSeekBar.setOnSeekBarChangeListener(equalizer12_5kHzListener);
-		
+                //Show a confirmation toast.
+                Toast.makeText(mContext, R.string.eq_reset, Toast.LENGTH_SHORT).show();
+
+            }
+
+        });
+
+        loadPresetButton.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                buildLoadPresetDialog().show();
+
+            }
+
+        });
+
+        saveAsPresetButton.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                buildSavePresetDialog().show();
+
+            }
+
+        });
+
+        equalizer50HzSeekBar.setOnSeekBarChangeListener(equalizer50HzListener);
+        equalizer130HzSeekBar.setOnSeekBarChangeListener(equalizer130HzListener);
+        equalizer320HzSeekBar.setOnSeekBarChangeListener(equalizer320HzListener);
+        equalizer800HzSeekBar.setOnSeekBarChangeListener(equalizer800HzListener);
+        equalizer2kHzSeekBar.setOnSeekBarChangeListener(equalizer2kHzListener);
+        equalizer5kHzSeekBar.setOnSeekBarChangeListener(equalizer5kHzListener);
+        equalizer12_5kHzSeekBar.setOnSeekBarChangeListener(equalizer12_5kHzListener);
+
         virtualizerSeekBar.setOnSeekBarChangeListener(virtualizerListener);
         bassBoostSeekBar.setOnSeekBarChangeListener(bassBoostListener);
         reverbSpinner.setOnItemSelectedListener(reverbListener);
 
-    	//Get the saved equalizer settings and apply them to the UI elements.
-		new AsyncInitSlidersTask().execute();
-    	
-        return rootView;
-        
+        //Get the saved equalizer settings and apply them to the UI elements.
+        new AsyncInitSlidersTask().execute();
+
+    }
+
+    /**
+     * Sets the activity theme based on the user preference.
+     */
+    private void setTheme() {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            if (mApp.getCurrentTheme()==Common.DARK_THEME) {
+                setTheme(R.style.AppThemeNoTranslucentNav);
+            } else {
+                setTheme(R.style.AppThemeNoTranslucentNavLight);
+            }
+
+        } else {
+            if (mApp.getCurrentTheme()==Common.DARK_THEME) {
+                setTheme(R.style.AppTheme);
+            } else {
+                setTheme(R.style.AppThemeLight);
+            }
+
+        }
+
     }
 	
 	/**
@@ -800,8 +840,8 @@ public class EqualizerFragment extends Fragment {
 	 */
 	private AlertDialog buildSavePresetDialog() {
 		
-		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        View dialogView = getActivity().getLayoutInflater().inflate(R.layout.add_new_equalizer_preset_dialog_layout, null);
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View dialogView = getLayoutInflater().inflate(R.layout.add_new_equalizer_preset_dialog_layout, null);
         
         final EditText newPresetNameField = (EditText) dialogView.findViewById(R.id.new_preset_name_text_field);
         newPresetNameField.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Light"));
@@ -858,7 +898,7 @@ public class EqualizerFragment extends Fragment {
 	 * @return A fully built AlertDialog reference.
 	 */
 	private AlertDialog buildLoadPresetDialog() {
-		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         //Get a cursor with the list of EQ presets.
         final Cursor cursor = mApp.getDBAccessHelper().getAllEQPresets();
@@ -926,10 +966,11 @@ public class EqualizerFragment extends Fragment {
 	 * @return A fully built AlertDialog reference.
 	 */
 	public AlertDialog buildApplyToDialog() {
-		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         //Set the dialog title.
         builder.setTitle(R.string.apply_to);
+        builder.setCancelable(false);
         builder.setItems(R.array.apply_equalizer_to_array, new DialogInterface.OnClickListener() {
 
 			@Override
@@ -939,33 +980,33 @@ public class EqualizerFragment extends Fragment {
 					setEQValuesForSong(mApp.getService().getCurrentSong().getId());
 					Toast.makeText(mContext, R.string.eq_applied_to_current_song, Toast.LENGTH_SHORT).show();
 					
-					//Hide the equalizer fragment.
-					((NowPlayingActivity) getActivity()).showHideEqualizer();
+					//Finish this activity.
+                    finish();
 					
 				} else if (which==1) {	
-					AsyncApplyEQToAllSongsTask task = new AsyncApplyEQToAllSongsTask(getActivity(), mFragment);
+					AsyncApplyEQToAllSongsTask task = new AsyncApplyEQToAllSongsTask(mContext, mFragment);
 					task.execute();
 					dialog.dismiss();
-					
-					//Hide the equalizer fragment.
-					((NowPlayingActivity) getActivity()).showHideEqualizer();
+
+                    //Finish this activity.
+                    finish();
 
 				} else if (which==2) {
-					FragmentTransaction ft = getFragmentManager().beginTransaction();
+					FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 					EQArtistsListDialog artistDialog = new EQArtistsListDialog();
 					artistDialog.show(ft, "eqArtistsListDialog");
 					
 					dialog.dismiss();
 
 				} else if (which==3) {	
-					FragmentTransaction ft = getFragmentManager().beginTransaction();
+					FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 					EQAlbumsListDialog albumsDialog = new EQAlbumsListDialog();
 					albumsDialog.show(ft, "eqAlbumsListDialog");
 					
 					dialog.dismiss();
 
 				} else if (which==4) {
-					FragmentTransaction ft = getFragmentManager().beginTransaction();
+					FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 					EQGenresListDialog genresDialog = new EQGenresListDialog();
 					genresDialog.show(ft, "eqGenresListDialog");
 					
@@ -1052,21 +1093,110 @@ public class EqualizerFragment extends Fragment {
 				new AsyncInitSlidersTask().execute();
 				
 			}
+
+            if (intent.hasExtra(Common.SERVICE_STOPPING)) {
+                finish();
+            }
 			
 		}
 		
 	};
-	
+
+    /**
+     * Initializes the ActionBar.
+     */
+    private void showEqualizerActionBar(Menu menu) {
+
+        //Set the Actionbar color.
+        getActionBar().setBackgroundDrawable(UIElementsHelper.getGeneralActionBarBackground(mContext));
+
+        //Hide all menu items except the toggle button and "done" icon.
+        menu.findItem(R.id.action_equalizer).setVisible(false);
+        menu.findItem(R.id.action_pin).setVisible(false);
+        menu.findItem(R.id.action_queue_drawer).setVisible(false);
+        menu.findItem(R.id.action_settings).setVisible(false);
+        menu.findItem(R.id.action_done).setVisible(true);
+
+        /**
+         * The Toggle button in the actionbar doesn't work at this point. The setChecked()
+         * method doesn't do anything, so there's no way to programmatically set the
+         * switch to its correct position when the equalizer fragment is first shown.
+         * Users will just have to rely on the "Reset" button in the equalizer fragment
+         * to effectively switch off the equalizer.
+         */
+        menu.findItem(R.id.action_equalizer_toggle).setVisible(false); //Hide the toggle for now.
+
+		//Set the toggle listener.
+		ToggleButton equalizerToggle = (ToggleButton) menu.findItem(R.id.action_equalizer_toggle)
+									 		  			  .getActionView()
+									 		  			  .findViewById(R.id.actionbar_toggle_switch);
+
+		//Set the current state of the toggle.
+		boolean toggleSetting = true;
+		if (mApp.isEqualizerEnabled())
+			toggleSetting = true;
+		else
+			toggleSetting = false;
+
+        //Set the ActionBar title text color.
+        int titleId = getResources().getIdentifier("action_bar_title", "id", "android");
+        TextView abTitle = (TextView) findViewById(titleId);
+        abTitle.setTextColor(0xFFFFFFFF);
+
+		equalizerToggle.setChecked(toggleSetting);
+		equalizerToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+			@Override
+			public void onCheckedChanged(CompoundButton arg0, boolean state) {
+				mApp.setIsEqualizerEnabled(state);
+
+				if (state==true)
+					applyCurrentEQSettings();
+
+			}
+
+		});
+
+        getActionBar().setHomeButtonEnabled(false);
+        getActionBar().setDisplayHomeAsUpEnabled(false);
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.now_playing, menu);
+
+        showEqualizerActionBar(menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        super.onOptionsItemSelected(item);
+        switch (item.getItemId()) {
+            case R.id.action_done:
+                mDoneButtonPressed = true;
+                buildApplyToDialog().show();
+                return true;
+            default:
+                //Return false to allow the activity to handle the item click.
+                return false;
+        }
+
+    }
+
     @Override
     public void onPause() {
     	super.onPause();
 
-    }
-    
-    @Override
-    public void onResume() {
-    	super.onResume();
-    	
+        //Save the EQ values for the current song.
+        if (!mDoneButtonPressed) {
+           setEQValuesForSong(mApp.getService().getCurrentSong().getId());
+           Toast.makeText(mContext, R.string.eq_applied_to_current_song, Toast.LENGTH_SHORT).show();
+        }
+
+        finish();
     }
 	
 	@Override
@@ -1242,7 +1372,7 @@ public class EqualizerFragment extends Fragment {
 		}
 		
 	}
-	
+
     /**
      * Getter methods.
      */

@@ -1,13 +1,10 @@
 package com.jams.music.player.NowPlayingActivity;
 
 import android.annotation.SuppressLint;
-import android.app.ActionBar;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.TransitionDrawable;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,25 +13,15 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.DrawerLayout.DrawerListener;
+import android.util.Log;
 import android.view.Gravity;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
 import android.view.animation.DecelerateInterpolator;
-import android.view.animation.RotateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
@@ -45,16 +32,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jams.music.player.Animations.FadeAnimation;
-import com.jams.music.player.Animations.TranslateAnimation;
 import com.jams.music.player.AsyncTasks.AsyncRemovePinnedSongsTask;
 import com.jams.music.player.DBHelpers.DBAccessHelper;
-import com.jams.music.player.Dialogs.RepeatSongRangeDialog;
 import com.jams.music.player.Drawers.QueueDrawerFragment;
-import com.jams.music.player.EqualizerAudioFXActivity.EqualizerFragment;
+import com.jams.music.player.Helpers.TypefaceHelper;
 import com.jams.music.player.Helpers.UIElementsHelper;
 import com.jams.music.player.R;
 import com.jams.music.player.Services.AudioPlaybackService;
-import com.jams.music.player.SettingsActivity.SettingsActivity;
 import com.jams.music.player.Utils.Common;
 import com.velocity.view.pager.library.VelocityViewPager;
 
@@ -65,13 +49,10 @@ public class NowPlayingActivity extends FragmentActivity {
     //Common objects.
 	private Context mContext;
     private Common mApp;
-	private Menu mMenu;
-	private FragmentManager mFragmentManager;
 
     //Layouts.
 	private DrawerLayout mDrawerLayout;
 	private FrameLayout mDrawerParentLayout;
-	private RelativeLayout mEqualizerLayout;
     private QueueDrawerFragment mQueueDrawerFragment;
     private RelativeLayout mCurrentQueueLayout;
 	
@@ -80,6 +61,7 @@ public class NowPlayingActivity extends FragmentActivity {
 	private ProgressBar mStreamingProgressBar;
 	
 	//Playback Controls.
+    private RelativeLayout mControlsLayoutHeaderParent;
 	private RelativeLayout mControlsLayoutHeader;
 	private ImageButton mPlayPauseButton;
     private RelativeLayout mPlayPauseButtonBackground;
@@ -87,7 +69,12 @@ public class NowPlayingActivity extends FragmentActivity {
 	private ImageButton mPreviousButton;
 	private ImageButton mShuffleButton;
 	private ImageButton mRepeatButton;
-	
+
+    //Seekbar indicator.
+    private RelativeLayout mSeekbarIndicatorLayoutParent;
+    private RelativeLayout mSeekbarIndicatorLayout;
+    private TextView mSeekbarIndicatorText;
+
 	//Playlist pager.
     private VelocityViewPager mViewPager;
     private PlaylistPagerAdapter mViewPagerAdapter;
@@ -97,10 +84,6 @@ public class NowPlayingActivity extends FragmentActivity {
     
     //Differentiates between a user's scroll input and a programmatic scroll.
     private boolean USER_SCROLL = true;
-    
-    //Equalizer fragment.
-    private EqualizerFragment mEqualizerFragment;
-    private boolean mIsEqualizerVisible = false;
 
     //HashMap that passes on song information to the "Download from Cloud" dialog.
     private HashMap<String, String> metadata;
@@ -130,19 +113,30 @@ public class NowPlayingActivity extends FragmentActivity {
         this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
         
         //Drawer layout.
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.main_activity_drawer_root);
-        mDrawerParentLayout = (FrameLayout) findViewById(R.id.now_playing_drawer_frame_root);
-        mCurrentQueueLayout = (RelativeLayout) findViewById(R.id.queue_drawer);
-        mDrawerLayout.setDrawerListener(mDrawerListener);
-        mDrawerLayout.setBackgroundColor(UIElementsHelper.getBackgroundColor(mContext));
-        
-        //Equalizer layout.
-        mEqualizerLayout = (RelativeLayout) findViewById(R.id.equalizer_fragment_container);
+        if (!mApp.isTabletInLandscape()) {
+            mDrawerLayout = (DrawerLayout) findViewById(R.id.main_activity_drawer_root);
+            mDrawerParentLayout = (FrameLayout) findViewById(R.id.now_playing_drawer_frame_root);
+            mCurrentQueueLayout = (RelativeLayout) findViewById(R.id.queue_drawer);
+            mDrawerLayout.setDrawerListener(mDrawerListener);
+            mDrawerLayout.setBackgroundColor(UIElementsHelper.getBackgroundColor(mContext));
+
+        } else {
+            mCurrentQueueLayout = (RelativeLayout) findViewById(R.id.queue_drawer);
+        }
         
         //ViewPager.
         mViewPager = (VelocityViewPager) findViewById(R.id.nowPlayingPlaylistPager);
+
+        //Seekbar indicator.
+        mSeekbarIndicatorLayoutParent = (RelativeLayout) findViewById(R.id.seekbarIndicatorParent);
+        mSeekbarIndicatorLayout = (RelativeLayout) findViewById(R.id.seekbarIndicator);
+        mSeekbarIndicatorText = (TextView) findViewById(R.id.seekbarIndicatorText);
+        mSeekbarIndicatorLayout.setBackgroundResource(UIElementsHelper.getGridViewCardBackground(mContext));
+        mSeekbarIndicatorText.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
+        mSeekbarIndicatorText.setTextColor(UIElementsHelper.getThemeBasedTextColor(mContext));
     	
-    	//Playback Controls
+    	//Playback Controls.
+        mControlsLayoutHeaderParent = (RelativeLayout) findViewById(R.id.now_playing_controls_header_parent);
         mControlsLayoutHeader = (RelativeLayout) findViewById(R.id.now_playing_controls_header);
         mPlayPauseButtonBackground = (RelativeLayout) findViewById(R.id.playPauseButtonBackground);
     	mPlayPauseButton = (ImageButton) findViewById(R.id.playPauseButton);
@@ -163,7 +157,6 @@ public class NowPlayingActivity extends FragmentActivity {
     	}
 
         mPlayPauseButtonBackground.setBackgroundResource(UIElementsHelper.getShadowedCircle(mContext));
-        mPlayPauseButton.setImageResource(R.drawable.play_pause_transition_drawable_light);
     	mNextButton.setImageResource(UIElementsHelper.getIcon(mContext, "btn_playback_next"));
     	mPreviousButton.setImageResource(UIElementsHelper.getIcon(mContext, "btn_playback_previous"));
     	
@@ -203,21 +196,25 @@ public class NowPlayingActivity extends FragmentActivity {
         	
         	//Grab the bundle from the intent.
         	Bundle bundle = intent.getExtras();
-        	
+
         	//Initializes the ViewPager.
         	if (intent.hasExtra(Common.INIT_PAGER) || 
         		intent.hasExtra(Common.NEW_QUEUE_ORDER))
                 initViewPager();
 
         	//Updates the ViewPager's current page/position.
-        	if (intent.hasExtra(Common.UPDATE_PAGER_POSTIION) && 
-        		mViewPager.getCurrentItem()!=mApp.getService().getCurrentSongIndex()) {
-        		int position = Integer.parseInt(bundle.getString(Common.UPDATE_PAGER_POSTIION));
-        		if (position==0) {
-        			mViewPager.setCurrentItem(position, false);
-        		} else {
-        			scrollViewPager(position, true, 1, false);
-        		}
+        	if (intent.hasExtra(Common.UPDATE_PAGER_POSTIION)) {
+                int position = Integer.parseInt(bundle.getString(Common.UPDATE_PAGER_POSTIION));
+                if (mViewPager.getCurrentItem()!=position) {
+
+                    if (position > 0) {
+                        scrollViewPager(position, true, 1, false);
+                    } else {
+                        mViewPager.setCurrentItem(position, false);
+                    }
+
+
+                }
 
         	}
         		
@@ -261,26 +258,7 @@ public class NowPlayingActivity extends FragmentActivity {
         		mSeekbar.setSecondaryProgress(Integer.parseInt(
         									  bundle.getString(
         									  Common.UPDATE_BUFFERING_PROGRESS)));
-        	
-        	if (intent.hasExtra(Common.UPDATE_EQ_FRAGMENT) && 
-        		mEqualizerFragment==null) {
-        		//The equalizer fragment hasn't been initialized yet.
-                new Handler().postDelayed(new Runnable() {
 
-                    @Override
-                    public void run() {
-                        mFragmentManager = getSupportFragmentManager();
-                        mEqualizerFragment = new EqualizerFragment();
-                        mFragmentManager.beginTransaction()
-                                        .add(R.id.equalizer_fragment_container, mEqualizerFragment, "EqualizerFragment")
-                                        .commit();
-
-                    }
-
-                }, 500);
-
-        	}
-        	
         	//Close this activity if the service is about to stop running.
         	if (intent.hasExtra(Common.SERVICE_STOPPING)) {
         		mHandler.removeCallbacks(seekbarUpdateRunnable);
@@ -296,9 +274,9 @@ public class NowPlayingActivity extends FragmentActivity {
      */
     private void setTheme() {
         if (mApp.getCurrentTheme()==Common.DARK_THEME) {
-            this.setTheme(R.style.NowPlayingTheme);
+            this.setTheme(R.style.AppThemeNoActionBar);
         } else {
-            this.setTheme(R.style.NowPlayingThemeLight);
+            this.setTheme(R.style.AppThemeLightNoActionBar);
         }
         
     }
@@ -326,7 +304,7 @@ public class NowPlayingActivity extends FragmentActivity {
 
             }
 
-        }, 700);
+        }, 300);
 
     }
 
@@ -338,6 +316,7 @@ public class NowPlayingActivity extends FragmentActivity {
         mQueueDrawerFragment = new QueueDrawerFragment();
         getSupportFragmentManager().beginTransaction()
                                    .replace(R.id.queue_drawer, mQueueDrawerFragment)
+                                   .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
                                    .commit();
 
     }
@@ -353,9 +332,9 @@ public class NowPlayingActivity extends FragmentActivity {
     	
     	USER_SCROLL = dispatchToListener;
     	mViewPager.scrollToItem(newPosition, 
-    									smoothScroll, 
-    									velocity, 
-    									dispatchToListener);
+                                smoothScroll,
+                                velocity,
+                                dispatchToListener);
     	
     }
 
@@ -435,33 +414,35 @@ public class NowPlayingActivity extends FragmentActivity {
     private void setKitKatTranslucentBars() {
     	//KitKat translucent status bar.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-        	
-        	//Set the background for the view.
-        	RelativeLayout containerBackground = (RelativeLayout) findViewById(R.id.landscape_background);
-        	if (containerBackground!=null) {
-                if (mApp.getCurrentTheme()==Common.DARK_THEME) {
-                	containerBackground.setBackgroundColor(0xFF191919);
-                } else {
-                	containerBackground.setBackgroundColor(0xFFFFFFFF);
-                }
-                
-        	}
-        	
     		int statusBarHeight = Common.getStatusBarHeight(mContext);
-
-    		if (mEqualizerLayout!=null) {
-    			mEqualizerLayout.setPadding(0, statusBarHeight, 0, 0);
-    		}
+            int navigationBarHeight = Common.getNavigationBarHeight(mContext);
             
             if (mDrawerParentLayout!=null) {
                 mDrawerParentLayout.setClipToPadding(false);
                 mDrawerParentLayout.setPadding(0, 0, 0, 0);
             }
 
+            if (mControlsLayoutHeaderParent!=null) {
+                int bottomPadding = mControlsLayoutHeaderParent.getPaddingBottom();
+                mControlsLayoutHeaderParent.setClipToPadding(false);
+                RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mControlsLayoutHeaderParent.getLayoutParams();
+
+                if (navigationBarHeight > 0) {
+                    /* The nav bar already has padding, so remove the extra 15dp
+                     * margin that was applied in the layout file.
+                     */
+                    params.bottomMargin = 0;
+                }
+
+                params.bottomMargin += navigationBarHeight;
+                mControlsLayoutHeaderParent.setLayoutParams(params);
+
+            }
+
         }
         
     }
-    
+
     /**
      * Seekbar change listener.
      */
@@ -469,17 +450,20 @@ public class NowPlayingActivity extends FragmentActivity {
 
 		@Override
 		public void onProgressChanged(SeekBar seekBar, int seekBarPosition, boolean changedByUser) {
-			
-			//Check if the seekbar was scrolled while music was playing or if the user changed it.
 			long currentSongDuration = mApp.getService().getCurrentMediaPlayer().getDuration();
 			seekBar.setMax((int) currentSongDuration / 1000);
-			
+
+            if (changedByUser)
+                mSeekbarIndicatorText.setText(mApp.convertMillisToMinsSecs(seekBar.getProgress()*1000));
+
 		}
 
 		@Override
 		public void onStartTrackingTouch(SeekBar seekBar) {
 			mHandler.removeCallbacks(seekbarUpdateRunnable);
-			
+            mSeekbarIndicatorLayoutParent.setVisibility(View.VISIBLE);
+            mSeekbarIndicatorLayout.setAlpha(0.9f);
+
 		}
 
 		@Override
@@ -488,6 +472,19 @@ public class NowPlayingActivity extends FragmentActivity {
 			mHandler.postDelayed(seekbarUpdateRunnable, 100);
 			int seekBarPosition = seekBar.getProgress();
 			mApp.getService().getCurrentMediaPlayer().seekTo(seekBarPosition*1000);
+
+            //Fade out the indicator after 1000ms.
+            mHandler.postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    FadeAnimation fadeOut = new FadeAnimation(mSeekbarIndicatorLayoutParent,
+                                                              300, 0.9f, 0.0f, null);
+                    fadeOut.animate();
+
+                }
+
+            }, 1000);
 			
 		}
 		
@@ -615,7 +612,7 @@ public class NowPlayingActivity extends FragmentActivity {
 	/**
 	 * Downloads a GMusic song for local playback.
 	 */
-    private void pinSong() {
+    /*private void pinSong() {
     	
     	//Check if the app is getting pinned songs from the official GMusic app.
 		if (mApp.isFetchingPinnedSongs()==false) {
@@ -664,7 +661,7 @@ public class NowPlayingActivity extends FragmentActivity {
 			Toast.makeText(mContext, R.string.wait_until_pinning_complete, Toast.LENGTH_SHORT).show();
 		}
 		
-    }
+    }*/
 
     /**
      * Drawer open/close listener.
@@ -749,44 +746,6 @@ public class NowPlayingActivity extends FragmentActivity {
 		}
 		
 	};
-
-	/**
-	 * Slides away the entire player screen to reveal the equalizer. 
-	 * Redisplays the player screen if the equalizer is already being 
-	 * shown.
-	 */
-	public void showHideEqualizer() {
-
-        if (mIsEqualizerVisible == false) {
-            //Slide down the entire player screen.
-            TranslateAnimation slideDownAnimation = new TranslateAnimation(mDrawerLayout, 400, new AccelerateInterpolator(),
-                    View.INVISIBLE,
-                    Animation.RELATIVE_TO_SELF, 0.0f,
-                    Animation.RELATIVE_TO_SELF, 0.0f,
-                    Animation.RELATIVE_TO_SELF, 0.0f,
-                    Animation.RELATIVE_TO_SELF, 2.0f);
-
-            slideDownAnimation.animate();
-            mIsEqualizerVisible = true;
-
-        } else {
-            //Slide up the entire player screen.
-            TranslateAnimation slideUpAnimation = new TranslateAnimation(mDrawerLayout, 400, new DecelerateInterpolator(),
-                    View.VISIBLE,
-                    Animation.RELATIVE_TO_SELF, 0.0f,
-                    Animation.RELATIVE_TO_SELF, 0.0f,
-                    Animation.RELATIVE_TO_SELF, 2.0f,
-                    Animation.RELATIVE_TO_SELF, 0.0f);
-
-            slideUpAnimation.animate();
-            mIsEqualizerVisible = false;
-
-        }
-
-        //Update the ActionBar.
-        invalidateOptionsMenu();
-
-    }
     
     /**
      * @deprecated
@@ -881,7 +840,7 @@ public class NowPlayingActivity extends FragmentActivity {
 	public void displayAudiobookToast(long resumePlaybackPosition) {
 		try {
 			String resumingFrom = mContext.getResources().getString(R.string.resuming_from) 
-								+ " " + convertMillisToMinsSecs(resumePlaybackPosition) + ".";
+								+ " " + mApp.convertMillisToMinsSecs(resumePlaybackPosition) + ".";
 			
 			Toast.makeText(mContext, resumingFrom, Toast.LENGTH_LONG).show();
 		} catch (Exception e) {
@@ -894,220 +853,15 @@ public class NowPlayingActivity extends FragmentActivity {
      * Toggles the open/closed state of the current queue drawer.
      */
 	public void toggleCurrentQueueDrawer() {
+        if (mDrawerLayout==null)
+            return;
+
         if (mDrawerLayout.isDrawerOpen(Gravity.END))
             mDrawerLayout.closeDrawer(Gravity.END);
         else
             mDrawerLayout.openDrawer(Gravity.END);
 
     }
-
-	/**
-	 * Converts millis to mins and secs and returns a 
-	 * formatted string.
-	 */
-    private String convertMillisToMinsSecs(long milliseconds) {
-    	
-    	int secondsValue = (int) (milliseconds / 1000) % 60 ;
-    	int minutesValue = (int) ((milliseconds / (1000*60)) % 60);
-    	int hoursValue  = (int) ((milliseconds / (1000*60*60)) % 24);
-    	
-    	String seconds = "";
-    	String minutes = "";
-    	String hours = "";
-    	
-    	if (secondsValue < 10) {
-    		seconds = "0" + secondsValue;
-    	} else {
-    		seconds = "" + secondsValue;
-    	}
-
-    	if (minutesValue < 10) {
-    		minutes = "0" + minutesValue;
-    	} else {
-    		minutes = "" + minutesValue;
-    	}
-    	
-    	if (hoursValue < 10) {
-    		hours = "0" + hoursValue;
-    	} else {
-    		hours = "" + hoursValue;
-    	}
-    	
-    	String output = "";
-    	
-    	if (hoursValue!=0) {
-    		output = hours + ":" + minutes + ":" + seconds;
-    	} else {
-    		output = minutes + ":" + seconds;
-    	}
-    	
-    	return output;
-    }
-    
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		super.onOptionsItemSelected(item);
-		
-		switch (item.getItemId()) {
-		case android.R.id.home:
-			finish();
-			return true;
-		case R.id.action_pin:
-			pinSong();
-			return true;
-	    case R.id.action_queue_drawer:
-	    	if (mDrawerLayout!=null && mCurrentQueueLayout!=null) {
-		    	if (mDrawerLayout.isDrawerOpen(mCurrentQueueLayout)) {
-		    		mDrawerLayout.closeDrawer(mCurrentQueueLayout);
-		    	} else {
-		    		mDrawerLayout.openDrawer(mCurrentQueueLayout);
-		    	}
-		    	
-	    	}
-	    	return true;
-	    case R.id.action_equalizer:
-	    	showHideEqualizer();
-	    	return true;
-	    case R.id.action_settings:
-	    	Intent intent = new Intent(mContext, SettingsActivity.class);
-	    	startActivity(intent);
-	    	return true;
-	    case R.id.action_done:
-	    	mEqualizerFragment.buildApplyToDialog().show();
-	    	return true;
-	    default:
-	    	//Return false to allow the fragment to handle the item click.
-	        return false;
-	    }
-
-	}
-	
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-
-		MenuInflater inflater = getMenuInflater();
-	    inflater.inflate(R.menu.now_playing, menu);
-	    mMenu = menu;
-	    
-	    //Set the ActionBar title text color.
-	    int titleId = getResources().getIdentifier("action_bar_title", "id", "android");
-		TextView abTitle = (TextView) findViewById(titleId);
-		
-		if (mApp.getSharedPreferences().getString("NOW_PLAYING_COLOR", "BLUE").equals("WHITE")) 
-			abTitle.setTextColor(0xFF444444);
-		else
-			abTitle.setTextColor(0xFFFFFFFF);
-
-	    //Show the appropriate ActionBar.
-		if (mIsEqualizerVisible) {
-			showEqualizerActionBar(menu);
-		} else {
-			showNowPlayingActionBar(menu);
-		}
-			
-		return super.onCreateOptionsMenu(menu);
-	}
-	
-	/**
-	 * Loads the ActionBar for the player screen.
-	 */
-	private void showNowPlayingActionBar(Menu menu) { 
-	    
-	    ActionBar actionBar = getActionBar();
-	    if (actionBar!=null) {
-		    actionBar.setTitle(getResources().getString(R.string.now_playing));
-		    actionBar.setHomeButtonEnabled(true);
-		    actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setLogo(0);
-		    actionBar.setBackgroundDrawable(new ColorDrawable(0x44000000));
-	    }
-	    
-	    //Hide the EQ toggle and "done" icon.
-	    menu.findItem(R.id.action_equalizer_toggle).setVisible(false);
-	    menu.findItem(R.id.action_done).setVisible(false);
-		
-		//Hide the queue button if we're in landscape mode (on a tablet).
-		if (mApp.getOrientation()==Common.ORIENTATION_LANDSCAPE) {
-			if (menu!=null) {
-				menu.findItem(R.id.action_queue_drawer).setVisible(false);
-			}
-			
-		}
-		
-		if (menu!=null && mApp.getSharedPreferences().getString("NOW_PLAYING_COLOR", "BLUE").equals("WHITE")) {
-			MenuItem pinIcon = menu.findItem(R.id.action_pin);
-			MenuItem equalizerIcon = menu.findItem(R.id.action_equalizer);
-			MenuItem queueIcon = menu.findItem(R.id.action_queue_drawer);
-			
-			if (pinIcon!=null)
-				pinIcon.setIcon(getResources().getDrawable(R.drawable.pin));
-			
-			if (equalizerIcon!=null)
-				equalizerIcon.setIcon(getResources().getDrawable(R.drawable.equalizer));
-		
-			if (queueIcon!=null)
-				queueIcon.setIcon(getResources().getDrawable(R.drawable.queue_drawer));
-			
-		}
-		
-	}
-	
-	/**
-	 * Loads the ActionBar for the equalizer fragment.
-	 */
-	private void showEqualizerActionBar(Menu menu) {
-		
-		//Hide all menu items except the toggle button and "done" icon.
-		menu.findItem(R.id.action_equalizer).setVisible(false);
-		menu.findItem(R.id.action_pin).setVisible(false);
-		menu.findItem(R.id.action_queue_drawer).setVisible(false);
-		menu.findItem(R.id.action_settings).setVisible(false);
-		menu.findItem(R.id.action_done).setVisible(true);
-		
-		/**
-		 * The Toggle button in the actionbar doesn't work at this point. The setChecked() 
-		 * method doesn't do anything, so there's no way to programmatically set the 
-		 * switch to its correct position when the equalizer fragment is first shown. 
-		 * Users will just have to rely on the "Reset" button in the equalizer fragment 
-		 * to effectively switch off the equalizer.
-		 */
-		menu.findItem(R.id.action_equalizer_toggle).setVisible(false); //Hide the toggle for now.
-		
-		/*//Set the toggle listener.
-		ToggleButton equalizerToggle = (ToggleButton) menu.findItem(R.id.action_equalizer_toggle)
-									 		  			  .getActionView()
-									 		  			  .findViewById(R.id.actionbar_toggle_switch);
-		
-		//Set the current state of the toggle.
-		boolean toggleSetting = true;
-		if (mApp.isEqualizerEnabled())
-			toggleSetting = true;
-		else
-			toggleSetting = false;
-		
-		equalizerToggle.setChecked(toggleSetting);
-		equalizerToggle.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-			
-			@Override
-			public void onCheckedChanged(CompoundButton arg0, boolean state) {
-				mApp.setIsEqualizerEnabled(state);
-				
-				if (state==true)
-					mEqualizerFragment.applyCurrentEQSettings();
-				
-			}
-			
-		});*/
-		
-		getActionBar().setHomeButtonEnabled(false);
-	    getActionBar().setDisplayHomeAsUpEnabled(false);
-		
-		if (menu!=null && mApp.getSharedPreferences().getString("NOW_PLAYING_COLOR", "BLUE").equals("WHITE")) {
-			menu.findItem(R.id.action_done).setIcon(R.drawable.checkmark);
-			
-		}
-		
-	}
 
 	/*
 	 * Getter and setter methods.
@@ -1124,11 +878,7 @@ public class NowPlayingActivity extends FragmentActivity {
 	public VelocityViewPager getPlaylistViewPager() {
 		return mViewPager;
 	}
-	
-	public EqualizerFragment getEqualizerFragment() {
-		return mEqualizerFragment;
-	}
-	
+
 	public NowPlayingActivityListener getNowPlayingActivityListener() {
 		return mNowPlayingActivityListener;
 	}
@@ -1157,6 +907,7 @@ public class NowPlayingActivity extends FragmentActivity {
 
         if (isCreating==false) {
             setKitKatTranslucentBars();
+            mHandler.postDelayed(seekbarUpdateRunnable, 100);
             isCreating = false;
         }
 
@@ -1184,19 +935,14 @@ public class NowPlayingActivity extends FragmentActivity {
 		}
 
 	}
-	
-	@Override
-	public void onBackPressed() {
 
-		if (mIsEqualizerVisible) {
-			//Reset the EQ and show the player screen.
-			mEqualizerFragment.new AsyncInitSlidersTask().execute();
-			showHideEqualizer();
-		} else {
-			super.onBackPressed();
-		}
-		
-	}
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (isFinishing())
+            mApp.setNowPlayingActivity(null);
+
+    }
 	
     @Override
     public void onStart() {
