@@ -30,6 +30,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
@@ -116,14 +117,7 @@ public class AudioPlaybackService extends Service {
 	public static final String MUSIC_PLAYING = "MUSIC_PLAYING";
 	public static final String TRACK_COMPLETED = "TRACK_COMPLETED";
 	public static final String MAIN_ACTIVITY_VISIBLE = "MAIN_ACTIVITY_VISIBLE";
-	public static final String REPEAT_MODE = "REPEAT_MODE";
 	public static final String SHUFFLE_MODE = "SHUFFLE_MODE";
-	
-	//Repeat modes.
-	public static int REPEAT_OFF = 0;
-	public static int REPEAT_PLAYLIST = 1;
-	public static int REPEAT_SONG = 2;
-	public static int A_B_REPEAT = 3;
 	
 	//Pointer variable.
 	private int mCurrentSongIndex;
@@ -234,7 +228,10 @@ public class AudioPlaybackService extends Service {
 		// Request audio focus for playback
 		mAudioManagerHelper.setHasAudioFocus(requestAudioFocus());
 
-		//Initialize audio effects (mEqualizerHelper.getEqualizer(), mVirtualizer, bass boost) for this session.
+        //Grab the crossfade duration for this session.
+        mCrossfadeDuration = mApp.getCrossfadeDuration();
+
+		//Initialize audio effects (equalizer, virtualizer, bass boost) for this session.
 		initAudioFX();
 		
 	    mMediaButtonReceiverComponent = new ComponentName(this.getPackageName(), HeadsetButtonsReceiver.class.getName());
@@ -350,7 +347,7 @@ public class AudioPlaybackService extends Service {
 		getMediaPlayer2().reset();
 		
 		//Loop the players if the repeat mode is set to repeat the current song.
-		if (getRepeatMode()==REPEAT_SONG) {
+		if (getRepeatMode()==Common.REPEAT_SONG) {
 			getMediaPlayer().setLooping(true);
 			getMediaPlayer2().setLooping(true);
 		}
@@ -1339,6 +1336,7 @@ public class AudioPlaybackService extends Service {
 		public void onCompletion(MediaPlayer mp) {
 			
 			//Remove the crossfade playback.
+            mHandler.removeCallbacks(startCrossFadeRunnable);
 			mHandler.removeCallbacks(crossFadeRunnable);
 			
 			//Set the track position handler (notifies the handler when the track should start being faded).
@@ -1355,7 +1353,7 @@ public class AudioPlaybackService extends Service {
 			getMediaPlayer2().setVolume(1.0f, 1.0f);
 
 			try {
-				if (isAtEndOfQueue() && getRepeatMode()!=REPEAT_PLAYLIST) {
+				if (isAtEndOfQueue() && getRepeatMode()!=Common.REPEAT_PLAYLIST) {
 					stopSelf();
 				} else if (isMediaPlayer2Prepared()) {
 					startMediaPlayer2();
@@ -1382,6 +1380,7 @@ public class AudioPlaybackService extends Service {
 		public void onCompletion(MediaPlayer mp) {
 			
 			//Remove the crossfade playback.
+            mHandler.removeCallbacks(startCrossFadeRunnable);
 			mHandler.removeCallbacks(crossFadeRunnable);
 			
 			//Set the track position handler (notifies the handler when the track should start being faded).
@@ -1398,7 +1397,7 @@ public class AudioPlaybackService extends Service {
 			getMediaPlayer2().setVolume(1.0f, 1.0f);
 
 			try {
-				if (isAtEndOfQueue() && getRepeatMode()!=REPEAT_PLAYLIST) {
+				if (isAtEndOfQueue() && getRepeatMode()!=Common.REPEAT_PLAYLIST) {
 					stopSelf();
 				} else if (isMediaPlayerPrepared()) {
 					startMediaPlayer();
@@ -1494,7 +1493,7 @@ public class AudioPlaybackService extends Service {
 		}
 		
 	};
-	
+
 	/**
 	 * First runnable that handles the cross fade operation between two tracks.
 	 */
@@ -1502,32 +1501,33 @@ public class AudioPlaybackService extends Service {
 
 		@Override
 		public void run() {
+
 			//Check if we're in the last part of the current song.
 			try {
 				if (getCurrentMediaPlayer().isPlaying()) {
-					
+
 					int currentTrackDuration = getCurrentMediaPlayer().getDuration();
 					int currentTrackFadePosition = currentTrackDuration - (mCrossfadeDuration*1000);
 					if (getCurrentMediaPlayer().getCurrentPosition() >= currentTrackFadePosition) {
 						//Launch the next runnable that will handle the cross fade effect.
 						mHandler.postDelayed(crossFadeRunnable, 100);
-						
+
 					} else {
 						mHandler.postDelayed(startCrossFadeRunnable, 1000);
 					}
-					
+
 				} else {
 					mHandler.postDelayed(startCrossFadeRunnable, 1000);
 				}
-				
+
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			
+
 		}
-		
+
 	};
-	
+
 	/**
 	 * Crossfade runnable.
 	 */
@@ -1538,7 +1538,7 @@ public class AudioPlaybackService extends Service {
 			try {
 				
 				//Do not crossfade if the current song is set to repeat itself.
-				if (getRepeatMode()!=REPEAT_SONG) {
+				if (getRepeatMode()!=Common.REPEAT_SONG) {
 					
 					//Do not crossfade if this is the last track in the queue.
 					if (getCursor().getCount() > (mCurrentSongIndex+1)) {
@@ -1582,6 +1582,7 @@ public class AudioPlaybackService extends Service {
 							if (!getMediaPlayer().isPlaying()) {
 								
 								if (mMediaPlayerPrepared==true) {
+
 									if (checkAndRequestAudioFocus()==true) {
 										
 										//Check if the the user requested to save the track's last playback position.
@@ -1635,7 +1636,7 @@ public class AudioPlaybackService extends Service {
 	    	getMediaPlayer().reset();
 	    	
     		//Loop the player if the repeat mode is set to repeat the current song.
-    		if (getRepeatMode()==REPEAT_SONG) {
+    		if (getRepeatMode()==Common.REPEAT_SONG) {
     			getMediaPlayer().setLooping(true);
     		}
 
@@ -1702,7 +1703,7 @@ public class AudioPlaybackService extends Service {
 	    	getMediaPlayer2().reset();
 	    	
     		//Loop the player if the repeat mode is set to repeat the current song.
-    		if (getRepeatMode()==REPEAT_SONG) {
+    		if (getRepeatMode()==Common.REPEAT_SONG) {
     			getMediaPlayer2().setLooping(true);
     		}
 	    	
@@ -1821,37 +1822,37 @@ public class AudioPlaybackService extends Service {
 	/**
 	 * Sets the A-B Repeat song markers.
 	 * 
-	 * @param pointA The duration to repeat from.
-	 * @param pointB The duration to repeat until.
+	 * @param pointA The duration to repeat from (in millis).
+	 * @param pointB The duration to repeat until (in millis).
 	 */
 	public void setRepeatSongRange(int pointA, int pointB) {
 		mRepeatSongRangePointA = pointA;
 		mRepeatSongRangePointB = pointB;
 		getCurrentMediaPlayer().seekTo(pointA);
-		mHandler.postDelayed(checkRepeatSongRange, 100);
+		mHandler.postDelayed(checkABRepeatRange, 100);
 	}
 	
 	/**
 	 * Clears the A-B Repeat song markers.
 	 */
-	public void clearRepeatSongRange() {
-		mHandler.removeCallbacks(checkRepeatSongRange);
+	public void clearABRepeatRange() {
+		mHandler.removeCallbacks(checkABRepeatRange);
 		mRepeatSongRangePointA = 0;
 		mRepeatSongRangePointB = 0;
-		mApp.getSharedPreferences().edit().putInt(REPEAT_MODE, 0);
+		mApp.getSharedPreferences().edit().putInt(Common.REPEAT_MODE, Common.REPEAT_OFF);
 	}
 	
 	/**
 	 * Called repetitively to check for A-B repeat markers.
 	 */
-	private Runnable checkRepeatSongRange = new Runnable() {
+	private Runnable checkABRepeatRange = new Runnable() {
 
 		@Override
 		public void run() {
 			try {
 				if (getCurrentMediaPlayer().isPlaying()) {
 					
-					if (getCurrentMediaPlayer().getCurrentPosition()>=mRepeatSongRangePointB) {
+					if (getCurrentMediaPlayer().getCurrentPosition()>= (mRepeatSongRangePointB)) {
 						getCurrentMediaPlayer().seekTo(mRepeatSongRangePointA);
 					}
 					
@@ -1860,8 +1861,8 @@ public class AudioPlaybackService extends Service {
 				e.printStackTrace();
 			}
 			
-			if (mApp.getSharedPreferences().getInt(REPEAT_MODE, 0)==3) {
-				mHandler.postDelayed(checkRepeatSongRange, 100);
+			if (mApp.getSharedPreferences().getInt(Common.REPEAT_MODE, Common.REPEAT_OFF)==Common.A_B_REPEAT) {
+				mHandler.postDelayed(checkABRepeatRange, 100);
 			}
 			
 		}
@@ -2029,6 +2030,11 @@ public class AudioPlaybackService extends Service {
     		while (getFailedIndecesList().contains(getCurrentSongIndex())) {
     			setCurrentSongIndex(determineNextSongIndex());
     		}
+
+            //Initialize the crossfade runnable.
+            if (mHandler!=null && mApp.isCrossfadeEnabled()) {
+                mHandler.post(startCrossFadeRunnable);
+            }
     		
     	}
 
@@ -2191,7 +2197,7 @@ public class AudioPlaybackService extends Service {
     		getMediaPlayer2().reset();
     		
     		//Loop the players if the repeat mode is set to repeat the current song.
-    		if (getRepeatMode()==REPEAT_SONG) {
+    		if (getRepeatMode()==Common.REPEAT_SONG) {
     			getMediaPlayer().setLooping(true);
     			getMediaPlayer2().setLooping(true);
     		}
@@ -2234,7 +2240,7 @@ public class AudioPlaybackService extends Service {
     		getMediaPlayer2().reset();
     		
     		//Loop the players if the repeat mode is set to repeat the current song.
-    		if (getRepeatMode()==REPEAT_SONG) {
+    		if (getRepeatMode()==Common.REPEAT_SONG) {
     			getMediaPlayer().setLooping(true);
     			getMediaPlayer2().setLooping(true);
     		}
@@ -2277,7 +2283,7 @@ public class AudioPlaybackService extends Service {
     		getMediaPlayer2().reset();
     		
     		//Loop the players if the repeat mode is set to repeat the current song.
-    		if (getRepeatMode()==REPEAT_SONG) {
+    		if (getRepeatMode()==Common.REPEAT_SONG) {
     			getMediaPlayer().setLooping(true);
     			getMediaPlayer2().setLooping(true);
     		}
@@ -2328,9 +2334,9 @@ public class AudioPlaybackService extends Service {
      * the end of the queue.
      */
     private int determineNextSongIndex() {
-		if (isAtEndOfQueue() && getRepeatMode()==REPEAT_PLAYLIST)
+		if (isAtEndOfQueue() && getRepeatMode()==Common.REPEAT_PLAYLIST)
 			return 0;
-		else if (!isAtEndOfQueue() && getRepeatMode()==REPEAT_SONG)
+		else if (!isAtEndOfQueue() && getRepeatMode()==Common.REPEAT_SONG)
 			return getCurrentSongIndex();
 		else if (isAtEndOfQueue())
 			return -1;
@@ -2393,21 +2399,21 @@ public class AudioPlaybackService extends Service {
      * Applies the specified repeat mode.
      */
     public void setRepeatMode(int repeatMode) {
-    	if (repeatMode==REPEAT_OFF || repeatMode==REPEAT_PLAYLIST ||
-    		repeatMode==REPEAT_SONG || repeatMode==A_B_REPEAT) {
+    	if (repeatMode==Common.REPEAT_OFF || repeatMode==Common.REPEAT_PLAYLIST ||
+    		repeatMode==Common.REPEAT_SONG || repeatMode==Common.A_B_REPEAT) {
     		//Save the repeat mode.
-    		mApp.getSharedPreferences().edit().putInt("REPEAT_MODE", repeatMode).commit();
+    		mApp.getSharedPreferences().edit().putInt(Common.REPEAT_MODE, repeatMode).commit();
     	} else {
     		//Just in case a bogus value is passed in.
-    		mApp.getSharedPreferences().edit().putInt("REPEAT_MODE", REPEAT_OFF).commit();
+    		mApp.getSharedPreferences().edit().putInt(Common.REPEAT_MODE, Common.REPEAT_OFF).commit();
     	}
     	
     	/* 
     	 * Set the both MediaPlayer objects to loop if the repeat mode 
-    	 * is REPEAT_SONG.
+    	 * is Common.REPEAT_SONG.
     	 */
     	try {
-    		if (repeatMode==REPEAT_SONG) {
+    		if (repeatMode==Common.REPEAT_SONG) {
     			getMediaPlayer().setLooping(true);
     			getMediaPlayer2().setLooping(true);
     		} else {
@@ -2610,35 +2616,6 @@ public class AudioPlaybackService extends Service {
     public int getRepeatSongRangePointB() {
     	return mRepeatSongRangePointB;
     }
-    
-    /**
-     * Returns point B in milliseconds for A-B repeat.
-     *//**
-	 * Moves the cursor to the specified index and pulls 
-	 * all song data into a new SongHelper object. The 
-	 * cursor is then moved back to its previous index and 
-	 * the SongHelper object is returned.
-	 */
-	public SongHelper getSongDataAtIndex(int index) {
-		SongHelper songHelper = new SongHelper();
-		int oldIndex = getCursor().getPosition();
-		getCursor().moveToPosition(getPlaybackIndecesList().get(index));
-		
-		songHelper.setId(getCursor().getString(getCursor().getColumnIndex(DBAccessHelper.SONG_ID)));
-		songHelper.setTitle(getCursor().getString(getCursor().getColumnIndex(DBAccessHelper.SONG_TITLE)));
-		songHelper.setAlbum(getCursor().getString(getCursor().getColumnIndex(DBAccessHelper.SONG_ALBUM)));
-		songHelper.setArtist(getCursor().getString(getCursor().getColumnIndex(DBAccessHelper.SONG_ARTIST)));
-		songHelper.setGenre(getCursor().getString(getCursor().getColumnIndex(DBAccessHelper.SONG_GENRE)));
-		songHelper.setDuration(getCursor().getLong(getCursor().getColumnIndex(DBAccessHelper.SONG_DURATION)));
-		
-		songHelper.setAlbumArtPath(getCursor().getString(getCursor().getColumnIndex(DBAccessHelper.SONG_ALBUM_ART_PATH)));
-		songHelper.setFilePath(getCursor().getString(getCursor().getColumnIndex(DBAccessHelper.SONG_FILE_PATH)));
-		songHelper.setSource(getCursor().getString(getCursor().getColumnIndex(DBAccessHelper.SONG_SOURCE)));
-		songHelper.setLocalCopyPath(getCursor().getString(getCursor().getColumnIndex(DBAccessHelper.LOCAL_COPY_PATH)));
-		
-		getCursor().moveToPosition(oldIndex);
-		return songHelper;
-	}
 	
 	/**
 	 * Pulls all song data at the current cursor index into 
@@ -2669,7 +2646,7 @@ public class AudioPlaybackService extends Service {
      * SharedPreferences.
      */
     public int getRepeatMode() {
-    	return mApp.getSharedPreferences().getInt("REPEAT_MODE", AudioPlaybackService.REPEAT_OFF);
+    	return mApp.getSharedPreferences().getInt(Common.REPEAT_MODE, Common.REPEAT_OFF);
     }
     
     /**
@@ -2925,8 +2902,8 @@ public class AudioPlaybackService extends Service {
 		mApp.getSharedPreferences().edit().putBoolean(MUSIC_PLAYING, false).commit();
 		
 		//If the current song is repeating a specific range, reset the repeat option.
-		if (getRepeatMode()==REPEAT_SONG) {
-			setRepeatMode(REPEAT_OFF);
+		if (getRepeatMode()==Common.REPEAT_SONG) {
+			setRepeatMode(Common.REPEAT_OFF);
 		}
 		
 		mFadeInVolume = 0.0f;
@@ -3014,6 +2991,15 @@ public class AudioPlaybackService extends Service {
             exception.printStackTrace();
             Toast.makeText(mContext, R.string.unable_to_start_playback, Toast.LENGTH_SHORT).show();
             stopSelf();
+
+        }
+
+        @Override
+        public void onServiceCursorUpdated(Cursor cursor) {
+            //Make sure the new cursor and the old cursor are the same size.
+            if (getCursor().getCount()==cursor.getCount()) {
+                setCursor(cursor);
+            }
 
         }
 

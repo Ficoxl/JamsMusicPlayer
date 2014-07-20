@@ -21,6 +21,8 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -74,6 +76,10 @@ public class NowPlayingActivity extends FragmentActivity {
     private RelativeLayout mSeekbarIndicatorLayoutParent;
     private RelativeLayout mSeekbarIndicatorLayout;
     private TextView mSeekbarIndicatorText;
+
+    //Seekbar strobe effect.
+    private AlphaAnimation mSeekbarStrobeAnim;
+    private static final int SEEKBAR_STROBE_ANIM_REPEAT = Animation.INFINITE;
 
 	//Playlist pager.
     private VelocityViewPager mViewPager;
@@ -131,6 +137,8 @@ public class NowPlayingActivity extends FragmentActivity {
         mSeekbarIndicatorLayoutParent = (RelativeLayout) findViewById(R.id.seekbarIndicatorParent);
         mSeekbarIndicatorLayout = (RelativeLayout) findViewById(R.id.seekbarIndicator);
         mSeekbarIndicatorText = (TextView) findViewById(R.id.seekbarIndicatorText);
+
+        mSeekbarIndicatorLayoutParent.setVisibility(View.GONE);
         mSeekbarIndicatorLayout.setBackgroundResource(UIElementsHelper.getGridViewCardBackground(mContext));
         mSeekbarIndicatorText.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
         mSeekbarIndicatorText.setTextColor(UIElementsHelper.getThemeBasedTextColor(mContext));
@@ -204,13 +212,16 @@ public class NowPlayingActivity extends FragmentActivity {
 
         	//Updates the ViewPager's current page/position.
         	if (intent.hasExtra(Common.UPDATE_PAGER_POSTIION)) {
-                int position = Integer.parseInt(bundle.getString(Common.UPDATE_PAGER_POSTIION));
-                if (mViewPager.getCurrentItem()!=position) {
+                int currentPosition = mViewPager.getCurrentItem();
+                int newPosition = Integer.parseInt(bundle.getString(Common.UPDATE_PAGER_POSTIION));
+                if (currentPosition!=newPosition) {
 
-                    if (position > 0) {
-                        scrollViewPager(position, true, 1, false);
+                    if (newPosition > 0 && Math.abs(newPosition - currentPosition) <= 5) {
+                        //Smooth scroll to the new index.
+                        scrollViewPager(newPosition, true, 1, false);
                     } else {
-                        mViewPager.setCurrentItem(position, false);
+                        //The new index is too far away, so avoid smooth scrolling to it.
+                        mViewPager.setCurrentItem(newPosition, false);
                     }
 
 
@@ -353,9 +364,12 @@ public class NowPlayingActivity extends FragmentActivity {
             if (mApp.getService().isPlayingMusic()) {
                 mPlayPauseButton.setImageResource(R.drawable.pause_light);
                 mPlayPauseButton.setPadding(0, 0, 0, 0);
+                stopSeekbarStrobeEffect();
+
             } else {
                 mPlayPauseButton.setImageResource(R.drawable.play_light);
                 mPlayPauseButton.setPadding(0, 0, (int) mApp.convertDpToPixels(-5f, mContext), 0);
+                initSeekbarStrobeEffect();
             }
 
         }
@@ -367,13 +381,13 @@ public class NowPlayingActivity extends FragmentActivity {
      */
     private void setRepeatButtonIcon() {
     	if (mApp.isServiceRunning())
-	    	if (mApp.getService().getRepeatMode()== AudioPlaybackService.REPEAT_OFF) {
+	    	if (mApp.getService().getRepeatMode()== Common.REPEAT_OFF) {
 	    		mRepeatButton.setImageResource(UIElementsHelper.getIcon(mContext, "repeat"));
-	    	} else if (mApp.getService().getRepeatMode()== AudioPlaybackService.REPEAT_PLAYLIST) {
+	    	} else if (mApp.getService().getRepeatMode()==Common.REPEAT_PLAYLIST) {
 	    		mRepeatButton.setImageResource(R.drawable.repeat_highlighted);
-	    	} else if (mApp.getService().getRepeatMode()== AudioPlaybackService.REPEAT_SONG) {
+	    	} else if (mApp.getService().getRepeatMode()==Common.REPEAT_SONG) {
 	    		mRepeatButton.setImageResource(R.drawable.repeat_song);
-	    	} else if (mApp.getService().getRepeatMode()== AudioPlaybackService.A_B_REPEAT) {
+	    	} else if (mApp.getService().getRepeatMode()==Common.A_B_REPEAT) {
 	    		mRepeatButton.setImageResource(R.drawable.repeat_song_range);
 	    	}
     	
@@ -404,6 +418,7 @@ public class NowPlayingActivity extends FragmentActivity {
      */
     private void setSeekbarDuration(int duration) {
     	mSeekbar.setMax(duration);
+        mSeekbar.setProgress(mApp.getService().getCurrentMediaPlayer().getCurrentPosition()/1000);
     	mHandler.postDelayed(seekbarUpdateRunnable, 100);
     }
     
@@ -461,8 +476,10 @@ public class NowPlayingActivity extends FragmentActivity {
 		@Override
 		public void onStartTrackingTouch(SeekBar seekBar) {
 			mHandler.removeCallbacks(seekbarUpdateRunnable);
+            mHandler.removeCallbacks(fadeOutSeekbarIndicator);
+
             mSeekbarIndicatorLayoutParent.setVisibility(View.VISIBLE);
-            mSeekbarIndicatorLayout.setAlpha(0.9f);
+            mSeekbarIndicatorLayout.setAlpha(0.8f);
 
 		}
 
@@ -474,21 +491,25 @@ public class NowPlayingActivity extends FragmentActivity {
 			mApp.getService().getCurrentMediaPlayer().seekTo(seekBarPosition*1000);
 
             //Fade out the indicator after 1000ms.
-            mHandler.postDelayed(new Runnable() {
-
-                @Override
-                public void run() {
-                    FadeAnimation fadeOut = new FadeAnimation(mSeekbarIndicatorLayoutParent,
-                                                              300, 0.9f, 0.0f, null);
-                    fadeOut.animate();
-
-                }
-
-            }, 1000);
+            mHandler.postDelayed(fadeOutSeekbarIndicator, 1000);
 			
 		}
 		
 	};
+
+    /**
+     * Seekbar change indicator.
+     */
+    private Runnable fadeOutSeekbarIndicator = new Runnable() {
+
+        @Override
+        public void run() {
+            FadeAnimation fadeOut = new FadeAnimation(mSeekbarIndicatorLayoutParent,
+                                                      300, 0.9f, 0.0f, null);
+            fadeOut.animate();
+        }
+
+    };
 	
 	/**
 	 * Repeat button click listener.
@@ -498,25 +519,25 @@ public class NowPlayingActivity extends FragmentActivity {
 		@Override
 		public void onClick(View arg0) {
 			
-			mApp.getService().clearRepeatSongRange();
-			if (mApp.getService().getRepeatMode()== AudioPlaybackService.REPEAT_OFF) {
+			mApp.getService().clearABRepeatRange();
+			if (mApp.getService().getRepeatMode()==Common.REPEAT_OFF) {
 				mRepeatButton.setImageResource(R.drawable.repeat_highlighted);
-				mApp.getService().setRepeatMode(AudioPlaybackService.REPEAT_PLAYLIST);
+				mApp.getService().setRepeatMode(Common.REPEAT_PLAYLIST);
 				
-			} else if (mApp.getService().getRepeatMode()== AudioPlaybackService.REPEAT_PLAYLIST) {
+			} else if (mApp.getService().getRepeatMode()==Common.REPEAT_PLAYLIST) {
 				mRepeatButton.setImageResource(R.drawable.repeat_song);
-				mApp.getService().setRepeatMode(AudioPlaybackService.REPEAT_SONG);
+				mApp.getService().setRepeatMode(Common.REPEAT_SONG);
 				
 			} else {
 				mRepeatButton.setImageResource(UIElementsHelper.getIcon(mContext, "repeat"));
-				mApp.getService().setRepeatMode(AudioPlaybackService.REPEAT_OFF);
+				mApp.getService().setRepeatMode(Common.REPEAT_OFF);
 				
 			}
 			
 		}
 		
 	};
-	
+
 	/**
 	 * Shuffle button click listener.
 	 */
@@ -597,7 +618,7 @@ public class NowPlayingActivity extends FragmentActivity {
 			if (newPosition < mViewPagerAdapter.getCount()) {
 				scrollViewPager(newPosition, true, 1, true);
 			} else {
-				if (mApp.getService().getRepeatMode()== AudioPlaybackService.REPEAT_PLAYLIST)
+				if (mApp.getService().getRepeatMode()==Common.REPEAT_PLAYLIST)
 					mViewPager.setCurrentItem(0, false);
 				else
 					Toast.makeText(mContext, R.string.no_songs_to_skip_to, Toast.LENGTH_SHORT).show();
@@ -740,9 +761,9 @@ public class NowPlayingActivity extends FragmentActivity {
 		}
 
 		@Override
-		public void onPageSelected(int arg0) {
-			//Update the song information.
-			
+		public void onPageSelected(int newPosition) {
+            //TODO Auto-generated method stub.
+
 		}
 		
 	};
@@ -785,6 +806,29 @@ public class NowPlayingActivity extends FragmentActivity {
     	}
     	
     };
+
+    /**
+     * Initiates the strobe effect on the seekbar.
+     */
+    private void initSeekbarStrobeEffect() {
+        mSeekbarStrobeAnim = new AlphaAnimation(1.0f, 0.0f);
+        mSeekbarStrobeAnim.setRepeatCount(SEEKBAR_STROBE_ANIM_REPEAT);
+        mSeekbarStrobeAnim.setDuration(700);
+        mSeekbarStrobeAnim.setRepeatMode(Animation.REVERSE);
+
+        mSeekbar.startAnimation(mSeekbarStrobeAnim);
+
+    }
+
+    /**
+     * Stops the seekbar strobe effect.
+     */
+    private void stopSeekbarStrobeEffect() {
+        mSeekbarStrobeAnim = new AlphaAnimation(mSeekbar.getAlpha(), 1.0f);
+        mSeekbarStrobeAnim.setDuration(700);
+        mSeekbar.startAnimation(mSeekbarStrobeAnim);
+        
+    }
     
     public class PlaylistPagerAdapter extends FragmentStatePagerAdapter {
 
@@ -909,6 +953,13 @@ public class NowPlayingActivity extends FragmentActivity {
             setKitKatTranslucentBars();
             mHandler.postDelayed(seekbarUpdateRunnable, 100);
             isCreating = false;
+        }
+
+        //Update the seekbar.
+        try {
+            setSeekbarDuration(mApp.getService().getCurrentMediaPlayer().getDuration()/1000);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         //Load the drawer 1000ms after the activity is loaded.

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.jams.music.player.R;
@@ -51,6 +52,14 @@ public class PlaybackKickstarter implements NowPlayingActivityListener, PrepareS
 		 * parameter.
 		 */
 		public void onServiceCursorFailed(Exception exception);
+
+        /**
+         * Called when/if the service is already running and
+         * should update its cursor. The service's cursor may
+         * need to be updated if the user tapped on "Save
+         * current position", etc.
+         */
+        public void onServiceCursorUpdated(Cursor cursor);
 	
 	}
 	
@@ -103,15 +112,16 @@ public class PlaybackKickstarter implements NowPlayingActivityListener, PrepareS
 		Intent intent = new Intent(mContext, AudioPlaybackService.class);
 		mContext.startService(intent);
 	}
-	
-	public BuildCursorListener getBuildCursorListener() {
-		return mBuildCursorListener;
-	}
-	
-	public void setBuildCursorListener(BuildCursorListener listener) {
-		mBuildCursorListener = listener;
-	}
-	
+
+    /**
+     * Requeries the database to update the current
+     * service cursor.
+     */
+    public void updateServiceCursor() {
+        new AsyncBuildCursorTask(true).execute();
+
+    }
+
 	/**
 	 * Builds the cursor that will be used for playback. Once the cursor 
 	 * is built, AudioPlaybackService receives a callback via
@@ -119,6 +129,12 @@ public class PlaybackKickstarter implements NowPlayingActivityListener, PrepareS
 	 * the rest of the process.
 	 */
 	class AsyncBuildCursorTask extends AsyncTask<Boolean, Boolean, Cursor> {
+
+        private boolean mIsUpdating = false;
+
+        public AsyncBuildCursorTask(boolean isUpdating) {
+            mIsUpdating = isUpdating;
+        }
 
 		@Override
 		protected Cursor doInBackground(Boolean... params) {
@@ -136,9 +152,16 @@ public class PlaybackKickstarter implements NowPlayingActivityListener, PrepareS
 		@Override
 		public void onPostExecute(Cursor cursor) {
 			super.onPostExecute(cursor);
-			if (cursor!=null)
-				getBuildCursorListener().onServiceCursorReady(cursor, mCurrentSongIndex);
-			
+			if (cursor!=null) {
+                if (!mIsUpdating)
+                    getBuildCursorListener().onServiceCursorReady(cursor, mCurrentSongIndex);
+                else
+                    getBuildCursorListener().onServiceCursorUpdated(cursor);
+
+            } else {
+                getBuildCursorListener().onServiceCursorFailed(new Exception());
+            }
+
 		}
 		
 	}
@@ -151,7 +174,7 @@ public class PlaybackKickstarter implements NowPlayingActivityListener, PrepareS
 		mApp.setService(service);
 		mApp.getService().setPrepareServiceListener(this);
 		mApp.getService().setCurrentSongIndex(mCurrentSongIndex);
-		new AsyncBuildCursorTask().execute();
+		new AsyncBuildCursorTask(false).execute();
 		
 	}
 
@@ -176,5 +199,25 @@ public class PlaybackKickstarter implements NowPlayingActivityListener, PrepareS
 		}
 		
 	}
-	
+
+    public BuildCursorListener getBuildCursorListener() {
+        return mBuildCursorListener;
+    }
+
+    public void setBuildCursorListener(BuildCursorListener listener) {
+        mBuildCursorListener = listener;
+    }
+
+    public String getPreviousQuerySelection() {
+        return mQuerySelection;
+    }
+
+    public int getPreviousFragmentId() {
+        return mFragmentId;
+    }
+
+    public int getPreviousCurrentFragmentId() {
+        return mCurrentSongIndex;
+    }
+
 }

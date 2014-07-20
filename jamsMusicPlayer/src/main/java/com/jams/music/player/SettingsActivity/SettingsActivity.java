@@ -900,7 +900,7 @@ public class SettingsActivity extends PreferenceActivity {
 			public boolean onPreferenceClick(Preference preference) {
 				
 				int currentSelection;
-				if (sharedPreferences.getBoolean("CROSSFADE_TRACKS", false)==true) {
+				if (sharedPreferences.getBoolean(Common.CROSSFADE_ENABLED, false)==true) {
 					currentSelection = 0;
 				} else {
 					currentSelection = 1;
@@ -918,18 +918,18 @@ public class SettingsActivity extends PreferenceActivity {
 						dialog.dismiss();
 						Toast.makeText(mContext, R.string.changes_saved, Toast.LENGTH_SHORT).show();
 						if (which==0) {
-							sharedPreferences.edit().putBoolean("CROSSFADE_TRACKS", true).commit();
+							sharedPreferences.edit().putBoolean(Common.CROSSFADE_ENABLED, true).commit();
 							
 							//Enable crossfade for the current queue.
-							if (mApp.getService().getHandler()!=null) {
+							if (mApp.isServiceRunning() && mApp.getService().getHandler()!=null) {
 								mApp.getService().getHandler().post(mApp.getService().startCrossFadeRunnable);
 							}
 							
 						} else {
-							sharedPreferences.edit().putBoolean("CROSSFADE_TRACKS", false).commit();
+							sharedPreferences.edit().putBoolean(Common.CROSSFADE_ENABLED, false).commit();
 							
 							//Disable crossfade for the current queue.
-							if (mApp.getService().getHandler()!=null) {
+							if (mApp.isServiceRunning() && mApp.getService().getHandler()!=null) {
 								mApp.getService().getHandler().removeCallbacks(mApp.getService().startCrossFadeRunnable);
 								mApp.getService().getHandler().removeCallbacks(mApp.getService().crossFadeRunnable);
 							}
@@ -941,7 +941,6 @@ public class SettingsActivity extends PreferenceActivity {
 				});
 				
 				builder.create().show();
-				
 				return false;
 			}
     		
@@ -958,7 +957,7 @@ public class SettingsActivity extends PreferenceActivity {
 				final TextView durationText = (TextView) dialogView.findViewById(R.id.crossfade_duration_text);
 				final SeekBar durationSeekBar = (SeekBar) dialogView.findViewById(R.id.crossfade_duration_seekbar);
 				
-				int currentSeekBarDuration = sharedPreferences.getInt("CROSSFADE_DURATION", 5);
+				int currentSeekBarDuration = sharedPreferences.getInt(Common.CROSSFADE_DURATION, 5);
 				durationSeekBar.setMax(14);
 				durationSeekBar.setProgress(currentSeekBarDuration);
 				durationText.setText(currentSeekBarDuration + " secs");
@@ -967,7 +966,7 @@ public class SettingsActivity extends PreferenceActivity {
 
 					@Override
 					public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-						sharedPreferences.edit().putInt("CROSSFADE_DURATION", (progress+1)).commit();
+						sharedPreferences.edit().putInt(Common.CROSSFADE_DURATION, (progress+1)).commit();
 						durationText.setText((progress + 1) + " secs");
 						
 					}

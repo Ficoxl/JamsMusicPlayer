@@ -13,6 +13,7 @@ import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
@@ -27,7 +28,7 @@ import com.jams.music.player.Utils.Common;
 import com.jams.music.player.Utils.RangeSeekBar;
 import com.jams.music.player.Utils.RangeSeekBar.OnRangeSeekBarChangeListener;
 
-public class RepeatSongRangeDialog extends DialogFragment {
+public class ABRepeatDialog extends DialogFragment {
 	
 	private Context mContext;
 	private Common mApp;
@@ -35,7 +36,8 @@ public class RepeatSongRangeDialog extends DialogFragment {
 	private int repeatPointA;
 	private int repeatPointB;
 	private int currentSongIndex;
-	private int currentSongDuration;
+	private int currentSongDurationMillis;
+    private int currentSongDurationSecs;
 	private SharedPreferences sharedPreferences;
 	private BroadcastReceiver receiver;
 	
@@ -69,7 +71,8 @@ public class RepeatSongRangeDialog extends DialogFragment {
         repeatSongATime = (TextView) view.findViewById(R.id.repeat_song_range_A_time);
         repeatSongBTime = (TextView) view.findViewById(R.id.repeat_song_range_B_time);
 
-        currentSongDuration = (int) (mApp.getService().getCurrentSong().getDuration());
+        currentSongDurationMillis = (int) mApp.getService().getCurrentMediaPlayer().getDuration();
+        currentSongDurationSecs = (int) currentSongDurationMillis/1000;
         
         //Remove the placeholder seekBar and replace it with the RangeSeekBar.
         seekBar = (SeekBar) view.findViewById(R.id.repeat_song_range_placeholder_seekbar);
@@ -77,31 +80,33 @@ public class RepeatSongRangeDialog extends DialogFragment {
         viewGroup = (ViewGroup) seekBar.getParent();
         viewGroup.removeView(seekBar);
         
-        rangeSeekBar = new RangeSeekBar<Integer>(0, currentSongDuration, getActivity());
+        rangeSeekBar = new RangeSeekBar<Integer>(0, currentSongDurationSecs, getActivity());
         rangeSeekBar.setLayoutParams(params);
         viewGroup.addView(rangeSeekBar);
 		
-        if (sharedPreferences.getInt("REPEAT_MODE", 0)==3) {
+        if (sharedPreferences.getInt(Common.REPEAT_MODE, Common.REPEAT_OFF)==Common.A_B_REPEAT) {
         	repeatSongATime.setText(convertMillisToMinsSecs(mApp.getService().getRepeatSongRangePointA()));
         	repeatSongBTime.setText(convertMillisToMinsSecs(mApp.getService().getRepeatSongRangePointB()));
+
         	rangeSeekBar.setSelectedMinValue(mApp.getService().getRepeatSongRangePointA());
         	rangeSeekBar.setSelectedMaxValue(mApp.getService().getRepeatSongRangePointB());
-        	repeatPointA = mApp.getService().getRepeatSongRangePointA();
+
+            repeatPointA = mApp.getService().getRepeatSongRangePointA();
         	repeatPointB = mApp.getService().getRepeatSongRangePointB();
         } else {
         	repeatSongATime.setText("0:00");
-        	repeatSongBTime.setText(convertMillisToMinsSecs(currentSongDuration));
+        	repeatSongBTime.setText(convertMillisToMinsSecs(currentSongDurationMillis));
         	repeatPointA = 0;
-        	repeatPointB = currentSongDuration;
+        	repeatPointB = currentSongDurationMillis;
         }
         
         rangeSeekBar.setOnRangeSeekBarChangeListener(new OnRangeSeekBarChangeListener<Integer>() {
             @Override
             public void onRangeSeekBarValuesChanged(RangeSeekBar<?> bar, Integer minValue, Integer maxValue) {
-            	repeatPointA = minValue;
-            	repeatPointB = maxValue;
-            	repeatSongATime.setText(convertMillisToMinsSecs(minValue));
-            	repeatSongBTime.setText(convertMillisToMinsSecs(maxValue));
+            	repeatPointA = minValue*1000;
+            	repeatPointB = maxValue*1000;
+            	repeatSongATime.setText(convertMillisToMinsSecs(minValue*1000));
+            	repeatSongBTime.setText(convertMillisToMinsSecs(maxValue*1000));
             }
             
         });
@@ -123,7 +128,7 @@ public class RepeatSongRangeDialog extends DialogFragment {
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				if ((currentSongDuration - repeatPointB) < 6) {
+				if ((currentSongDurationSecs - repeatPointB) < mApp.getCrossfadeDuration()) {
 					//Remove the crossfade handler.
 					mApp.getService().getHandler().removeCallbacks(mApp.getService().startCrossFadeRunnable);
 					mApp.getService().getHandler().removeCallbacks(mApp.getService().crossFadeRunnable);
@@ -132,7 +137,7 @@ public class RepeatSongRangeDialog extends DialogFragment {
 				mApp.broadcastUpdateUICommand(new String[] { Common.UPDATE_PLAYBACK_CONTROLS }, 
 											  new String[] { "" });
 				mApp.getService().setRepeatSongRange(repeatPointA, repeatPointB);
-				mApp.getService().setRepeatMode(AudioPlaybackService.A_B_REPEAT);
+				mApp.getService().setRepeatMode(Common.A_B_REPEAT);
 				
 			}
         	
@@ -143,18 +148,18 @@ public class RepeatSongRangeDialog extends DialogFragment {
 	
 	public void initRepeatSongRangeDialog() {
 
-		mApp.getService().getCursor().moveToPosition(currentSongIndex+1);
-        currentSongDuration = mApp.getService().getCursor().getInt(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_DURATION));
+        currentSongDurationMillis = (int) mApp.getService().getCurrentMediaPlayer().getDuration();
+        currentSongDurationSecs = (int) currentSongDurationMillis/1000;
         
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) rangeSeekBar.getLayoutParams();
         viewGroup = (ViewGroup) rangeSeekBar.getParent();
         viewGroup.removeView(rangeSeekBar);
         
-        rangeSeekBar = new RangeSeekBar<Integer>(0, currentSongDuration, getActivity());
+        rangeSeekBar = new RangeSeekBar<Integer>(0, currentSongDurationSecs, getActivity());
         rangeSeekBar.setLayoutParams(params);
         viewGroup.addView(rangeSeekBar);
 		
-        if (sharedPreferences.getInt("REPEAT_MODE", 0)==3) {
+        if (sharedPreferences.getInt(Common.REPEAT_MODE, Common.REPEAT_OFF)==Common.A_B_REPEAT) {
         	repeatSongATime.setText(convertMillisToMinsSecs(mApp.getService().getRepeatSongRangePointA()));
         	repeatSongBTime.setText(convertMillisToMinsSecs(mApp.getService().getRepeatSongRangePointB()));
         	rangeSeekBar.setSelectedMinValue(mApp.getService().getRepeatSongRangePointA());
@@ -163,18 +168,19 @@ public class RepeatSongRangeDialog extends DialogFragment {
         	repeatPointB = mApp.getService().getRepeatSongRangePointB();
         } else {
         	repeatSongATime.setText("0:00");
-        	repeatSongBTime.setText(convertMillisToMinsSecs(currentSongDuration));
+        	repeatSongBTime.setText(convertMillisToMinsSecs(currentSongDurationMillis));
         	repeatPointA = 0;
-        	repeatPointB = currentSongDuration;
+        	repeatPointB = currentSongDurationMillis;
         }
         
         rangeSeekBar.setOnRangeSeekBarChangeListener(new OnRangeSeekBarChangeListener<Integer>() {
+
             @Override
             public void onRangeSeekBarValuesChanged(RangeSeekBar<?> bar, Integer minValue, Integer maxValue) {
-            	repeatPointA = minValue;
-            	repeatPointB = maxValue;
-            	repeatSongATime.setText(convertMillisToMinsSecs(minValue));
-            	repeatSongBTime.setText(convertMillisToMinsSecs(maxValue));
+            	repeatPointA = minValue*1000;
+            	repeatPointB = maxValue*1000;
+            	repeatSongATime.setText(convertMillisToMinsSecs(minValue*1000));
+            	repeatSongBTime.setText(convertMillisToMinsSecs(maxValue*1000));
             }
             
         });

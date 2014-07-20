@@ -169,6 +169,17 @@ public class Common extends Application {
     public static final int DARK_THEME = 0;
     public static final int LIGHT_THEME = 1;
 
+    //SharedPreferences keys.
+    public static final String CROSSFADE_ENABLED = "CrossfadeEnabled";
+    public static final String CROSSFADE_DURATION = "CrossfadeDuration";
+    public static final String REPEAT_MODE = "RepeatMode";
+
+    //Repeat mode constants.
+    public static final int REPEAT_OFF = 0;
+    public static final int REPEAT_PLAYLIST = 1;
+    public static final int REPEAT_SONG = 2;
+    public static final int A_B_REPEAT = 3;
+
 	@Override
 	public void onCreate() {
 		super.onCreate();
@@ -861,9 +872,13 @@ public class Common extends Application {
     }
     
     public boolean isCrossfadeEnabled() {
-    	return getSharedPreferences().getBoolean("CROSSFADE_ENABLED", false);
+    	return getSharedPreferences().getBoolean(CROSSFADE_ENABLED, false);
     }
-    
+
+    public int getCrossfadeDuration() {
+        return getSharedPreferences().getInt(CROSSFADE_DURATION, 5);
+    }
+
     public boolean isGooglePlayMusicEnabled() {
     	return getSharedPreferences().getBoolean("GOOGLE_PLAY_MUSIC_ENABLED", false);
     }
