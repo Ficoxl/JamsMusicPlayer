@@ -173,6 +173,8 @@ public class Common extends Application {
     public static final String CROSSFADE_ENABLED = "CrossfadeEnabled";
     public static final String CROSSFADE_DURATION = "CrossfadeDuration";
     public static final String REPEAT_MODE = "RepeatMode";
+    public static final String MUSIC_PLAYING = "MusicPlaying";
+    public static final String SERVICE_RUNNING = "ServiceRunning";
 
     //Repeat mode constants.
     public static final int REPEAT_OFF = 0;

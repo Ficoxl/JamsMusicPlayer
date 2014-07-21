@@ -1,11 +1,13 @@
 package com.jams.music.player.NowPlayingActivity;
 
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,12 +20,15 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.DrawerLayout.DrawerListener;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.HapticFeedbackConstants;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
+import android.view.animation.ScaleAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
@@ -97,9 +102,7 @@ public class NowPlayingActivity extends FragmentActivity {
     //Interface instance and flags.
     private NowPlayingActivityListener mNowPlayingActivityListener;
     public static final String START_SERVICE = "StartService";
-    private boolean isCreating = true;
-    private boolean pauseButtonVisible = true;
-    private boolean playButtonVisible = false;
+    private boolean mIsCreating = true;
     
     @SuppressLint("NewApi")
 	@Override
@@ -148,7 +151,7 @@ public class NowPlayingActivity extends FragmentActivity {
         mControlsLayoutHeader = (RelativeLayout) findViewById(R.id.now_playing_controls_header);
         mPlayPauseButtonBackground = (RelativeLayout) findViewById(R.id.playPauseButtonBackground);
     	mPlayPauseButton = (ImageButton) findViewById(R.id.playPauseButton);
-    	mNextButton = (ImageButton) findViewById(R.id.nextButton);
+        mNextButton = (ImageButton) findViewById(R.id.nextButton);
     	mPreviousButton = (ImageButton) findViewById(R.id.previousButton);
     	mShuffleButton = (ImageButton) findViewById(R.id.shuffleButton);
     	mRepeatButton = (ImageButton) findViewById(R.id.repeatButton);
@@ -165,6 +168,8 @@ public class NowPlayingActivity extends FragmentActivity {
     	}
 
         mPlayPauseButtonBackground.setBackgroundResource(UIElementsHelper.getShadowedCircle(mContext));
+        mPlayPauseButton.setImageResource(R.drawable.pause_light);
+        mPlayPauseButton.setId(R.drawable.pause_light);
     	mNextButton.setImageResource(UIElementsHelper.getIcon(mContext, "btn_playback_next"));
     	mPreviousButton.setImageResource(UIElementsHelper.getIcon(mContext, "btn_playback_previous"));
     	
@@ -182,7 +187,7 @@ public class NowPlayingActivity extends FragmentActivity {
         setShuffleButtonIcon();
         setRepeatButtonIcon();
     	
-        //Set the listeners.
+        //Set the click listeners.
     	mSeekbar.setOnSeekBarChangeListener(seekBarChangeListener);
     	mNextButton.setOnClickListener(mOnClickNextListener);
     	mPreviousButton.setOnClickListener(mOnClickPreviousListener);
@@ -190,6 +195,10 @@ public class NowPlayingActivity extends FragmentActivity {
         mPlayPauseButtonBackground.setOnClickListener(playPauseClickListener);
     	mShuffleButton.setOnClickListener(shuffleButtonClickListener);
     	mRepeatButton.setOnClickListener(repeatButtonClickListener);
+
+        //Apply haptic feedback to the play/pause button.
+        mPlayPauseButtonBackground.setHapticFeedbackEnabled(true);
+        mPlayPauseButton.setHapticFeedbackEnabled(true);
 
     }
     
@@ -224,6 +233,8 @@ public class NowPlayingActivity extends FragmentActivity {
                         mViewPager.setCurrentItem(newPosition, false);
                     }
 
+                    //Reinit the seekbar update handler.
+                    mHandler.post(seekbarUpdateRunnable);
 
                 }
 
@@ -301,17 +312,27 @@ public class NowPlayingActivity extends FragmentActivity {
 
             @Override
             public void run() {
-                mViewPager.setVisibility(View.INVISIBLE);
-                mViewPagerAdapter = new PlaylistPagerAdapter(getSupportFragmentManager());
-                mViewPager.setAdapter(mViewPagerAdapter);
-                mViewPager.setOffscreenPageLimit(5);
-                mViewPager.setOnPageChangeListener(mPageChangeListener);
-                mViewPager.setCurrentItem(mApp.getService().getCurrentSongIndex(), false);
 
-                FadeAnimation fadeAnimation = new FadeAnimation(mViewPager, 600, 0.0f,
-                        1.0f, new DecelerateInterpolator(2.0f));
+                try {
+                    mViewPager.setVisibility(View.INVISIBLE);
+                    mViewPagerAdapter = new PlaylistPagerAdapter(getSupportFragmentManager());
+                    mViewPager.setAdapter(mViewPagerAdapter);
+                    mViewPager.setOffscreenPageLimit(5);
+                    mViewPager.setOnPageChangeListener(mPageChangeListener);
+                    mViewPager.setCurrentItem(mApp.getService().getCurrentSongIndex(), false);
 
-                fadeAnimation.animate();
+                    FadeAnimation fadeAnimation = new FadeAnimation(mViewPager, 600, 0.0f,
+                                                                    1.0f, new DecelerateInterpolator(2.0f));
+
+                    fadeAnimation.animate();
+
+                } catch (IllegalStateException e) {
+                    /*
+                     * Catches any exceptions that may occur
+                     * as a result of the user rapidly changing
+                     * their device's orientation.
+                     */
+                }
 
             }
 
@@ -325,10 +346,20 @@ public class NowPlayingActivity extends FragmentActivity {
     private void initDrawer() {
         //Load the current queue drawer.
         mQueueDrawerFragment = new QueueDrawerFragment();
-        getSupportFragmentManager().beginTransaction()
-                                   .replace(R.id.queue_drawer, mQueueDrawerFragment)
-                                   .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
-                                   .commit();
+
+        try {
+            getSupportFragmentManager().beginTransaction()
+                                       .replace(R.id.queue_drawer, mQueueDrawerFragment)
+                                       .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
+                                       .commit();
+
+        } catch (IllegalStateException e) {
+            /*
+             * Catches any exceptions that may occur if the
+             * user rapidly changes the device's orientation.
+             */
+            e.printStackTrace();
+        }
 
     }
     
@@ -362,13 +393,10 @@ public class NowPlayingActivity extends FragmentActivity {
     private void setPlayPauseButton() {
         if (mApp.isServiceRunning()) {
             if (mApp.getService().isPlayingMusic()) {
-                mPlayPauseButton.setImageResource(R.drawable.pause_light);
-                mPlayPauseButton.setPadding(0, 0, 0, 0);
+                animatePlayToPause();
                 stopSeekbarStrobeEffect();
-
             } else {
-                mPlayPauseButton.setImageResource(R.drawable.play_light);
-                mPlayPauseButton.setPadding(0, 0, (int) mApp.convertDpToPixels(-5f, mContext), 0);
+                animatePauseToPlay();
                 initSeekbarStrobeEffect();
             }
 
@@ -377,11 +405,149 @@ public class NowPlayingActivity extends FragmentActivity {
     }
 
     /**
+     * Animates the play button to a pause button.
+     */
+    private void animatePlayToPause() {
+
+        //Check to make sure the current icon is the play icon.
+        if (mPlayPauseButton.getId()!=R.drawable.play_light)
+            return;
+
+        //Fade out the play button.
+        final ScaleAnimation scaleOut = new ScaleAnimation(1.0f, 0.0f, 1.0f, 0.0f,
+                                                           mPlayPauseButton.getWidth()/2,
+                                                           mPlayPauseButton.getHeight()/2);
+        scaleOut.setDuration(150);
+        scaleOut.setInterpolator(new AccelerateInterpolator());
+
+
+        //Scale in the pause button.
+        final ScaleAnimation scaleIn = new ScaleAnimation(0.0f, 1.0f, 0.0f, 1.0f,
+                                                          mPlayPauseButton.getWidth()/2,
+                                                          mPlayPauseButton.getHeight()/2);
+        scaleIn.setDuration(150);
+        scaleIn.setInterpolator(new DecelerateInterpolator());
+
+        scaleOut.setAnimationListener(new Animation.AnimationListener() {
+
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mPlayPauseButton.setImageResource(R.drawable.pause_light);
+                mPlayPauseButton.setPadding(0, 0, 0, 0);
+                mPlayPauseButton.startAnimation(scaleIn);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+
+        });
+
+        scaleIn.setAnimationListener(new Animation.AnimationListener() {
+
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mPlayPauseButton.setScaleX(1.0f);
+                mPlayPauseButton.setScaleY(1.0f);
+                mPlayPauseButton.setId(R.drawable.pause_light);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+
+        });
+
+        mPlayPauseButton.startAnimation(scaleOut);
+    }
+
+    /**
+     * Animates the pause button to a play button.
+     */
+    private void animatePauseToPlay() {
+
+        //Check to make sure the current icon is the pause icon.
+        if (mPlayPauseButton.getId()!=R.drawable.pause_light)
+            return;
+
+        //Scale out the pause button.
+        final ScaleAnimation scaleOut = new ScaleAnimation(1.0f, 0.0f, 1.0f, 0.0f,
+                                                           mPlayPauseButton.getWidth()/2,
+                                                           mPlayPauseButton.getHeight()/2);
+        scaleOut.setDuration(150);
+        scaleOut.setInterpolator(new AccelerateInterpolator());
+
+
+        //Scale in the play button.
+        final ScaleAnimation scaleIn = new ScaleAnimation(0.0f, 1.0f, 0.0f, 1.0f,
+                                                          mPlayPauseButton.getWidth()/2,
+                                                          mPlayPauseButton.getHeight()/2);
+        scaleIn.setDuration(150);
+        scaleIn.setInterpolator(new DecelerateInterpolator());
+
+        scaleOut.setAnimationListener(new Animation.AnimationListener() {
+
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mPlayPauseButton.setImageResource(R.drawable.play_light);
+                mPlayPauseButton.setPadding(0, 0, -5, 0);
+                mPlayPauseButton.startAnimation(scaleIn);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+
+        });
+
+        scaleIn.setAnimationListener(new Animation.AnimationListener() {
+
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mPlayPauseButton.setScaleX(1.0f);
+                mPlayPauseButton.setScaleY(1.0f);
+                mPlayPauseButton.setId(R.drawable.play_light);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+
+        });
+
+        mPlayPauseButton.startAnimation(scaleOut);
+    }
+
+    /**
      * Sets the repeat button icon based on the current repeat mode.
      */
     private void setRepeatButtonIcon() {
     	if (mApp.isServiceRunning())
-	    	if (mApp.getService().getRepeatMode()== Common.REPEAT_OFF) {
+	    	if (mApp.getService().getRepeatMode()==Common.REPEAT_OFF) {
 	    		mRepeatButton.setImageResource(UIElementsHelper.getIcon(mContext, "repeat"));
 	    	} else if (mApp.getService().getRepeatMode()==Common.REPEAT_PLAYLIST) {
 	    		mRepeatButton.setImageResource(R.drawable.repeat_highlighted);
@@ -485,10 +651,11 @@ public class NowPlayingActivity extends FragmentActivity {
 
 		@Override
 		public void onStopTrackingTouch(SeekBar seekBar) {
-			//Reinitiate the handler.
-			mHandler.postDelayed(seekbarUpdateRunnable, 100);
 			int seekBarPosition = seekBar.getProgress();
 			mApp.getService().getCurrentMediaPlayer().seekTo(seekBarPosition*1000);
+
+            //Reinitiate the handler.
+            mHandler.post(seekbarUpdateRunnable);
 
             //Fade out the indicator after 1000ms.
             mHandler.postDelayed(fadeOutSeekbarIndicator, 1000);
@@ -563,13 +730,34 @@ public class NowPlayingActivity extends FragmentActivity {
     private View.OnClickListener playPauseClickListener = new View.OnClickListener() {
 		
 		@Override
-		public void onClick(View arg0) {
-			boolean isPlaying = mApp.getService().togglePlaybackState();
-			
-			if (isPlaying)
-				mHandler.post(seekbarUpdateRunnable);
-			else
-				mHandler.removeCallbacks(seekbarUpdateRunnable);
+		public void onClick(View view) {
+
+            //BZZZT! Give the user a brief haptic feedback touch response.
+            view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+
+            //Update the playback UI elements.
+            if (mApp.getService().isPlayingMusic()) {
+                animatePauseToPlay();
+                mHandler.removeCallbacks(seekbarUpdateRunnable);
+            } else {
+                animatePlayToPause();
+                mHandler.post(seekbarUpdateRunnable);
+            }
+
+            /*
+             * Toggle the playback state in a separate thread. This
+             * will allow the play/pause button animation to remain
+             * buttery smooth.
+             */
+            new AsyncTask() {
+
+                @Override
+                protected Object doInBackground(Object[] params) {
+                    mApp.getService().togglePlaybackState();
+                    return null;
+                }
+
+            }.execute();
 
 		}
 		
@@ -582,6 +770,10 @@ public class NowPlayingActivity extends FragmentActivity {
 		
 		@Override
 		public void onClick(View arg0) {
+
+            //Remove the seekbar update runnable.
+            mHandler.removeCallbacks(seekbarUpdateRunnable);
+
 			/*
 			 * Scrolling the pager will automatically call the skipToTrack() method. 
 			 * Since we're passing true for the dispatchToListener parameter, the 
@@ -607,6 +799,10 @@ public class NowPlayingActivity extends FragmentActivity {
 		
 		@Override
 		public void onClick(View arg0) {
+
+            //Remove the seekbar update runnable.
+            mHandler.removeCallbacks(seekbarUpdateRunnable);
+
 			/*
 			 * Scrolling the pager will automatically call the skipToTrack() method. 
 			 * Since we're passing true for the dispatchToListener parameter, the 
@@ -623,7 +819,7 @@ public class NowPlayingActivity extends FragmentActivity {
 				else
 					Toast.makeText(mContext, R.string.no_songs_to_skip_to, Toast.LENGTH_SHORT).show();
 			}
-				
+
 			//mApp.getService().skipToNextTrack();
 			
 		}
@@ -734,7 +930,7 @@ public class NowPlayingActivity extends FragmentActivity {
 		}
 
 		@Override
-		public void onPageScrolled(int pagerPosition, float swipeVelocity, int offsetFromCurrentPosition) {
+		public void onPageScrolled(final int pagerPosition, float swipeVelocity, int offsetFromCurrentPosition) {
 			
 			/* swipeVelocity determines whether the viewpager has finished scrolling or not.
 			 * Throw in an if statement that only allows the track to change when
@@ -751,7 +947,18 @@ public class NowPlayingActivity extends FragmentActivity {
 				 */
 				if (swipeVelocity==0.0f && pagerPosition!=mApp.getService().getCurrentSongIndex()) {
 					if (USER_SCROLL) {
-						mApp.getService().skipToTrack(pagerPosition);
+                        mHandler.removeCallbacks(seekbarUpdateRunnable);
+                        smoothScrollSeekbar(0);
+
+                        mHandler.postDelayed(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                mApp.getService().skipToTrack(pagerPosition);
+                            }
+
+                        }, 200);
+
 					}
 
 				}
@@ -792,13 +999,13 @@ public class NowPlayingActivity extends FragmentActivity {
     	public void run() {
     		
     		try {
-    			if (mApp.getService().isPlayingMusic()) {
-            		long currentPosition = mApp.getService().getCurrentMediaPlayer().getCurrentPosition();
-            		int currentPositionInSecs = (int) currentPosition/1000;
+                long currentPosition = mApp.getService().getCurrentMediaPlayer().getCurrentPosition();
+                int currentPositionInSecs = (int) currentPosition/1000;
+                smoothScrollSeekbar(currentPositionInSecs);
 
-            		mSeekbar.setProgress(currentPositionInSecs);
-            		mHandler.postDelayed(seekbarUpdateRunnable, 100);
-        		}
+                //mSeekbar.setProgress(currentPositionInSecs);
+                mHandler.postDelayed(seekbarUpdateRunnable, 100);
+
     		} catch (Exception e) {
     			e.printStackTrace();
     		}
@@ -806,6 +1013,17 @@ public class NowPlayingActivity extends FragmentActivity {
     	}
     	
     };
+
+    /**
+     * Smoothly scrolls the seekbar to the indicated position.
+     */
+    private void smoothScrollSeekbar(int progress) {
+        ObjectAnimator animation = ObjectAnimator.ofInt(mSeekbar, "progress", progress);
+        animation.setDuration(200);
+        animation.setInterpolator(new DecelerateInterpolator());
+        animation.start();
+
+    }
 
     /**
      * Initiates the strobe effect on the seekbar.
@@ -949,10 +1167,10 @@ public class NowPlayingActivity extends FragmentActivity {
 	public void onResume() {
 		super.onResume();
 
-        if (isCreating==false) {
+        if (mIsCreating==false) {
             setKitKatTranslucentBars();
             mHandler.postDelayed(seekbarUpdateRunnable, 100);
-            isCreating = false;
+            mIsCreating = false;
         }
 
         //Update the seekbar.

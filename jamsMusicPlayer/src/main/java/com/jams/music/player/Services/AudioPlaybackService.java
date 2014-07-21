@@ -110,15 +110,7 @@ public class AudioPlaybackService extends Service {
 	//Song data helpers for each MediaPlayer object.
 	private SongHelper mMediaPlayerSongHelper;
 	private SongHelper mMediaPlayer2SongHelper;
-	
-	//String constants for mApp.getSharedPreferences().
-	public static final String SERVICE_RUNNING = "SERVICE_RUNNING";
-	public static final String NOW_PLAYING_ACTIVE = "NOW_PLAYING_ACTIVE";
-	public static final String MUSIC_PLAYING = "MUSIC_PLAYING";
-	public static final String TRACK_COMPLETED = "TRACK_COMPLETED";
-	public static final String MAIN_ACTIVITY_VISIBLE = "MAIN_ACTIVITY_VISIBLE";
-	public static final String SHUFFLE_MODE = "SHUFFLE_MODE";
-	
+
 	//Pointer variable.
 	private int mCurrentSongIndex;
 
@@ -1553,6 +1545,7 @@ public class AudioPlaybackService extends Service {
 							if (!getMediaPlayer2().isPlaying()) {
 								
 								if (mMediaPlayer2Prepared==true) {
+
 									if (checkAndRequestAudioFocus()==true) {
 										
 										//Check if the the user requested to save the track's last playback position.
@@ -1680,8 +1673,7 @@ public class AudioPlaybackService extends Service {
 				prepareMediaPlayer(songIndex+1);
 			else
 				return false;
-			
-			
+
 			return false;
 		}
 		
@@ -2184,7 +2176,7 @@ public class AudioPlaybackService extends Service {
     	
     	return true;
     }
-    
+
     /**
      * Skips to the next track (if there is one) and starts 
      * playing it. Returns true if the operation succeeded. 
@@ -2195,6 +2187,7 @@ public class AudioPlaybackService extends Service {
     		//Reset both MediaPlayer objects.
     		getMediaPlayer().reset();
     		getMediaPlayer2().reset();
+            clearCrossfadeCallbacks();
     		
     		//Loop the players if the repeat mode is set to repeat the current song.
     		if (getRepeatMode()==Common.REPEAT_SONG) {
@@ -2238,6 +2231,7 @@ public class AudioPlaybackService extends Service {
     		//Reset both MediaPlayer objects.
     		getMediaPlayer().reset();
     		getMediaPlayer2().reset();
+            clearCrossfadeCallbacks();
     		
     		//Loop the players if the repeat mode is set to repeat the current song.
     		if (getRepeatMode()==Common.REPEAT_SONG) {
@@ -2281,6 +2275,7 @@ public class AudioPlaybackService extends Service {
     		//Reset both MediaPlayer objects.
     		getMediaPlayer().reset();
     		getMediaPlayer2().reset();
+            clearCrossfadeCallbacks();
     		
     		//Loop the players if the repeat mode is set to repeat the current song.
     		if (getRepeatMode()==Common.REPEAT_SONG) {
@@ -2297,9 +2292,8 @@ public class AudioPlaybackService extends Service {
     		setCurrentSongIndex(trackIndex);
     		
     		//Update the UI.
-    		String[] updateFlags = new String[] { Common.UPDATE_PLAYBACK_CONTROLS, 
-    											  Common.UPDATE_PAGER_POSTIION };
-    		String[] flagValues = new String[] { "", getCurrentSongIndex() + "" };
+    		String[] updateFlags = new String[] { Common.UPDATE_PAGER_POSTIION };
+    		String[] flagValues = new String[] { getCurrentSongIndex() + "" };
     		mApp.broadcastUpdateUICommand(updateFlags, flagValues);
     		
     		//Start the playback process.
@@ -2427,6 +2421,16 @@ public class AudioPlaybackService extends Service {
     	} catch (Exception e) {
     		e.printStackTrace();
     	}
+
+        /*
+         * Remove the crossfade callbacks and reinitalize them
+         * only if the user didn't select A-B repeat.
+         */
+        clearCrossfadeCallbacks();
+
+        if (repeatMode!=Common.A_B_REPEAT)
+            if (mHandler!=null && mApp.isCrossfadeEnabled())
+                mHandler.post(startCrossFadeRunnable);
     	
     }
     
@@ -2505,6 +2509,27 @@ public class AudioPlaybackService extends Service {
     		return mMediaPlayer2SongHelper;
     	}
     	
+    }
+
+    /**
+     * Removes all crossfade callbacks on the current
+     * Handler object. Also resets the volumes of the
+     * MediaPlayer objects to 1.0f.
+     */
+    private void clearCrossfadeCallbacks() {
+        if (mHandler==null)
+            return;
+
+        mHandler.removeCallbacks(startCrossFadeRunnable);
+        mHandler.removeCallbacks(crossFadeRunnable);
+
+        try {
+            getMediaPlayer().setVolume(1.0f, 1.0f);
+            getMediaPlayer2().setVolume(1.0f, 1.0f);
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        }
+
     }
     
     /**
@@ -2898,9 +2923,6 @@ public class AudioPlaybackService extends Service {
 			mApp.getSharedPreferences().edit().putLong("LAST_SONG_TRACK_POSITION", 0);
 		}
 		
-		mApp.getSharedPreferences().edit().putBoolean(SERVICE_RUNNING, false).commit();
-		mApp.getSharedPreferences().edit().putBoolean(MUSIC_PLAYING, false).commit();
-		
 		//If the current song is repeating a specific range, reset the repeat option.
 		if (getRepeatMode()==Common.REPEAT_SONG) {
 			setRepeatMode(Common.REPEAT_OFF);
@@ -2949,7 +2971,15 @@ public class AudioPlaybackService extends Service {
 		
 		//Final scrobbling.
 		scrobbleTrack(SimpleLastFMHelper.PAUSE);
-		
+
+        /*
+         * If A-B repeat is enabled, disable it to prevent the
+         * next service instance from repeating the same section
+         * over and over on the new track.
+         */
+        if (getRepeatMode()==Common.A_B_REPEAT)
+            setRepeatMode(Common.REPEAT_OFF);
+
 		//Remove audio focus and unregister the audio buttons receiver.
 		mAudioManagerHelper.setHasAudioFocus(false);
 		mAudioManager.abandonAudioFocus(audioFocusChangeListener);
