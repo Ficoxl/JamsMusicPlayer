@@ -18,6 +18,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.ScaleAnimation;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
@@ -29,6 +33,7 @@ import com.jams.music.player.ListViewFragment.ListViewFragment;
 import com.jams.music.player.R;
 import com.jams.music.player.SettingsActivity.SettingsActivity;
 import com.jams.music.player.Utils.Common;
+import com.mikhaellopez.circularimageview.CircularImageView;
 
 public class MainActivity extends FragmentActivity {
 
@@ -36,11 +41,14 @@ public class MainActivity extends FragmentActivity {
 	private Context mContext;
 	private Common mApp;
 
-	//DrawerLayout UI elements.
+	//UI elements.
 	private FrameLayout mDrawerParentLayout;
 	private DrawerLayout mDrawerLayout;
 	private RelativeLayout mNavDrawerLayout;
 	private RelativeLayout mCurrentQueueDrawerLayout;
+    private RelativeLayout mFragmentContainer1;
+    private RelativeLayout mFragmentContainer2;
+    private RelativeLayout mFragmentContainer3;
 	private ActionBarDrawerToggle mDrawerToggle;
     private QueueDrawerFragment mQueueDrawerFragment;
 	
@@ -78,7 +86,10 @@ public class MainActivity extends FragmentActivity {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.main_activity_drawer_root);
         mNavDrawerLayout = (RelativeLayout) findViewById(R.id.nav_drawer_container);
         mCurrentQueueDrawerLayout = (RelativeLayout) findViewById(R.id.current_queue_drawer_container);
-        
+        mFragmentContainer1 = (RelativeLayout) findViewById(R.id.mainActivityContainer);
+        mFragmentContainer2 = (RelativeLayout) findViewById(R.id.mainActivityContainer2);
+        mFragmentContainer3 = (RelativeLayout) findViewById(R.id.mainActivityContainer3);
+
         //Load the drawer fragments.
         loadDrawerFragments();
 		
@@ -121,31 +132,6 @@ public class MainActivity extends FragmentActivity {
 	}
 	
 	/**
-	 * Broadcast receiver interface that will update this activity as necessary.
-	 */
-	BroadcastReceiver mReceiver = new BroadcastReceiver() {
-
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			Bundle bundle = intent.getExtras();
-
-			if (bundle.containsKey(Common.UPDATE_PAGER_POSTIION)) {
-                //Update the queue fragment with the new song info.
-                if (mQueueDrawerFragment!=null)
-                    mQueueDrawerFragment.initListViewAdapter(false);
-
-            }
-
-            //Show the "No music playing." message.
-            if (bundle.containsKey(Common.SERVICE_STOPPING))
-                if (mQueueDrawerFragment!=null)
-                    mQueueDrawerFragment.showEmptyTextView();
-
-		}
-		
-	};
-	
-	/**
 	 * Sets the entire activity-wide theme.
 	 */
 	private void setTheme() {
@@ -176,13 +162,13 @@ public class MainActivity extends FragmentActivity {
     			mCurrentQueueDrawerLayout.setPadding(0, topPadding, 0, 0);
     		}
 
-            //Calculate ActionBar height.
+            //Calculate ActionBar and navigation bar height.
             TypedValue tv = new TypedValue();
             int actionBarHeight = 0;
             if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
                 actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
             }
-            
+
             if (mDrawerParentLayout!=null) {
             	mDrawerParentLayout.setPadding(0, actionBarHeight, 0, 0);
             	mDrawerParentLayout.setClipToPadding(false);
@@ -328,15 +314,9 @@ public class MainActivity extends FragmentActivity {
 	/**
 	 * Called when the user taps on the "Play all" or "Shuffle all" action button.
 	 */
-	private void playAll(boolean shuffle) {
-		
-		//Mix it all up (or not).
-		if (shuffle) {
-			mApp.getSharedPreferences().edit().putBoolean("SHUFFLE_MODE", true).commit();
-		}
-		
+	public void playAll(boolean shuffle) {
 		//Start the playback sequence.
-		mApp.getPlaybackKickstarter().initPlayback(mContext, "", Common.SONGS_FRAGMENT, 0, true);
+		mApp.getPlaybackKickstarter().initPlayback(mContext, "", Common.SONGS_FRAGMENT, 0, true, true);
 		
 	}
 	
@@ -398,21 +378,6 @@ public class MainActivity extends FragmentActivity {
 	        return super.onOptionsItemSelected(item);
 	    }
 		
-	}
-	
-	@Override
-	protected void onStart() {
-	    super.onStart();
-	    LocalBroadcastManager.getInstance(this)
-	    					 .registerReceiver((mReceiver), new IntentFilter(Common.UPDATE_UI_BROADCAST));
-	
-	}
-
-	@Override
-	protected void onStop() {
-	    LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
-	    super.onStop();
-	    
 	}
 	
 	@Override

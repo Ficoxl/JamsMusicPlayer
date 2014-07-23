@@ -631,11 +631,16 @@ public class NowPlayingActivity extends FragmentActivity {
 
 		@Override
 		public void onProgressChanged(SeekBar seekBar, int seekBarPosition, boolean changedByUser) {
-			long currentSongDuration = mApp.getService().getCurrentMediaPlayer().getDuration();
-			seekBar.setMax((int) currentSongDuration / 1000);
 
-            if (changedByUser)
-                mSeekbarIndicatorText.setText(mApp.convertMillisToMinsSecs(seekBar.getProgress()*1000));
+            try {
+                long currentSongDuration = mApp.getService().getCurrentMediaPlayer().getDuration();
+                seekBar.setMax((int) currentSongDuration / 1000);
+
+                if (changedByUser)
+                    mSeekbarIndicatorText.setText(mApp.convertMillisToMinsSecs(seekBar.getProgress()*1000));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
 		}
 
@@ -681,7 +686,7 @@ public class NowPlayingActivity extends FragmentActivity {
 	/**
 	 * Repeat button click listener.
 	 */
-	private View.OnClickListener repeatButtonClickListener = new OnClickListener() {
+	private OnClickListener repeatButtonClickListener = new OnClickListener() {
 
 		@Override
 		public void onClick(View arg0) {
@@ -708,7 +713,7 @@ public class NowPlayingActivity extends FragmentActivity {
 	/**
 	 * Shuffle button click listener.
 	 */
-	private View.OnClickListener shuffleButtonClickListener = new OnClickListener() {
+	private OnClickListener shuffleButtonClickListener = new OnClickListener() {
 
 		@Override
 		public void onClick(View arg0) {
@@ -727,7 +732,7 @@ public class NowPlayingActivity extends FragmentActivity {
 	/**
 	 * Click listener for the play/pause button.
 	 */
-    private View.OnClickListener playPauseClickListener = new View.OnClickListener() {
+    private OnClickListener playPauseClickListener = new OnClickListener() {
 		
 		@Override
 		public void onClick(View view) {
@@ -766,7 +771,7 @@ public class NowPlayingActivity extends FragmentActivity {
 	/**
 	 * Click listener for the previous button.
 	 */
-	private View.OnClickListener mOnClickPreviousListener = new View.OnClickListener() {
+	private OnClickListener mOnClickPreviousListener = new OnClickListener() {
 		
 		@Override
 		public void onClick(View arg0) {
@@ -795,7 +800,7 @@ public class NowPlayingActivity extends FragmentActivity {
 	/**
 	 * Click listener for the next button.
 	 */
-	private View.OnClickListener mOnClickNextListener = new View.OnClickListener() {
+	private OnClickListener mOnClickNextListener = new OnClickListener() {
 		
 		@Override
 		public void onClick(View arg0) {

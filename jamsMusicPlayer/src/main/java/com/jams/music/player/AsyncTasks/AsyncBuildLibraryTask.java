@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.PowerManager;
 import android.provider.MediaStore;
+import android.util.Log;
 
 import com.jams.music.player.DBHelpers.DBAccessHelper;
 import com.jams.music.player.DBHelpers.MediaStoreAccessHelper;
@@ -23,9 +24,7 @@ import java.util.HashMap;
 
 /**
  * The Mother of all AsyncTasks in this app.
- * 
- * 
- * 
+ *
  * @author Saravan Pantham
  */
 public class AsyncBuildLibraryTask extends AsyncTask<String, String, Void> {
@@ -40,6 +39,8 @@ public class AsyncBuildLibraryTask extends AsyncTask<String, String, Void> {
 
 	private String mMediaStoreSelection = null;
 	private HashMap<String, String> mGenresHashMap = new HashMap<String, String>();
+    private HashMap<String, Integer> mAlbumsCountMap = new HashMap<String, Integer>();
+    private HashMap<String, Integer> mSongsCountMap = new HashMap<String, Integer>();
 	private HashMap<String, String> mFolderArtHashMap = new HashMap<String, String>();
 	private MediaMetadataRetriever mMMDR = new MediaMetadataRetriever();
 	
@@ -375,16 +376,17 @@ public class AsyncBuildLibraryTask extends AsyncTask<String, String, Void> {
         Cursor mediaStoreCursor = null;
         String sortOrder = null;
         String projection[] = { MediaStore.Audio.Media.TITLE, 
-        						MediaStore.Audio.Media.ARTIST, 
+        						MediaStore.Audio.Media.ARTIST,
+                                MediaStore.Audio.Media.ARTIST_KEY,
         						MediaStore.Audio.Media.ALBUM, 
-        						MediaStore.Audio.Media.ALBUM_ID, 
+        						MediaStore.Audio.Media.ALBUM_KEY,
         						MediaStore.Audio.Media.DURATION, 
         						MediaStore.Audio.Media.TRACK, 
         						MediaStore.Audio.Media.YEAR, 
         						MediaStore.Audio.Media.DATA, 
         						MediaStore.Audio.Media.DATE_ADDED, 
         						MediaStore.Audio.Media.DATE_MODIFIED, 
-        						MediaStore.Audio.Media._ID, 
+        						MediaStore.Audio.Media._ID,
         						MediaStoreAccessHelper.ALBUM_ARTIST };
         
         //Grab the cursor of MediaStore entries.
@@ -402,7 +404,7 @@ public class AsyncBuildLibraryTask extends AsyncTask<String, String, Void> {
             //Close the music folders cursor.
             musicFoldersCursor.close(); 
         }
-    	
+
     	return mediaStoreCursor;
 	}
 	
@@ -432,7 +434,13 @@ public class AsyncBuildLibraryTask extends AsyncTask<String, String, Void> {
     		
     		//Populate a hash of all songs in MediaStore and their genres.
     		buildGenresLibrary();
-    		
+
+            //Populate a hash of all artists and their number of albums.
+            buildArtistsLibrary();
+
+            //Populate a hash of all albums and their number of songs.
+            buildAlbumsLibrary();
+
     		//Prefetch each column's index.
     		final int titleColIndex = mediaStoreCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
     		final int artistColIndex = mediaStoreCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
@@ -445,6 +453,8 @@ public class AsyncBuildLibraryTask extends AsyncTask<String, String, Void> {
     		final int filePathColIndex = mediaStoreCursor.getColumnIndex(MediaStore.Audio.Media.DATA);
     		final int idColIndex = mediaStoreCursor.getColumnIndex(MediaStore.Audio.Media._ID);
     		int albumArtistColIndex = mediaStoreCursor.getColumnIndex(MediaStoreAccessHelper.ALBUM_ARTIST);
+            final int albumIdColIndex = mediaStoreCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_KEY);
+            final int artistIdColIndex = mediaStoreCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST_KEY);
     		
     		/* The album artist field is hidden by default and we've explictly exposed it.
     		 * The field may cease to exist at any time and if it does, use the artists 
@@ -463,7 +473,9 @@ public class AsyncBuildLibraryTask extends AsyncTask<String, String, Void> {
             	
             	String songTitle = mediaStoreCursor.getString(titleColIndex);
             	String songArtist = mediaStoreCursor.getString(artistColIndex);
+                String songArtistId = mediaStoreCursor.getString(artistIdColIndex);
             	String songAlbum = mediaStoreCursor.getString(albumColIndex);
+                String songAlbumId = mediaStoreCursor.getString(albumIdColIndex);
             	String songAlbumArtist = mediaStoreCursor.getString(albumArtistColIndex);
             	String songFilePath = mediaStoreCursor.getString(filePathColIndex);
             	String songGenre = getSongGenre(songFilePath);
@@ -473,8 +485,20 @@ public class AsyncBuildLibraryTask extends AsyncTask<String, String, Void> {
             	String songDateAdded = mediaStoreCursor.getString(dateAddedColIndex);
             	String songDateModified = mediaStoreCursor.getString(dateModifiedColIndex);
             	String songId = mediaStoreCursor.getString(idColIndex);
+                String numberOfAlbums = "" + mAlbumsCountMap.get(songArtistId);
+                String numberOfTracks = "" + mSongsCountMap.get(songAlbumId);
             	String songSource = DBAccessHelper.LOCAL;
             	String songSavedPosition = "-1";
+
+                if (numberOfAlbums.equals("1"))
+                    numberOfAlbums += " " + mContext.getResources().getString(R.string.album_small);
+                else
+                    numberOfAlbums += " " + mContext.getResources().getString(R.string.albums_small);
+
+                if (numberOfTracks.equals("1"))
+                    numberOfTracks += " " + mContext.getResources().getString(R.string.song_small);
+                else
+                    numberOfTracks += " " + mContext.getResources().getString(R.string.songs_small);
 
             	//Check if any of the other tags were empty/null and set them to "Unknown xxx" values.
             	if (songArtist==null || songArtist.isEmpty()) {
@@ -532,6 +556,8 @@ public class AsyncBuildLibraryTask extends AsyncTask<String, String, Void> {
             	values.put(DBAccessHelper.SONG_SOURCE, songSource);
             	values.put(DBAccessHelper.SONG_ID, songId);
             	values.put(DBAccessHelper.SAVED_POSITION, songSavedPosition);
+                values.put(DBAccessHelper.ALBUMS_COUNT, numberOfAlbums);
+                values.put(DBAccessHelper.SONGS_COUNT, numberOfTracks);
             	
             	//Add all the entries to the database to build the songs library.
             	mApp.getDBAccessHelper().getWritableDatabase().insert(DBAccessHelper.MUSIC_LIBRARY_TABLE, 
@@ -630,6 +656,50 @@ public class AsyncBuildLibraryTask extends AsyncTask<String, String, Void> {
         	genresCursor.close();
          
 	}
+
+    /**
+     * Builds a HashMap of all artists and their individual albums count.
+     */
+    private void buildArtistsLibrary() {
+        Cursor artistsCursor = mContext.getContentResolver().query(MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI,
+                                        new String[] { MediaStore.Audio.Artists.ARTIST_KEY, MediaStore.Audio.Artists.NUMBER_OF_ALBUMS },
+                                        null,
+                                        null,
+                                        null);
+
+        if (artistsCursor==null)
+            return;
+
+        for (int i=0; i < artistsCursor.getCount(); i++) {
+            artistsCursor.moveToPosition(i);
+            mAlbumsCountMap.put(artistsCursor.getString(0), artistsCursor.getInt(1));
+
+        }
+
+        artistsCursor.close();
+    }
+
+    /**
+     * Builds a HashMap of all albums and their individual songs count.
+     */
+    private void buildAlbumsLibrary() {
+        Cursor albumsCursor = mContext.getContentResolver().query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+                                       new String[] { MediaStore.Audio.Albums.ALBUM_KEY, MediaStore.Audio.Albums.NUMBER_OF_SONGS },
+                                       null,
+                                       null,
+                                       null);
+
+        if (albumsCursor==null)
+            return;
+
+        for (int i=0; i < albumsCursor.getCount(); i++) {
+            albumsCursor.moveToPosition(i);
+            mSongsCountMap.put(albumsCursor.getString(0), albumsCursor.getInt(1));
+
+        }
+
+        albumsCursor.close();
+    }
 	
 	/**
 	 * Returns the genre of the song at the specified file path.

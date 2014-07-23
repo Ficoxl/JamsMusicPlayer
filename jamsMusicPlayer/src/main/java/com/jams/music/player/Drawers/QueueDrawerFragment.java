@@ -1,21 +1,36 @@
 package com.jams.music.player.Drawers;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
+import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.ScaleAnimation;
 import android.widget.AdapterView;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jams.music.player.Helpers.TypefaceHelper;
+import com.jams.music.player.Helpers.UIElementsHelper;
+import com.jams.music.player.NowPlayingActivity.NowPlayingActivity;
 import com.jams.music.player.R;
 import com.jams.music.player.Services.AudioPlaybackService;
 import com.jams.music.player.Utils.Common;
@@ -27,15 +42,23 @@ public class QueueDrawerFragment extends Fragment {
 	private Context mContext;
 	private Common mApp;
 
+    private RelativeLayout mMiniPlayerLayout;
+    private ImageView mMiniPlayerAlbumArt;
+    private RelativeLayout mPlayPauseBackground;
+    private ImageButton mPlayPauseButton;
+    private ImageButton mNextButton;
+    private ImageButton mPreviousButton;
+    private TextView mTitleText;
+    private TextView mSubText;
+
 	private DragSortListView mListView;
     private QueueDrawerAdapter mListViewAdapter;
-    private TextView mEmptyText;
     private TextView mEmptyInfoText;
 
     private boolean mInitListViewParams = true;
     private boolean mDrawerOpen = false;
 
-	@SuppressWarnings("deprecation")
+    @SuppressWarnings("deprecation")
 	@SuppressLint("NewApi")
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -50,19 +73,30 @@ public class QueueDrawerFragment extends Fragment {
 			rootView.setBackgroundColor(0xFF191919);
 		}
 
-		mListView = (DragSortListView) rootView.findViewById(R.id.queue_drawer_list_view);
-        mEmptyText = (TextView) rootView.findViewById(R.id.queue_drawer_empty_text);
-        mEmptyInfoText = (TextView) rootView.findViewById(R.id.queue_drawer_empty_text_info);
+        mMiniPlayerLayout = (RelativeLayout) rootView.findViewById(R.id.queue_drawer_mini_player_layout);
+        mMiniPlayerAlbumArt = (ImageView) rootView.findViewById(R.id.queue_drawer_album_art);
+        mPlayPauseBackground = (RelativeLayout) rootView.findViewById(R.id.playPauseButtonBackground);
+        mPlayPauseButton = (ImageButton) rootView.findViewById(R.id.playPauseButton);
+        mNextButton = (ImageButton) rootView.findViewById(R.id.nextButton);
+        mPreviousButton = (ImageButton) rootView.findViewById(R.id.previousButton);
+        mTitleText = (TextView) rootView.findViewById(R.id.songName);
+        mSubText = (TextView) rootView.findViewById(R.id.artistAlbumName);
+        mListView = (DragSortListView) rootView.findViewById(R.id.queue_drawer_list_view);
+        mEmptyInfoText = (TextView) rootView.findViewById(R.id.queue_drawer_empty_text);
 
-		mEmptyText.setTypeface(TypefaceHelper.getTypeface(getActivity(), "Roboto-Light"));
-		mEmptyText.setPaintFlags(mEmptyText.getPaintFlags()
-                                 | Paint.ANTI_ALIAS_FLAG
-                                 | Paint.SUBPIXEL_TEXT_FLAG);
+        mPlayPauseBackground.setBackgroundResource(UIElementsHelper.getShadowedCircle(mContext));
+        mPlayPauseButton.setId(R.drawable.pause_light);
 
-        mEmptyInfoText.setTypeface(TypefaceHelper.getTypeface(getActivity(), "RobotoCondensed-Regular"));
-        mEmptyInfoText.setPaintFlags(mEmptyInfoText.getPaintFlags()
-                                     | Paint.ANTI_ALIAS_FLAG
-                                     | Paint.SUBPIXEL_TEXT_FLAG);
+        mTitleText.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
+        mSubText.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
+        mEmptyInfoText.setTypeface(TypefaceHelper.getTypeface(getActivity(), "Roboto-Regular"));
+
+        //Set the click listeners.
+        mMiniPlayerLayout.setOnClickListener(mOnClickMiniPlayer);
+        mPlayPauseBackground.setOnClickListener(playPauseClickListener);
+        mPlayPauseButton.setOnClickListener(playPauseClickListener);
+        mNextButton.setOnClickListener(mOnClickNextListener);
+        mPreviousButton.setOnClickListener(mOnClickPreviousListener);
 
         //Restrict all touch events to this fragment.
         rootView.setOnTouchListener(new View.OnTouchListener() {
@@ -78,14 +112,58 @@ public class QueueDrawerFragment extends Fragment {
 	}
 
     /**
+     * Broadcast receiver interface that will update this activity as necessary.
+     */
+    BroadcastReceiver mReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Bundle bundle = intent.getExtras();
+
+            if (bundle.containsKey(Common.UPDATE_PAGER_POSTIION)) {
+                //Update the queue fragment with the new song info.
+                initMiniPlayer();
+                initListViewAdapter(false);
+
+            }
+
+            //Updates the playback control buttons.
+            if (intent.hasExtra(Common.UPDATE_PLAYBACK_CONTROLS))
+                setPlayPauseButton();
+
+            if (bundle.containsKey(Common.SERVICE_STOPPING)) {
+                showEmptyTextView();
+
+            }
+
+        }
+
+    };
+
+    /**
      * Helper method that checks whether the audio playback service
      * is running or not.
      */
     private void checkServiceRunning() {
-        if (mApp.isServiceRunning() && mApp.getService().getCursor()!=null)
+        if (mApp.isServiceRunning() && mApp.getService().getCursor()!=null) {
+            initMiniPlayer();
+            setPlayPauseButton();
             initListViewAdapter(mInitListViewParams);
-        else
+        } else {
             showEmptyTextView();
+        }
+
+    }
+
+    /**
+     * Initializes the mini player above the current queue.
+     */
+    private void initMiniPlayer() {
+        mMiniPlayerLayout.setVisibility(View.VISIBLE);
+        mMiniPlayerAlbumArt.setImageBitmap(mApp.getService().getCurrentSong().getAlbumArt());
+        mTitleText.setText(mApp.getService().getCurrentSong().getTitle());
+        mSubText.setText(mApp.getService().getCurrentSong().getAlbum() + " - " +
+                         mApp.getService().getCurrentSong().getArtist());
 
     }
 
@@ -99,7 +177,7 @@ public class QueueDrawerFragment extends Fragment {
      *                       false if the list just needs to be updated
      *                       with the current song.
      */
-	public void initListViewAdapter(boolean initViewParams) {
+	private void initListViewAdapter(boolean initViewParams) {
 
         if (initViewParams) {
             //Reset the initialization flag.
@@ -142,7 +220,6 @@ public class QueueDrawerFragment extends Fragment {
         mListView.setFloatViewManager(simpleFloatViewManager);
 
         mListView.setVisibility(View.VISIBLE);
-        mEmptyText.setVisibility(View.INVISIBLE);
         mEmptyInfoText.setVisibility(View.INVISIBLE);
 
         /*
@@ -155,14 +232,241 @@ public class QueueDrawerFragment extends Fragment {
     }
 
     /**
+     * Sets the play/pause button states.
+     */
+    private void setPlayPauseButton() {
+        if (mApp.isServiceRunning()) {
+            if (mApp.getService().isPlayingMusic())
+                animatePlayToPause();
+            else
+                animatePauseToPlay();
+
+        }
+
+    }
+
+    /**
+     * Animates the play button to a pause button.
+     */
+    private void animatePlayToPause() {
+
+        //Check to make sure the current icon is the play icon.
+        if (mPlayPauseButton.getId()!=R.drawable.play_light)
+            return;
+
+        //Fade out the play button.
+        final ScaleAnimation scaleOut = new ScaleAnimation(1.0f, 0.0f, 1.0f, 0.0f,
+                mPlayPauseButton.getWidth()/2,
+                mPlayPauseButton.getHeight()/2);
+        scaleOut.setDuration(150);
+        scaleOut.setInterpolator(new AccelerateInterpolator());
+
+
+        //Scale in the pause button.
+        final ScaleAnimation scaleIn = new ScaleAnimation(0.0f, 1.0f, 0.0f, 1.0f,
+                mPlayPauseButton.getWidth()/2,
+                mPlayPauseButton.getHeight()/2);
+        scaleIn.setDuration(150);
+        scaleIn.setInterpolator(new DecelerateInterpolator());
+
+        scaleOut.setAnimationListener(new Animation.AnimationListener() {
+
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mPlayPauseButton.setImageResource(R.drawable.pause_light);
+                mPlayPauseButton.setPadding(0, 0, 0, 0);
+                mPlayPauseButton.startAnimation(scaleIn);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+
+        });
+
+        scaleIn.setAnimationListener(new Animation.AnimationListener() {
+
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mPlayPauseButton.setScaleX(1.0f);
+                mPlayPauseButton.setScaleY(1.0f);
+                mPlayPauseButton.setId(R.drawable.pause_light);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+
+        });
+
+        mPlayPauseButton.startAnimation(scaleOut);
+    }
+
+    /**
+     * Animates the pause button to a play button.
+     */
+    private void animatePauseToPlay() {
+
+        //Check to make sure the current icon is the pause icon.
+        if (mPlayPauseButton.getId()!=R.drawable.pause_light)
+            return;
+
+        //Scale out the pause button.
+        final ScaleAnimation scaleOut = new ScaleAnimation(1.0f, 0.0f, 1.0f, 0.0f,
+                mPlayPauseButton.getWidth()/2,
+                mPlayPauseButton.getHeight()/2);
+        scaleOut.setDuration(150);
+        scaleOut.setInterpolator(new AccelerateInterpolator());
+
+
+        //Scale in the play button.
+        final ScaleAnimation scaleIn = new ScaleAnimation(0.0f, 1.0f, 0.0f, 1.0f,
+                mPlayPauseButton.getWidth()/2,
+                mPlayPauseButton.getHeight()/2);
+        scaleIn.setDuration(150);
+        scaleIn.setInterpolator(new DecelerateInterpolator());
+
+        scaleOut.setAnimationListener(new Animation.AnimationListener() {
+
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mPlayPauseButton.setImageResource(R.drawable.play_light);
+                mPlayPauseButton.setPadding(0, 0, -5, 0);
+                mPlayPauseButton.startAnimation(scaleIn);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+
+        });
+
+        scaleIn.setAnimationListener(new Animation.AnimationListener() {
+
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mPlayPauseButton.setScaleX(1.0f);
+                mPlayPauseButton.setScaleY(1.0f);
+                mPlayPauseButton.setId(R.drawable.play_light);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+
+        });
+
+        mPlayPauseButton.startAnimation(scaleOut);
+    }
+
+    /**
+     * Click listener for the play/pause button.
+     */
+    private View.OnClickListener playPauseClickListener = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View view) {
+
+            //BZZZT! Give the user a brief haptic feedback touch response.
+            view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+
+            //Update the playback UI elements.
+            if (mApp.getService().isPlayingMusic())
+                animatePauseToPlay();
+            else
+                animatePlayToPause();
+
+            /*
+             * Toggle the playback state in a separate thread. This
+             * will allow the play/pause button animation to remain
+             * buttery smooth.
+             */
+            new AsyncTask() {
+
+                @Override
+                protected Object doInBackground(Object[] params) {
+                    mApp.getService().togglePlaybackState();
+                    return null;
+                }
+
+            }.execute();
+
+        }
+
+    };
+
+    /**
+     * Click listener for the previous button.
+     */
+    private View.OnClickListener mOnClickPreviousListener = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View arg0) {
+            mApp.getService().skipToPreviousTrack();
+
+        }
+
+    };
+
+    /**
+     * Click listener for the next button.
+     */
+    private View.OnClickListener mOnClickNextListener = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View arg0) {
+            mApp.getService().skipToNextTrack();
+
+        }
+
+    };
+
+    /**
      * Called if the audio playback service is not running.
      */
     public void showEmptyTextView() {
+        mMiniPlayerLayout.setVisibility(View.GONE);
         mListView.setVisibility(View.INVISIBLE);
-        mEmptyText.setVisibility(View.VISIBLE);
         mEmptyInfoText.setVisibility(View.VISIBLE);
 
     }
+
+    /**
+     * Click listener for the mini player.
+     */
+    private View.OnClickListener mOnClickMiniPlayer = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(mContext, NowPlayingActivity.class);
+            startActivity(intent);
+        }
+
+    };
 
     /**
      * Click listener for the ListView.
@@ -308,6 +612,21 @@ public class QueueDrawerFragment extends Fragment {
     public void onResume() {
         super.onResume();
         checkServiceRunning();
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        LocalBroadcastManager.getInstance(mContext)
+                             .registerReceiver((mReceiver), new IntentFilter(Common.UPDATE_UI_BROADCAST));
+
+    }
+
+    @Override
+    public void onStop() {
+        LocalBroadcastManager.getInstance(mContext).unregisterReceiver(mReceiver);
+        super.onStop();
 
     }
 

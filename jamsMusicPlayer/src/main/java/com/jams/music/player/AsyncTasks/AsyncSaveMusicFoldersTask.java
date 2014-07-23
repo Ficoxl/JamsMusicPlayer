@@ -78,7 +78,7 @@ public class AsyncSaveMusicFoldersTask extends AsyncTask<String, Void, Boolean> 
 			mApp.getDBAccessHelper().getWritableDatabase().insert(DBAccessHelper.LIBRARIES_TABLE, null, googlePlayMusicLibrary);
 			
 			//Default to "All Libraries".
-			mApp.getSharedPreferences().edit().putString("CURRENT_LIBRARY", mContext.getResources().getString(R.string.all_libraries)).commit();
+			mApp.getSharedPreferences().edit().putString(Common.CURRENT_LIBRARY, mContext.getResources().getString(R.string.all_libraries)).commit();
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -87,7 +87,7 @@ public class AsyncSaveMusicFoldersTask extends AsyncTask<String, Void, Boolean> 
 			mApp.getDBAccessHelper().getWritableDatabase().endTransaction();
 			
 			//Use "All Libraries" as the default library.
-			mApp.getSharedPreferences().edit().putString("CURRENT_LIBRARY", mContext.getResources().getString(R.string.all_libraries)).commit();
+			mApp.getSharedPreferences().edit().putString(Common.CURRENT_LIBRARY, mContext.getResources().getString(R.string.all_libraries)).commit();
 			
 		}
     	

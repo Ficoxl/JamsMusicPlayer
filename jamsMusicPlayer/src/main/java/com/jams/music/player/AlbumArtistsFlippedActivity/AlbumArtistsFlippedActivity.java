@@ -743,7 +743,7 @@ public class AlbumArtistsFlippedActivity extends FragmentActivity {
 		
 		@Override
 		public void onItemClick(AdapterView<?> adapterView, View view, int position, long dbID) {
-			sharedPreferences.edit().putString("CURRENT_LIBRARY", (String) view.getTag(R.string.library_name)).commit();
+			sharedPreferences.edit().putString(Common.CURRENT_LIBRARY, (String) view.getTag(R.string.library_name)).commit();
 			librariesListView.setAdapter(slidingMenuLibrariesAdapter);
 			librariesListView.invalidate();
 			
@@ -758,7 +758,7 @@ public class AlbumArtistsFlippedActivity extends FragmentActivity {
 			
 			String currentLibrary = "";
 			try {
-				currentLibrary = sharedPreferences.getString("CURRENT_LIBRARY", mContext.getResources().getString(R.string.all_libraries));
+				currentLibrary = sharedPreferences.getString(Common.CURRENT_LIBRARY, mContext.getResources().getString(R.string.all_libraries));
 			} catch (Exception e) {
 				e.printStackTrace();
 				currentLibrary = mContext.getResources().getString(R.string.all_libraries);

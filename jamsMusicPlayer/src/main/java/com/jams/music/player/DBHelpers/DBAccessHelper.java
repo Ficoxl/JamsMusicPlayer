@@ -98,6 +98,8 @@ public class DBAccessHelper extends SQLiteOpenHelper {
     public static final String LOCAL_COPY_PATH = "local_copy_path";
     public static final String LIBRARIES = "libraries";
     public static final String SAVED_POSITION = "saved_position";
+    public static final String ALBUMS_COUNT = "albums_count";
+    public static final String SONGS_COUNT = "songs_count";
     
     //Playlist fields.
     public static final String PLAYLIST_ID = "playlist_id";
@@ -193,8 +195,8 @@ public class DBAccessHelper extends SQLiteOpenHelper {
 			    						   SONG_ALBUM, SONG_ALBUM_ARTIST, 
 			    						   SONG_DURATION, SONG_FILE_PATH, 
 			    						   SONG_TRACK_NUMBER, SONG_GENRE, 
-			    						   SONG_PLAY_COUNT, SONG_YEAR, 
-			    						   SONG_LAST_MODIFIED, SONG_SCANNED, 
+			    						   SONG_PLAY_COUNT, SONG_YEAR, ALBUMS_COUNT,
+			    						   SONGS_COUNT, SONG_LAST_MODIFIED, SONG_SCANNED,
 			    						   BLACKLIST_STATUS, ADDED_TIMESTAMP, RATING, 
 			    						   LAST_PLAYED_TIMESTAMP, SONG_SOURCE, SONG_ALBUM_ART_PATH,
 			    						   SONG_DELETED, ARTIST_ART_LOCATION, ALBUM_ID, 
@@ -820,7 +822,7 @@ public class DBAccessHelper extends SQLiteOpenHelper {
     public Cursor getAllUniqueArtists(String selection) {
     	String selectDistinctQuery = "SELECT DISTINCT(" + SONG_ARTIST + "), " 
     								 + _ID + ", " + SONG_FILE_PATH + ", " + ARTIST_ART_LOCATION 
-    								 + ", " + BLACKLIST_STATUS + ", "
+    								 + ", " + BLACKLIST_STATUS + ", " + ALBUMS_COUNT + ", "
     								 + SONG_SOURCE + ", " + SONG_ALBUM_ART_PATH + ", " 
     								 + SONG_DURATION + " FROM " + MUSIC_LIBRARY_TABLE 
     								 + " WHERE " + BLACKLIST_STATUS + "=" + "'" 
@@ -841,7 +843,7 @@ public class DBAccessHelper extends SQLiteOpenHelper {
     	String selectDistinctQuery = "SELECT DISTINCT(" + SONG_ARTIST + "), " 
     								 + MUSIC_LIBRARY_TABLE + "." + _ID + ", " 
     								 + SONG_FILE_PATH + ", " + ARTIST_ART_LOCATION + ", "
-    								 + SONG_SOURCE + ", " + SONG_DURATION + ", " 
+    								 + SONG_SOURCE + ", " + ALBUMS_COUNT + ", " + SONG_DURATION + ", "
     								 + SONG_ALBUM_ART_PATH + " FROM " + MUSIC_LIBRARY_TABLE 
     								 + " INNER JOIN " + DBAccessHelper.LIBRARY_NAME 
     								 + " ON (" + MUSIC_LIBRARY_TABLE + "." + _ID + "=" 
@@ -872,7 +874,7 @@ public class DBAccessHelper extends SQLiteOpenHelper {
     public Cursor getAllUniqueAlbumArtists(String selection) {
     	String selectDistinctQuery = "SELECT DISTINCT(" + SONG_ALBUM_ARTIST + "), " 
     								 + _ID + ", " + SONG_FILE_PATH + ", " + ARTIST_ART_LOCATION 
-    								 + ", " + BLACKLIST_STATUS + ", " + SONG_SOURCE + ", " 
+    								 + ", " + BLACKLIST_STATUS + ", " + ALBUMS_COUNT + ", " + SONG_SOURCE + ", "
     								 + SONG_ALBUM_ART_PATH + ", " + SONG_DURATION + " FROM " 
     								 + MUSIC_LIBRARY_TABLE + " WHERE " + BLACKLIST_STATUS 
     								 + "=" + "'" + "0" + "'" + selection + " GROUP BY " 
@@ -892,7 +894,7 @@ public class DBAccessHelper extends SQLiteOpenHelper {
     	String selectDistinctQuery = "SELECT DISTINCT(" + SONG_ALBUM_ARTIST + "), " 
     								 + MUSIC_LIBRARY_TABLE + "." + _ID + ", " 
     								 + SONG_FILE_PATH + ", " + ARTIST_ART_LOCATION + ", "
-    								 + SONG_SOURCE + ", " + SONG_DURATION + ", " 
+    								 + SONG_SOURCE + ", " + SONG_DURATION + ", " + ALBUMS_COUNT + ", "
     								 + SONG_ALBUM_ART_PATH + " FROM " + MUSIC_LIBRARY_TABLE 
     								 + " INNER JOIN " + DBAccessHelper.LIBRARY_NAME + " ON (" 
     								 + MUSIC_LIBRARY_TABLE + "." + _ID + "=" + DBAccessHelper.LIBRARY_NAME + "." 

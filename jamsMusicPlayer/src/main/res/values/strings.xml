@@ -521,7 +521,7 @@
     <string name="browsers_caps">BROWSERS</string>
     <string name="libraries_caps">LIBRARIES</string>
     <string name="my_library">My Library</string>
-    <string name="all_libraries">All Libraries</string>
+    <string name="all_libraries">All Music</string>
     <string name="adding_music_folders">Adding Music Folders</string>
     <string name="library_name">library_name</string>
     <string name="library_color_code">library_color_code</string>
@@ -813,5 +813,9 @@
     <string name="queue_empty_info">Your current songs queue will appear here when you\'re playing music.</string>
     <string name="play_all_caps">PLAY ALL</string>
     <string name="a_b_repeat">A-B Repeat</string>
-
+    <string name="music_library_colon">Music Library: </string>
+    <string name="album_small">album</string>
+    <string name="song_small">song</string>
+    <string name="albums_small">albums</string>
+    <string name="songs_small">songs</string>
 </resources>

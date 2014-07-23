@@ -235,7 +235,7 @@ public class ArtistsFlippedFragment extends Fragment {
     }
     
     public static void getCursor() {
-	    String currentLibrary = sharedPreferences.getString("CURRENT_LIBRARY", mContext.getResources().getString(R.string.all_libraries));
+	    String currentLibrary = sharedPreferences.getString(Common.CURRENT_LIBRARY, mContext.getResources().getString(R.string.all_libraries));
 	    currentLibrary = currentLibrary.replace("'", "''");
 	    artistName = artistName.replace("'", "''");
     	
@@ -399,7 +399,7 @@ public class ArtistsFlippedFragment extends Fragment {
 			Toast.makeText(mContext, R.string.artist_doesnt_have_any_songs, Toast.LENGTH_LONG).show();
 		}
 		
-		String currentLibrary = sharedPreferences.getString("CURRENT_LIBRARY", mContext.getResources().getString(R.string.all_libraries));
+		String currentLibrary = sharedPreferences.getString(Common.CURRENT_LIBRARY, mContext.getResources().getString(R.string.all_libraries));
 		Intent intent = new Intent(getActivity(), NowPlayingActivity.class);
 		
 		cursor.moveToFirst();
@@ -415,7 +415,7 @@ public class ArtistsFlippedFragment extends Fragment {
 		intent.putExtra("CALLED_FROM_FOOTER", false);
 		intent.putExtra("PLAY_ALL", "ARTIST");
 		intent.putExtra("CALLING_FRAGMENT", "ARTISTS_FLIPPED_FRAGMENT");
-		intent.putExtra("CURRENT_LIBRARY", currentLibrary);
+		intent.putExtra(Common.CURRENT_LIBRARY, currentLibrary);
 		
 		
 		getActivity().startActivity(intent);

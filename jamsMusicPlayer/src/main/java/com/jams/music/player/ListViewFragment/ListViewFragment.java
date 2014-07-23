@@ -235,7 +235,8 @@ public class ListViewFragment extends Fragment {
                               mQuerySelection,
                               Common.SONGS_FRAGMENT,
                               index,
-                              true);
+                              true,
+                              false);
 			
 		}
     	

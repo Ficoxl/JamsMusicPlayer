@@ -362,21 +362,25 @@ public class AudioPlaybackService extends Service {
 	/**
 	 * Initializes the list of pointers to each cursor row.
 	 */
-	private void initPlaybackIndecesList() {
+	private void initPlaybackIndecesList(boolean playAll) {
 		if (getCursor()!=null && getPlaybackIndecesList()!=null) {
 			getPlaybackIndecesList().clear();
 			for (int i=0; i < getCursor().getCount(); i++) {
 				getPlaybackIndecesList().add(i);
 			}
 			
-			if (isShuffleOn()) {
+			if (isShuffleOn() && !playAll) {
 				//Shuffle all elements before and after the current index.
                 Random preSubListSeed = new Random();
                 Random postSubListSeed = new Random();
 	    		Collections.shuffle(getPlaybackIndecesList().subList(0, getCurrentSongIndex()), preSubListSeed);
 	    		Collections.shuffle(getPlaybackIndecesList().subList(getCurrentSongIndex()+1, getPlaybackIndecesList().size()),
                                     postSubListSeed);
-			}
+
+			} else if (isShuffleOn() && playAll) {
+                //Shuffle all elements.
+                Collections.shuffle(getPlaybackIndecesList(), new Random(System.nanoTime()));
+            }
 			
 		} else {
 			stopSelf();
@@ -1664,7 +1668,10 @@ public class AudioPlaybackService extends Service {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			
+
+            //Display an error toast to the user.
+            showErrorToast();
+
 			//Add the current song index to the list of failed indeces.
 			getFailedIndecesList().add(songIndex);
 			
@@ -1715,7 +1722,10 @@ public class AudioPlaybackService extends Service {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			
+
+            //Display an error toast to the user.
+            showErrorToast();
+
 			//Add the current song index to the list of failed indeces.
 			getFailedIndecesList().add(songIndex);
 			
@@ -1872,6 +1882,13 @@ public class AudioPlaybackService extends Service {
 	   startActivity(intent);
 	   
 	}
+
+    /**
+     * Displays an error toast.
+     */
+    private void showErrorToast() {
+        Toast.makeText(mContext, R.string.song_failed_to_load, Toast.LENGTH_SHORT).show();
+    }
 	
 	/**
 	 * Deploys the current track's data to the specified 
@@ -2204,9 +2221,8 @@ public class AudioPlaybackService extends Service {
     		incrementCurrentSongIndex();
     		
     		//Update the UI.
-    		String[] updateFlags = new String[] { Common.UPDATE_PLAYBACK_CONTROLS, 
-    											  Common.UPDATE_PAGER_POSTIION };
-    		String[] flagValues = new String[] { "", getCurrentSongIndex() + "" };
+    		String[] updateFlags = new String[] { Common.UPDATE_PAGER_POSTIION };
+    		String[] flagValues = new String[] { getCurrentSongIndex() + "" };
     		mApp.broadcastUpdateUICommand(updateFlags, flagValues);
     		
     		//Start the playback process.
@@ -2248,9 +2264,8 @@ public class AudioPlaybackService extends Service {
     		decrementCurrentSongIndex();
     		
     		//Update the UI.
-    		String[] updateFlags = new String[] { Common.UPDATE_PLAYBACK_CONTROLS, 
-    											  Common.UPDATE_PAGER_POSTIION };
-    		String[] flagValues = new String[] { "", getCurrentSongIndex() + "" };
+    		String[] updateFlags = new String[] { Common.UPDATE_PAGER_POSTIION };
+    		String[] flagValues = new String[] { getCurrentSongIndex() + "" };
     		mApp.broadcastUpdateUICommand(updateFlags, flagValues);
     		
     		//Start the playback process.
@@ -2357,7 +2372,7 @@ public class AudioPlaybackService extends Service {
     public boolean toggleShuffleMode() {
     	if (isShuffleOn()) {
     		//Set shuffle off.
-    		mApp.getSharedPreferences().edit().putBoolean("SHUFFLE_MODE", false).commit();
+    		mApp.getSharedPreferences().edit().putBoolean(Common.SHUFFLE_ON, false).commit();
 
     		//Save the element at the current index.
     		int currentElement = getPlaybackIndecesList().get(getCurrentSongIndex());
@@ -2371,7 +2386,7 @@ public class AudioPlaybackService extends Service {
     		
     	} else {
     		//Set shuffle on.
-    		mApp.getSharedPreferences().edit().putBoolean("SHUFFLE_MODE", true).commit();
+    		mApp.getSharedPreferences().edit().putBoolean(Common.SHUFFLE_ON, true).commit();
     		
     		//Shuffle all elements before and after the current index.
     		Collections.shuffle(getPlaybackIndecesList().subList(0, getCurrentSongIndex()));
@@ -2678,7 +2693,7 @@ public class AudioPlaybackService extends Service {
      * Indicates if shuffle mode is turned on or off.
      */
     public boolean isShuffleOn() {
-    	return mApp.getSharedPreferences().getBoolean("SHUFFLE_MODE", false);
+    	return mApp.getSharedPreferences().getBoolean(Common.SHUFFLE_ON, false);
     }
     
     /**
@@ -3001,11 +3016,11 @@ public class AudioPlaybackService extends Service {
     public BuildCursorListener buildCursorListener = new BuildCursorListener() {
 
         @Override
-        public void onServiceCursorReady(Cursor cursor, int currentSongIndex) {
+        public void onServiceCursorReady(Cursor cursor, int currentSongIndex, boolean playAll) {
             setCursor(cursor);
             setCurrentSongIndex(currentSongIndex);
             getFailedIndecesList().clear();
-            initPlaybackIndecesList();
+            initPlaybackIndecesList(playAll);
             mFirstRun = true;
             prepareMediaPlayer(currentSongIndex);
 

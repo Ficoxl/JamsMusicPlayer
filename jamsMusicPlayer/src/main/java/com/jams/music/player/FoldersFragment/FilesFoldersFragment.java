@@ -966,7 +966,7 @@ public class FilesFoldersFragment extends Fragment {
         		//Play Folder.
         		
         		//Reset the shuffle function if it's currently enabled.
-        		mApp.getSharedPreferences().edit().putBoolean("SHUFFLE_MODE", false).commit();
+        		mApp.getSharedPreferences().edit().putBoolean(Common.SHUFFLE_ON, false).commit();
         		
         		playFolder(contextMenuItemPath, false);
         		contextMenuItemPath = "";
@@ -975,7 +975,7 @@ public class FilesFoldersFragment extends Fragment {
         		//Play Folder Recursively.
         		
         		//Reset the shuffle function if it's currently enabled.
-        		mApp.getSharedPreferences().edit().putBoolean("SHUFFLE_MODE", false).commit();
+        		mApp.getSharedPreferences().edit().putBoolean(Common.SHUFFLE_ON, false).commit();
         		
         		playFolder(contextMenuItemPath, true);
         		contextMenuItemPath = "";

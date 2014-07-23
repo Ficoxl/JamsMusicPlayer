@@ -20,6 +20,8 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.jams.music.player.Helpers.UIElementsHelper;
@@ -36,12 +38,14 @@ public class NavigationDrawerFragment extends Fragment {
 	
 	private Context mContext;
 	private Common mApp;
-	
+
+    private RelativeLayout mLibraryPickerLayout;
+    private TextView mLibraryPickerHeaderText;
+    private Spinner mLibraryPickerSpinner;
 	private ListView browsersListView;
-	private ListView librariesListView;
-	private TextView librariesHeaderText;
 	
 	private Cursor cursor;
+    private int mCurrentLibraryPosition;
 	private NavigationDrawerLibrariesAdapter mLibrariesAdapter;
 	private NavigationDrawerAdapter mBrowsersAdapter;
 	private Handler mHandler;
@@ -59,11 +63,10 @@ public class NavigationDrawerFragment extends Fragment {
 		rootView.setBackgroundColor(UIElementsHelper.getBackgroundColor(mContext));
 
 		browsersListView = (ListView) rootView.findViewById(R.id.browsers_list_view);
-		librariesListView = (ListView) rootView.findViewById(R.id.libraries_list_view);
-		librariesHeaderText = (TextView) rootView.findViewById(R.id.libraries_header_text);
-		
-		//Set the header text fonts/colors.
-		librariesHeaderText.setTypeface(TypefaceHelper.getTypeface(getActivity(), "Roboto-Regular"));
+        mLibraryPickerLayout = (RelativeLayout) rootView.findViewById(R.id.library_picker_layout);
+        mLibraryPickerSpinner = (Spinner) rootView.findViewById(R.id.library_picker_spinner);
+        mLibraryPickerHeaderText = (TextView) rootView.findViewById(R.id.library_picker_header_text);
+        mLibraryPickerHeaderText.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
 		
 		//Apply the Browser ListView's adapter.
 		List<String> titles = Arrays.asList(getActivity().getResources().getStringArray(R.array.sliding_menu_array));
@@ -71,62 +74,54 @@ public class NavigationDrawerFragment extends Fragment {
 		browsersListView.setAdapter(mBrowsersAdapter);
 		browsersListView.setOnItemClickListener(browsersClickListener);
 		setListViewHeightBasedOnChildren(browsersListView);
-		
+
 		//Apply the Libraries ListView's adapter.
         cursor = mApp.getDBAccessHelper().getAllUniqueLibraries();
         mLibrariesAdapter = new NavigationDrawerLibrariesAdapter(getActivity(), cursor);
-        librariesListView.setAdapter(mLibrariesAdapter);
-        librariesListView.setOnItemClickListener(librariesClickListener);
-        setListViewHeightBasedOnChildren(librariesListView);
+        mLibraryPickerSpinner.setAdapter(mLibrariesAdapter);
+        mLibraryPickerSpinner.setSelection(mApp.getCurrentLibraryIndex());
+        mLibraryPickerSpinner.setOnItemSelectedListener(librariesItemSelectedListener);
 
         browsersListView.setDividerHeight(0);
-        librariesListView.setDividerHeight(0);
-
-/*        //KitKat padding.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            int topPadding = Common.getStatusBarHeight(mContext);
-
-            //Calculate navigation bar height.
-            int navigationBarHeight = 0;
-            int resourceId = getResources().getIdentifier("navigation_bar_height", "dimen", "android");
-            if (resourceId > 0) {
-                navigationBarHeight = getResources().getDimensionPixelSize(resourceId);
-            }
-
-            browsersListView.setClipToPadding(false);
-            browsersListView.setPadding(0, topPadding, 0, navigationBarHeight);
-
-        }*/
-
 		return rootView;
 	}
-	
-	private OnItemClickListener librariesClickListener = new OnItemClickListener() {
 
-		@Override
-		public void onItemClick(AdapterView<?> adapterView, View view, int position, long dbID) {
-			mApp.getSharedPreferences().edit().putString("CURRENT_LIBRARY", (String) view.getTag(R.string.library_name)).commit();
-			librariesListView.setAdapter(mLibrariesAdapter);
-			librariesListView.invalidate();
-			
-			//Update the fragment.
-			((MainActivity) getActivity()).loadFragment(null);
-			
-			//Reset the ActionBar after 500ms.
-			mHandler.postDelayed(new Runnable() {
+    private AdapterView.OnItemSelectedListener librariesItemSelectedListener = new AdapterView.OnItemSelectedListener() {
 
-				@Override
-				public void run() {
-					getActivity().invalidateOptionsMenu();
-					
-				}
-				
-			}, 500);
-			
-		}
-		
-	};
-	
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+            if (mApp.getCurrentLibraryIndex()==position)
+                return;
+
+            mApp.getSharedPreferences().edit().putString(Common.CURRENT_LIBRARY,
+                                                         (String) view.getTag(R.string.library_name)).commit();
+
+            mApp.getSharedPreferences().edit().putInt(Common.CURRENT_LIBRARY_POSITION, position).commit();
+
+            //Update the fragment.
+            ((MainActivity) getActivity()).loadFragment(null);
+
+            //Reset the ActionBar after 500ms.
+            mHandler.postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    getActivity().invalidateOptionsMenu();
+
+                }
+
+            }, 500);
+
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+
+    };
+
 	private OnItemClickListener browsersClickListener = new OnItemClickListener() {
 
 		@Override

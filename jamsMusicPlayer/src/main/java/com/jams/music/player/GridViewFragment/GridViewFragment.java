@@ -106,6 +106,18 @@ public class GridViewFragment extends Fragment {
         * button in Android L (API 21). */
         mPlayAllText = (TextView) mRootView.findViewById(R.id.fragment_grid_view_play_all);
         mPlayAllText.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Medium"));
+        mPlayAllText.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                if (mApp.isShuffleOn())
+                    ((MainActivity) getActivity()).playAll(true);
+                else
+                    ((MainActivity) getActivity()).playAll(false);
+
+            }
+
+        });
 
         //Grab the fragment. This will determine which data to load into the cursor.
         mFragmentId = getArguments().getInt(Common.FRAGMENT_ID);
@@ -194,8 +206,10 @@ public class GridViewFragment extends Fragment {
 		@Override
 		public void onItemClick(AdapterView<?> arg0, View view, int index, long id) {
 
+            fadeOutViews();
+
             //Grab a handle on the album art ImageView within the grid.
-            ImageView albumArt = (ImageView) view.findViewById(R.id.artistsGridViewImage);
+            ImageView albumArt = (ImageView) view.findViewById(R.id.gridViewImage);
 
             //Grab the album art image data.
             int[] screenLocation = new int[2];
@@ -209,7 +223,7 @@ public class GridViewFragment extends Fragment {
             int orientation = getResources().getConfiguration().orientation;
 
             bundle.putInt("orientation", orientation);
-            bundle.putString("albumArtPath", info.mAlbumArtPath);
+            bundle.putString("headerImagePath", info.mAlbumArtPath);
             bundle.putInt("left", screenLocation[0]);
             bundle.putInt("top", screenLocation[1]);
             bundle.putInt("width", albumArt.getWidth());
@@ -228,6 +242,20 @@ public class GridViewFragment extends Fragment {
 		}
     	
     };
+
+    /**
+     * Fades out all view elements in the fragment (including the actionbar).
+     */
+    private void fadeOutViews() {
+        FadeAnimation fadeOutActionBar = new FadeAnimation(mApp.getActionBarView(getActivity()),
+                                                           300, 1.0f, 0.0f, null);
+
+        FadeAnimation fadeOutGridView = new FadeAnimation(mGridView, 300, 1.0f, 0.0f, null);
+
+        fadeOutActionBar.animate();
+        fadeOutGridView.animate();
+
+    }
     
     @Override
     public void onDestroyView() {
@@ -274,12 +302,14 @@ public class GridViewFragment extends Fragment {
 				mDBColumnsMap.put(GridViewCardsAdapter.SOURCE, DBAccessHelper.SONG_SOURCE);
 				mDBColumnsMap.put(GridViewCardsAdapter.FILE_PATH, DBAccessHelper.SONG_FILE_PATH);
 				mDBColumnsMap.put(GridViewCardsAdapter.ARTWORK_PATH, DBAccessHelper.SONG_ALBUM_ART_PATH);
+                mDBColumnsMap.put(GridViewCardsAdapter.FIELD_1, DBAccessHelper.ALBUMS_COUNT);
 				break;
 			case Common.ALBUM_ARTISTS_FRAGMENT:
 				mDBColumnsMap.put(GridViewCardsAdapter.TITLE_TEXT, DBAccessHelper.SONG_ALBUM_ARTIST);
 				mDBColumnsMap.put(GridViewCardsAdapter.SOURCE, DBAccessHelper.SONG_SOURCE);
 				mDBColumnsMap.put(GridViewCardsAdapter.FILE_PATH, DBAccessHelper.SONG_FILE_PATH);
 				mDBColumnsMap.put(GridViewCardsAdapter.ARTWORK_PATH, DBAccessHelper.SONG_ALBUM_ART_PATH);
+                mDBColumnsMap.put(GridViewCardsAdapter.FIELD_1, DBAccessHelper.ALBUMS_COUNT);
 				break;
 			case Common.ALBUMS_FRAGMENT:
 				mDBColumnsMap.put(GridViewCardsAdapter.TITLE_TEXT, DBAccessHelper.SONG_ALBUM);
@@ -331,6 +361,7 @@ public class GridViewFragment extends Fragment {
             animationAdapter.setShouldAnimateFromPosition(0);
             animationAdapter.setAbsListView(mGridView);
             mGridView.setAdapter(animationAdapter);
+            mGridView.setOnItemClickListener(onItemClickListener);
 
             //Init the quick scroll widget.
             mQuickScroll.init(QuickScrollGridView.TYPE_INDICATOR_WITH_HANDLE,

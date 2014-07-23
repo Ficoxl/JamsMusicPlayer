@@ -199,7 +199,7 @@ public class GenresFlippedFragment extends Fragment {
     }
     
     public static void getCursor() {
-    	String currentLibrary = sharedPreferences.getString("CURRENT_LIBRARY", mContext.getResources().getString(R.string.all_libraries));
+    	String currentLibrary = sharedPreferences.getString(Common.CURRENT_LIBRARY, mContext.getResources().getString(R.string.all_libraries));
 	    currentLibrary = currentLibrary.replace("'", "''");
 		
         if (genreName.contains("'")) {
@@ -421,7 +421,7 @@ public class GenresFlippedFragment extends Fragment {
 		
 		if (cursor!=null && cursor.getCount() > 0) {
         	cursor.moveToFirst();
-        	String currentLibrary = sharedPreferences.getString("CURRENT_LIBRARY", mContext.getResources().getString(R.string.all_libraries));
+        	String currentLibrary = sharedPreferences.getString(Common.CURRENT_LIBRARY, mContext.getResources().getString(R.string.all_libraries));
         	
         	Intent intent = new Intent(getActivity(), NowPlayingActivity.class);
 			intent.putExtra("SELECTED_SONG_DURATION", cursor.getString(cursor.getColumnIndex(DBAccessHelper.SONG_DURATION)));
@@ -430,7 +430,7 @@ public class GenresFlippedFragment extends Fragment {
 			intent.putExtra("SELECTED_SONG_ALBUM", cursor.getString(cursor.getColumnIndex(DBAccessHelper.SONG_ALBUM)));
 			intent.putExtra("SELECTED_SONG_GENRE", cursor.getString(cursor.getColumnIndex(DBAccessHelper.SONG_GENRE)));
 			intent.putExtra("SONG_SELECTED_INDEX", 0);
-			intent.putExtra("CURRENT_LIBRARY", sharedPreferences.getString("CURRENT_LIBRARY", currentLibrary));
+			intent.putExtra(Common.CURRENT_LIBRARY, sharedPreferences.getString(Common.CURRENT_LIBRARY, currentLibrary));
 			intent.putExtra("SELECTED_SONG_DATA_URI", cursor.getString(cursor.getColumnIndex(DBAccessHelper.SONG_FILE_PATH)));
 			intent.putExtra("NEW_PLAYLIST", true);
 			intent.putExtra("NUMBER_SONGS", genresFlippedListViewAdapter.getCount());

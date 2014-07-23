@@ -181,7 +181,7 @@ public class AlbumsFlippedFragment extends Fragment {
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View view, int index, long arg3) {
 
-				String currentLibrary = sharedPreferences.getString("CURRENT_LIBRARY", mContext.getResources().getString(R.string.all_libraries));
+				String currentLibrary = sharedPreferences.getString(Common.CURRENT_LIBRARY, mContext.getResources().getString(R.string.all_libraries));
 				Intent intent = new Intent(getActivity(), NowPlayingActivity.class);
 				
 				intent.putExtra("SELECTED_SONG_DURATION", (String) view.getTag(R.string.duration));
@@ -197,7 +197,7 @@ public class AlbumsFlippedFragment extends Fragment {
 				intent.putExtra("PLAY_ALL", "ALBUM");
 				intent.putExtra("CALLING_FRAGMENT", "ALBUMS_FLIPPED_FRAGMENT");
 				intent.putExtra("SONG_ID", (String) view.getTag(R.string.song_id));
-				intent.putExtra("CURRENT_LIBRARY", currentLibrary);
+				intent.putExtra(Common.CURRENT_LIBRARY, currentLibrary);
 				
 				//Notify NowPlayingActivity.java if the song is coming from Google's servers.
 				if (((String) view.getTag(R.string.song_source)).equals(DBAccessHelper.GMUSIC)) {
@@ -250,7 +250,7 @@ public class AlbumsFlippedFragment extends Fragment {
     }
     
     public void playAllPressed() {
-    	String currentLibrary = sharedPreferences.getString("CURRENT_LIBRARY", mContext.getResources().getString(R.string.all_libraries));
+    	String currentLibrary = sharedPreferences.getString(Common.CURRENT_LIBRARY, mContext.getResources().getString(R.string.all_libraries));
 		Intent intent = new Intent(getActivity(), NowPlayingActivity.class);
 		
 		intent.putExtra("SELECTED_SONG_DURATION", (String) albumsFlippedListView.getChildAt(0).getTag(R.string.duration));
@@ -265,7 +265,7 @@ public class AlbumsFlippedFragment extends Fragment {
 		intent.putExtra("CALLED_FROM_FOOTER", false);
 		intent.putExtra("PLAY_ALL", "ALBUM");
 		intent.putExtra("CALLING_FRAGMENT", "ALBUMS_FLIPPED_FRAGMENT");
-		intent.putExtra("CURRENT_LIBRARY", currentLibrary);
+		intent.putExtra(Common.CURRENT_LIBRARY, currentLibrary);
 		
 		getActivity().startActivity(intent);
 		getActivity().overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);

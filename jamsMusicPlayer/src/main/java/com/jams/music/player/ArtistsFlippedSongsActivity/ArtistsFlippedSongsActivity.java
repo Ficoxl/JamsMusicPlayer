@@ -737,12 +737,12 @@ public class ArtistsFlippedSongsActivity extends FragmentActivity {
 	
 		@Override
 		public void onItemClick(AdapterView<?> adapterView, View view, int position, long dbID) {
-			sharedPreferences.edit().putString("CURRENT_LIBRARY", (String) view.getTag(R.string.library_name)).commit();
+			sharedPreferences.edit().putString(Common.CURRENT_LIBRARY, (String) view.getTag(R.string.library_name)).commit();
 			librariesListView.setAdapter(slidingMenuLibrariesAdapter);
 			librariesListView.invalidate();
 			
 			//Refresh the activity to reflect the new library.
-			String currentLibrary = sharedPreferences.getString("CURRENT_LIBRARY", mContext.getResources().getString(R.string.all_libraries));
+			String currentLibrary = sharedPreferences.getString(Common.CURRENT_LIBRARY, mContext.getResources().getString(R.string.all_libraries));
 			currentLibrary = currentLibrary.replace("'", "''");
 			
 			//Replace the current fragment (refreshes all UI elements with the current library).

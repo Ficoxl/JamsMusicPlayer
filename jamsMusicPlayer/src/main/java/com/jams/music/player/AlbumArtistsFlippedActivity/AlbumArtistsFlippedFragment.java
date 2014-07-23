@@ -235,7 +235,7 @@ public class AlbumArtistsFlippedFragment extends Fragment {
     }
     
 	public static void getCursor() {
-	    String currentLibrary = sharedPreferences.getString("CURRENT_LIBRARY", mContext.getResources().getString(R.string.all_libraries));
+	    String currentLibrary = sharedPreferences.getString(Common.CURRENT_LIBRARY, mContext.getResources().getString(R.string.all_libraries));
 	    currentLibrary = currentLibrary.replace("'", "''");
 	    if (albumArtistName==null) {
 	    	albumArtistName = "";
@@ -392,7 +392,7 @@ public class AlbumArtistsFlippedFragment extends Fragment {
 			return;
 		}
 		
-		String currentLibrary = sharedPreferences.getString("CURRENT_LIBRARY", mContext.getResources().getString(R.string.all_libraries));
+		String currentLibrary = sharedPreferences.getString(Common.CURRENT_LIBRARY, mContext.getResources().getString(R.string.all_libraries));
 		Intent intent = new Intent(getActivity(), NowPlayingActivity.class);
 		
 		cursor.moveToFirst();
@@ -409,7 +409,7 @@ public class AlbumArtistsFlippedFragment extends Fragment {
 		intent.putExtra("CALLED_FROM_FOOTER", false);
 		intent.putExtra("PLAY_ALL", "ALBUM_ARTIST");
 		intent.putExtra("CALLING_FRAGMENT", "ALBUM_ARTISTS_FLIPPED_FRAGMENT");
-		intent.putExtra("CURRENT_LIBRARY", currentLibrary);
+		intent.putExtra(Common.CURRENT_LIBRARY, currentLibrary);
 		
 		getActivity().startActivity(intent);
 		getActivity().overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);

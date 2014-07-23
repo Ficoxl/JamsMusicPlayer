@@ -1,5 +1,6 @@
 package com.jams.music.player.Utils;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
 import android.webkit.WebView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -175,6 +177,9 @@ public class Common extends Application {
     public static final String REPEAT_MODE = "RepeatMode";
     public static final String MUSIC_PLAYING = "MusicPlaying";
     public static final String SERVICE_RUNNING = "ServiceRunning";
+    public static final String CURRENT_LIBRARY = "CurrentLibrary";
+    public static final String CURRENT_LIBRARY_POSITION = "CurrentLibraryPosition";
+    public static final String SHUFFLE_ON = "ShuffleOn";
 
     //Repeat mode constants.
     public static final int REPEAT_OFF = 0;
@@ -536,8 +541,19 @@ public class Common extends Application {
         return 0;
     }
 
+    /**
+     * Returns the view container for the ActionBar.
+     * @return
+     */
+    public View getActionBarView(Activity activity) {
+        Window window = activity.getWindow();
+        View view = window.getDecorView();
+        int resId = getResources().getIdentifier("action_bar_container", "id", "android");
 
-    /*
+        return view.findViewById(resId);
+    }
+
+    /**
      * Download Manager implementation for pinning songs.
      */
     public void queueSongsToPin(boolean getAllPinnedSongs, boolean pinPlaylist, String selection) {
@@ -604,26 +620,6 @@ public class Common extends Application {
     	}
 
     }
-
-    /**
-     * Rebuilds the service cursor.
-     *
-     * @param context The context to use for this operation.
-     */
-/*    public static void rebuildServiceCursor(Context context) {
-		AsyncBuildServiceCursorTask task = new AsyncBuildServiceCursorTask(context, 
-																		   Common.callingFragment, 
-																		   Common.bundle, 
-																		   Common.currentLibrary, 
-																		   Common.audioFilePathsInFolder, 
-																		   Common.songTitle, 
-																		   Common.songArtist, 
-																		   Common.songAlbum, 
-																		   Common.songGenre, 
-																		   Common.songAlbumArtist);
-		task.execute();
-		
-    }*/
 
     /**
      * Converts dp unit to equivalent pixels, depending on device density.
@@ -731,29 +727,8 @@ public class Common extends Application {
             return false;
     }
 
-    //Resamples an input stream bitmap to avoid OOM errors.
-    public Bitmap decodeSampledBitmapFromInputStream(InputStream is, int reqWidth, int reqHeight) {
-        try {
-
-            final BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
-            options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-            options.inJustDecodeBounds = false;
-            options.inPurgeable = true;
-
-            return BitmapFactory.decodeStream(is, null, options);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        } finally {
-            try {
-                is.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        }
-
+    public boolean isShuffleOn() {
+        return getSharedPreferences().getBoolean(SHUFFLE_ON, false);
     }
 
     /**
@@ -886,7 +861,7 @@ public class Common extends Application {
     }
     
     public String getCurrentLibrary() {
-    	return getSharedPreferences().getString("CURRENT_LIBRARY", mContext.getResources()
+    	return getSharedPreferences().getString(CURRENT_LIBRARY, mContext.getResources()
     																	   .getString(R.string.all_libraries));
     }
 	
@@ -896,6 +871,10 @@ public class Common extends Application {
     
     public PlaybackKickstarter getPlaybackKickstarter() {
     	return mPlaybackKickstarter;
+    }
+
+    public int getCurrentLibraryIndex() {
+        return getSharedPreferences().getInt(CURRENT_LIBRARY_POSITION, 0);
     }
 
 	/*

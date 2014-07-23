@@ -62,15 +62,20 @@ public class QueueDrawerAdapter extends ArrayAdapter<Integer> {
         holder.artistText.setText(songHelper.getArtist());
 
         //Apply the item's colors.
-        if (position==mApp.getService().getCurrentSongIndex()) {
-            holder.songTitleText.setTextColor(mColors[0]);
-            holder.artistText.setTextColor(mColors[0]);
-        } else if (mApp.getCurrentTheme()==Common.LIGHT_THEME) {
-            holder.songTitleText.setTextColor(UIElementsHelper.getThemeBasedTextColor(mContext));
-            holder.artistText.setTextColor(UIElementsHelper.getSmallTextColor(mContext));
-        } else if (mApp.getCurrentTheme()==Common.DARK_THEME) {
-            holder.songTitleText.setTextColor(UIElementsHelper.getThemeBasedTextColor(mContext));
-            holder.artistText.setTextColor(UIElementsHelper.getSmallTextColor(mContext));
+        try {
+            if (position==mApp.getService().getCurrentSongIndex()) {
+                holder.songTitleText.setTextColor(mColors[0]);
+                holder.artistText.setTextColor(mColors[0]);
+            } else if (mApp.getCurrentTheme()==Common.LIGHT_THEME) {
+                holder.songTitleText.setTextColor(UIElementsHelper.getThemeBasedTextColor(mContext));
+                holder.artistText.setTextColor(UIElementsHelper.getSmallTextColor(mContext));
+            } else if (mApp.getCurrentTheme()==Common.DARK_THEME) {
+                holder.songTitleText.setTextColor(UIElementsHelper.getThemeBasedTextColor(mContext));
+                holder.artistText.setTextColor(UIElementsHelper.getSmallTextColor(mContext));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return convertView;

@@ -393,7 +393,7 @@ public class AsyncAddToQueueTask extends AsyncTask<Boolean, Integer, Boolean> {
 				intent.putExtra("NEW_PLAYLIST", true);
 				intent.putExtra("NUMBER_SONGS", mCursor.getCount());
 				intent.putExtra("CALLED_FROM_FOOTER", false);
-				intent.putExtra("CURRENT_LIBRARY", mApp.getCurrentLibrary());
+				intent.putExtra(Common.CURRENT_LIBRARY, mApp.getCurrentLibrary());
 				
 			} else {
 				Toast.makeText(mContext, R.string.error_occurred, Toast.LENGTH_LONG).show();

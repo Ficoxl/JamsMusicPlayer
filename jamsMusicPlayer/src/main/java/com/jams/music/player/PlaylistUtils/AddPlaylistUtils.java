@@ -28,7 +28,7 @@ public class AddPlaylistUtils {
 		
 		if (ADD_TYPE.equals("ARTIST")) {
 			String selection = null;
-			String currentLibrary = sharedPreferences.getString("CURRENT_LIBRARY", context.getResources().getString(R.string.all_libraries));
+			String currentLibrary = sharedPreferences.getString(Common.CURRENT_LIBRARY, context.getResources().getString(R.string.all_libraries));
 		    currentLibrary = currentLibrary.replace("'", "''");
 		    ARTIST = ARTIST.replace("'", "''");
 	    	
@@ -52,7 +52,7 @@ public class AddPlaylistUtils {
 		    
 		} else if (ADD_TYPE.equals("ALBUM")) {
 			String selection = null;
-			String currentLibrary = sharedPreferences.getString("CURRENT_LIBRARY", context.getResources().getString(R.string.all_libraries));
+			String currentLibrary = sharedPreferences.getString(Common.CURRENT_LIBRARY, context.getResources().getString(R.string.all_libraries));
 		    currentLibrary = currentLibrary.replace("'", "''");
 			ARTIST = ARTIST.replace("'", "''");
 			ALBUM = ALBUM.replace("'", "''");
@@ -84,7 +84,7 @@ public class AddPlaylistUtils {
 			SONG = SONG.replace("'", "''");
 			ARTIST = ARTIST.replace("'", "''");
 			ALBUM = ALBUM.replace("'", "''");
-		    String currentLibrary = sharedPreferences.getString("CURRENT_LIBRARY", context.getResources().getString(R.string.all_libraries));
+		    String currentLibrary = sharedPreferences.getString(Common.CURRENT_LIBRARY, context.getResources().getString(R.string.all_libraries));
 		    
 		    currentLibrary = currentLibrary.replace("'", "''");
 		    if (currentLibrary.equals(context.getResources().getString(R.string.all_libraries))) {
@@ -116,7 +116,7 @@ public class AddPlaylistUtils {
 		} else if (ADD_TYPE.equals("GENRE")) {
 			String selection = null;
 			GENRE = GENRE.replace("'", "''");
-			String currentLibrary = sharedPreferences.getString("CURRENT_LIBRARY", context.getResources().getString(R.string.all_libraries));
+			String currentLibrary = sharedPreferences.getString(Common.CURRENT_LIBRARY, context.getResources().getString(R.string.all_libraries));
 		    currentLibrary = currentLibrary.replace("'", "''");
 			
 		    if (currentLibrary.equals(context.getResources().getString(R.string.all_libraries))) {
@@ -141,7 +141,7 @@ public class AddPlaylistUtils {
 			String selection = null;
 			ALBUM_ARTIST = ALBUM_ARTIST.replace("'", "''");
 			
-			String currentLibrary = sharedPreferences.getString("CURRENT_LIBRARY", context.getResources().getString(R.string.all_libraries));
+			String currentLibrary = sharedPreferences.getString(Common.CURRENT_LIBRARY, context.getResources().getString(R.string.all_libraries));
 		    currentLibrary = currentLibrary.replace("'", "''");
 			
 		    if (currentLibrary.equals(context.getResources().getString(R.string.all_libraries))) {
@@ -166,7 +166,7 @@ public class AddPlaylistUtils {
 			ALBUM_ARTIST = ALBUM_ARTIST.replace("'", "''");
 			ALBUM = ALBUM.replace("'", "''");
 			
-			String currentLibrary = sharedPreferences.getString("CURRENT_LIBRARY", context.getResources().getString(R.string.all_libraries));
+			String currentLibrary = sharedPreferences.getString(Common.CURRENT_LIBRARY, context.getResources().getString(R.string.all_libraries));
 		    currentLibrary = currentLibrary.replace("'", "''");
 			
 		    if (currentLibrary.equals(context.getResources().getString(R.string.all_libraries))) {

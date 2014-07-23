@@ -4,83 +4,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <RelativeLayout
-        android:id="@+id/browser_inner_fragment_background"
+    <ImageView
+        android:id="@+id/browser_inner_fragment_header_image"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="invisible"
-        android:background="@android:color/black" />
+        android:layout_height="280dp"
+        android:scaleType="centerCrop"
+        android:layout_alignParentTop="true"
+        android:adjustViewBounds="true" />
 
-    <RelativeLayout
-        android:id="@+id/browser_inner_fragment_content"
-        android:layout_height="match_parent"
+    <ListView
+        android:id="@+id/browser_inner_fragment_list_view"
         android:layout_width="match_parent"
-        android:layout_marginTop="330dp"
-        android:visibility="invisible" >
-
-        <ListView
-            android:id="@+id/browser_inner_fragment_list_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true" />
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/browser_inner_fragment_header_layout"
-        android:layout_width="match_parent"
-        android:layout_height="330dp"
-        android:layout_alignParentTop="true" >
-
-        <RelativeLayout
-            android:id="@+id/browser_inner_fragment_details_layout"
-            android:layout_width="match_parent"
-            android:layout_height="90dp"
-            android:layout_below="@+id/browser_inner_fragment_header_image"
-            android:background="#0099CC" >
-
-            <TextView
-                android:id="@+id/browser_inner_fragment_details_header_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="28sp"
-                android:text="Header Text"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentRight="true"
-                android:layout_marginTop="20dp"
-                android:layout_marginRight="100dp"
-                android:layout_marginLeft="20dp"
-                android:singleLine="true"
-                android:ellipsize="marquee"
-                android:textColor="#FFFFFFFF" />
-
-            <TextView
-                android:id="@+id/browser_inner_fragment_details_header_subtext"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:text="Subtext"
-                android:layout_below="@+id/browser_inner_fragment_details_header_text"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentRight="true"
-                android:layout_marginTop="-5dp"
-                android:layout_marginRight="100dp"
-                android:layout_marginLeft="20dp"
-                android:singleLine="true"
-                android:ellipsize="marquee"
-                android:textColor="#FFFFFFFF" />
-
-        </RelativeLayout>
-
-        <ImageView
-            android:id="@+id/browser_inner_fragment_header_image"
-            android:layout_width="match_parent"
-            android:layout_height="240dp"
-            android:scaleType="centerCrop"
-            android:layout_alignParentTop="true"
-            android:adjustViewBounds="true" />
-
-    </RelativeLayout>
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/browser_inner_fragment_header_image" />
 
 </RelativeLayout>

@@ -29,6 +29,7 @@ public class PlaybackKickstarter implements NowPlayingActivityListener, PrepareS
 	private String mQuerySelection;
 	private int mFragmentId;
 	private int mCurrentSongIndex;
+    private boolean mPlayAll;
 	
 	private BuildCursorListener mBuildCursorListener;
 	
@@ -44,7 +45,7 @@ public class PlaybackKickstarter implements NowPlayingActivityListener, PrepareS
 		/**
 		 * Called when the service cursor has been prepared successfully.
 		 */
-		public void onServiceCursorReady(Cursor cursor, int currentSongIndex);
+		public void onServiceCursorReady(Cursor cursor, int currentSongIndex, boolean playAll);
 		
 		/**
 		 * Called when the service cursor failed to be built. 
@@ -73,13 +74,15 @@ public class PlaybackKickstarter implements NowPlayingActivityListener, PrepareS
 						     String querySelection,
 							 int fragmentId, 
 							 int currentSongIndex,
-							 boolean showNowPlayingActivity) {
+							 boolean showNowPlayingActivity,
+                             boolean playAll) {
 		
 		mContext = context;
 		mApp = (Common) context.getApplicationContext();
 		mQuerySelection = querySelection;
 		mFragmentId = fragmentId;
 		mCurrentSongIndex = currentSongIndex;
+        mPlayAll = playAll;
 		
 		if (showNowPlayingActivity) {
 			//Launch NowPlayingActivity.
@@ -154,7 +157,7 @@ public class PlaybackKickstarter implements NowPlayingActivityListener, PrepareS
 			super.onPostExecute(cursor);
 			if (cursor!=null) {
                 if (!mIsUpdating)
-                    getBuildCursorListener().onServiceCursorReady(cursor, mCurrentSongIndex);
+                    getBuildCursorListener().onServiceCursorReady(cursor, mCurrentSongIndex, mPlayAll);
                 else
                     getBuildCursorListener().onServiceCursorUpdated(cursor);
 

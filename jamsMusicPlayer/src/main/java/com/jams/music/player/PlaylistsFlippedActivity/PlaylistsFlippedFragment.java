@@ -227,7 +227,7 @@ public class PlaylistsFlippedFragment extends Fragment {
 
 		@Override
 		public void onItemClick(AdapterView<?> arg0, View view, int index, long arg3) {
-			String currentLibrary = sharedPreferences.getString("CURRENT_LIBRARY", mContext.getResources().getString(R.string.all_libraries));
+			String currentLibrary = sharedPreferences.getString(Common.CURRENT_LIBRARY, mContext.getResources().getString(R.string.all_libraries));
 			
 			cursor.moveToPosition(index);
 			Intent intent = new Intent(mContext, NowPlayingActivity.class);
@@ -242,7 +242,7 @@ public class PlaylistsFlippedFragment extends Fragment {
 			intent.putExtra("NUMBER_SONGS", adapter.getCount());
 			intent.putExtra("CALLED_FROM_FOOTER", false);
 			intent.putExtra("CALLING_FRAGMENT", "PLAYLISTS_FLIPPED_FRAGMENT");
-			intent.putExtra("CURRENT_LIBRARY", currentLibrary);
+			intent.putExtra(Common.CURRENT_LIBRARY, currentLibrary);
 			intent.putExtra("SONG_ID", cursor.getLong(cursor.getColumnIndex(DBAccessHelper.SONG_ID)));
 			intent.putExtra("PLAYLIST_NAME", playlistName);
 			intent.putExtra("SONG_SOURCE", cursor.getLong(cursor.getColumnIndex(DBAccessHelper.SONG_SOURCE)));
@@ -352,7 +352,7 @@ public class PlaylistsFlippedFragment extends Fragment {
     }
     
     private void playAllPressed() {
-    	String currentLibrary = sharedPreferences.getString("CURRENT_LIBRARY", mContext.getResources().getString(R.string.all_libraries));
+    	String currentLibrary = sharedPreferences.getString(Common.CURRENT_LIBRARY, mContext.getResources().getString(R.string.all_libraries));
 		
 		cursor.moveToPosition(0);
 		Intent intent = new Intent(mContext, NowPlayingActivity.class);
@@ -367,7 +367,7 @@ public class PlaylistsFlippedFragment extends Fragment {
 		intent.putExtra("NUMBER_SONGS", adapter.getCount());
 		intent.putExtra("CALLED_FROM_FOOTER", false);
 		intent.putExtra("CALLING_FRAGMENT", "PLAYLISTS_FLIPPED_FRAGMENT");
-		intent.putExtra("CURRENT_LIBRARY", currentLibrary);
+		intent.putExtra(Common.CURRENT_LIBRARY, currentLibrary);
 		intent.putExtra("SONG_ID", cursor.getLong(cursor.getColumnIndex(DBAccessHelper.SONG_ID)));
 		intent.putExtra("PLAYLIST_NAME", playlistName);
 		intent.putExtra("SONG_SOURCE", cursor.getLong(cursor.getColumnIndex(DBAccessHelper.SONG_SOURCE)));
