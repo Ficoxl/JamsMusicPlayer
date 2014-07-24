@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools"
-          package="com.jams.music.player"
-          android:hardwareAccelerated="true"
-          android:versionCode="47"
-          android:versionName="3.0" >
+    package="com.jams.music.player"
+    android:hardwareAccelerated="true"
+    android:versionCode="47"
+    android:versionName="3.0" >
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
@@ -49,8 +48,8 @@
         <activity
             android:name=".NowPlayingActivity.NowPlayingActivity"
             android:exported="true"
-            android:launchMode="singleTask"
-            android:label="@string/now_playing" >
+            android:label="@string/now_playing"
+            android:launchMode="singleTask" >
         </activity>
 
         <!-- Equalizer Activity -->
@@ -335,7 +334,7 @@
         </activity>
 
         <!-- Music Libraries Editor Activity -->
-        
+
         <activity
             android:name=".PlaylistEditorActivity.PlaylistEditorActivity"
             android:label="@string/playlists" >
@@ -354,7 +353,14 @@
             android:noHistory="true"
             android:stateNotNeeded="true"
             android:theme="@android:style/Theme.NoDisplay" />
-
+        <activity
+            android:name=".BrowserSubListActivity.BrowserSubListActivity"
+            android:label="@string/title_activity_browser_sub" >
+        </activity>
+        <activity
+            android:name=".BrowserSubGridActivity.BrowserSubGridActivity"
+            android:label="@string/title_activity_browsser_sub_grid" >
+        </activity>
     </application>
 
 </manifest>

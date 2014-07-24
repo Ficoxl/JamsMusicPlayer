@@ -1,0 +1,501 @@
+package com.jams.music.player.BrowserSubListActivity;
+
+import android.content.Context;
+import android.database.Cursor;
+import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.widget.DrawerLayout;
+import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.DecelerateInterpolator;
+import android.widget.AdapterView;
+import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+import com.jams.music.player.Animations.TranslateAnimation;
+import com.jams.music.player.DBHelpers.DBAccessHelper;
+import com.jams.music.player.Drawers.NavigationDrawerFragment;
+import com.jams.music.player.Drawers.QueueDrawerFragment;
+import com.jams.music.player.Helpers.PauseOnScrollHelper;
+import com.jams.music.player.Helpers.TypefaceHelper;
+import com.jams.music.player.Helpers.UIElementsHelper;
+import com.jams.music.player.ListViewFragment.ListViewCardsAdapter;
+import com.jams.music.player.R;
+import com.jams.music.player.Utils.Common;
+import com.nhaarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
+import com.squareup.picasso.Callback;
+
+import java.util.HashMap;
+
+public class BrowserSubListActivity extends FragmentActivity {
+
+    //Context and common objects.
+    private Context mContext;
+    private Common mApp;
+    private Handler mHandler;
+    private QueueDrawerFragment mQueueDrawerFragment;
+
+    //UI elements
+    private ImageView mHeaderImage;
+    private ListView mListView;
+    private RelativeLayout mDrawerParentLayout;
+    private RelativeLayout mHeaderLayout;
+    private TextView mHeaderTextView;
+    private TextView mHeaderSubTextView;
+    private TextView mPlayAllText;
+    private DrawerLayout mDrawerLayout;
+    private RelativeLayout mNavDrawerLayout;
+    private RelativeLayout mCurrentQueueDrawerLayout;
+
+    //Data adapter objects/vars.
+    private HashMap<Integer, String> mDBColumnsMap;
+    private BrowserSubListAdapter mListViewAdapter;
+    private Cursor mCursor;
+    private String mQuerySelection;
+
+    //Arguments passed in from the calling activity.
+    private String mHeaderImagePath;
+    private String mHeaderText;
+    private String mHeaderSubText;
+    private int mFragmentId;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+
+        mContext = getApplicationContext();
+        mApp = (Common) mContext;
+        mHandler = new Handler();
+        mDBColumnsMap = new HashMap<Integer, String>();
+
+        //Set the theme and inflate the layout.
+        setTheme();
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_browser_sub_list);
+
+        mHeaderImagePath = getIntent().getExtras().getString("headerImagePath");
+        mFragmentId = getIntent().getExtras().getInt("fragmentId");
+        mHeaderText = getIntent().getExtras().getString("headerText");
+        mHeaderSubText = getIntent().getExtras().getString("subText");
+
+        mHeaderLayout = (RelativeLayout) findViewById(R.id.browser_sub_header_layout);
+        mHeaderImage = (ImageView) findViewById(R.id.browser_sub_header_image);
+        mHeaderTextView = (TextView) findViewById(R.id.browser_sub_header_text);
+        mHeaderSubTextView = (TextView) findViewById(R.id.browser_sub_header_sub_text);
+        mListView = (ListView) findViewById(R.id.browser_sub_list_view);
+        mDrawerParentLayout = (RelativeLayout) findViewById(R.id.browser_sub_drawer_parent);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.browser_sub_drawer_root);
+        mNavDrawerLayout = (RelativeLayout) findViewById(R.id.nav_drawer_container);
+        mCurrentQueueDrawerLayout = (RelativeLayout) findViewById(R.id.current_queue_drawer_container);
+        mPlayAllText = (TextView) findViewById(R.id.browser_sub_play_all);
+
+        mHeaderTextView.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
+        mHeaderTextView.setText(mHeaderText);
+        mHeaderTextView.setSelected(true);
+
+        mHeaderSubTextView.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
+        mHeaderSubTextView.setText(mHeaderSubText);
+        mHeaderSubTextView.setSelected(true);
+
+        mPlayAllText.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
+        mPlayAllText.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                //TODO
+            }
+
+        });
+
+        //Apply the ListViews' dividers.
+        if (mApp.getCurrentTheme()==Common.DARK_THEME) {
+            mListView.setDivider(mContext.getResources().getDrawable(R.drawable.list_divider));
+        } else {
+            mListView.setDivider(mContext.getResources().getDrawable(R.drawable.list_divider_light));
+        }
+        mListView.setDividerHeight(1);
+
+        mDrawerParentLayout.setBackgroundColor(UIElementsHelper.getBackgroundColor(mContext));
+        applyKitKatTranslucency();
+
+        //Load the drawer fragments.
+        loadDrawerFragments();
+
+        //Start the content animations as soon the activity's transition finishes.
+        mHandler.postDelayed(animateContent, 300);
+
+        //Start loading the GridView cursor.
+        AsyncRunQuery task = new AsyncRunQuery();
+        task.execute();
+
+    }
+
+    /**
+     * Sets the entire activity-wide theme.
+     */
+    private void setTheme() {
+        if (mApp.getCurrentTheme()==Common.DARK_THEME) {
+            setTheme(R.style.AppThemeNoActionBar);
+        } else {
+            setTheme(R.style.AppThemeLightNoActionBar);
+        }
+
+    }
+
+    /**
+     * Apply KitKat specific translucency.
+     */
+    private void applyKitKatTranslucency() {
+
+        //KitKat translucent navigation/status bar.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+
+            int topPadding = Common.getStatusBarHeight(mContext);
+            if (mDrawerParentLayout!=null) {
+                mDrawerParentLayout.setPadding(0, (0-topPadding), 0, 0);
+                mDrawerParentLayout.setClipToPadding(false);
+
+                int navigationBarHeight = Common.getNavigationBarHeight(mContext);
+                mListView.setClipToPadding(false);
+                mListView.setPadding(mListView.getPaddingLeft(),
+                                     mListView.getPaddingTop(),
+                                     mListView.getPaddingRight(),
+                                     mListView.getPaddingBottom() + navigationBarHeight);
+
+
+            }
+
+        }
+
+    }
+
+    /**
+     * Loads the drawer fragments.
+     */
+    private void loadDrawerFragments() {
+        //Load the navigation drawer.
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.nav_drawer_container, new NavigationDrawerFragment())
+                .commit();
+
+        //Load the current queue drawer.
+        mQueueDrawerFragment = new QueueDrawerFragment();
+        getSupportFragmentManager().beginTransaction()
+                                   .replace(R.id.current_queue_drawer_container, mQueueDrawerFragment)
+                                   .commit();
+
+    }
+
+    /**
+     * Animates the content views in.
+     */
+    private Runnable animateContent = new Runnable() {
+
+        @Override
+        public void run() {
+
+            //Slide down the header image.
+            mApp.getPicasso().load(mHeaderImagePath).into(mHeaderImage, new Callback() {
+
+                @Override
+                public void onSuccess() {
+                    TranslateAnimation slideDown = new TranslateAnimation(mHeaderLayout, 400, new DecelerateInterpolator(2.0f),
+                            View.VISIBLE, Animation.RELATIVE_TO_SELF,
+                            0.0f, Animation.RELATIVE_TO_SELF, 0.0f,
+                            Animation.RELATIVE_TO_SELF, -2.0f,
+                            Animation.RELATIVE_TO_SELF, 0.0f);
+
+                    slideDown.setAnimationListener(new Animation.AnimationListener() {
+
+                        @Override
+                        public void onAnimationStart(Animation animation) {
+                            mHeaderLayout.setVisibility(View.VISIBLE);
+
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animation animation) {
+
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animation animation) {
+
+                        }
+
+                    });
+
+                    slideDown.animate();
+                }
+
+                @Override
+                public void onError() {
+                    //Load the default album art.
+
+                }
+
+            });
+
+        }
+
+    };
+
+    /**
+     * Runs the correct DB query based on the passed in fragment id and
+     * displays the GridView.
+     *
+     * @author Saravan Pantham
+     */
+    public class AsyncRunQuery extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            mQuerySelection = buildQuerySelectionClause();
+            mCursor = mApp.getDBAccessHelper().getFragmentCursor(mContext, mQuerySelection, mFragmentId);
+            loadDBColumnNames();
+
+            return null;
+        }
+
+        /**
+         * Populates the DB column names based on the specifed fragment id.
+         */
+        private void loadDBColumnNames() {
+
+            switch (mFragmentId) {
+                case Common.ARTISTS_FLIPPED_SONGS_FRAGMENT:
+                    mDBColumnsMap.put(ListViewCardsAdapter.TITLE_TEXT, DBAccessHelper.SONG_TITLE);
+                    mDBColumnsMap.put(ListViewCardsAdapter.SOURCE, DBAccessHelper.SONG_SOURCE);
+                    mDBColumnsMap.put(ListViewCardsAdapter.FILE_PATH, DBAccessHelper.SONG_FILE_PATH);
+                    mDBColumnsMap.put(ListViewCardsAdapter.ARTWORK_PATH, DBAccessHelper.SONG_ALBUM_ART_PATH);
+                    mDBColumnsMap.put(ListViewCardsAdapter.FIELD_1, DBAccessHelper.SONG_DURATION);
+                    mDBColumnsMap.put(ListViewCardsAdapter.FIELD_2, DBAccessHelper.SONG_ARTIST);
+                    mDBColumnsMap.put(ListViewCardsAdapter.FIELD_3, DBAccessHelper.SONG_TRACK_NUMBER);
+                    break;
+                case Common.ALBUM_ARTISTS_FLIPPED_SONGS_FRAGMENT:
+                    mDBColumnsMap.put(ListViewCardsAdapter.TITLE_TEXT, DBAccessHelper.SONG_TITLE);
+                    mDBColumnsMap.put(ListViewCardsAdapter.SOURCE, DBAccessHelper.SONG_SOURCE);
+                    mDBColumnsMap.put(ListViewCardsAdapter.FILE_PATH, DBAccessHelper.SONG_FILE_PATH);
+                    mDBColumnsMap.put(ListViewCardsAdapter.ARTWORK_PATH, DBAccessHelper.SONG_ALBUM_ART_PATH);
+                    mDBColumnsMap.put(ListViewCardsAdapter.FIELD_1, DBAccessHelper.SONG_DURATION);
+                    mDBColumnsMap.put(ListViewCardsAdapter.FIELD_2, DBAccessHelper.SONG_ARTIST);
+                    mDBColumnsMap.put(ListViewCardsAdapter.FIELD_3, DBAccessHelper.SONG_TRACK_NUMBER);
+                    break;
+                case Common.ALBUMS_FLIPPED_FRAGMENT:
+                    mDBColumnsMap.put(ListViewCardsAdapter.TITLE_TEXT, DBAccessHelper.SONG_TITLE);
+                    mDBColumnsMap.put(ListViewCardsAdapter.SOURCE, DBAccessHelper.SONG_SOURCE);
+                    mDBColumnsMap.put(ListViewCardsAdapter.FILE_PATH, DBAccessHelper.SONG_FILE_PATH);
+                    mDBColumnsMap.put(ListViewCardsAdapter.ARTWORK_PATH, DBAccessHelper.SONG_ALBUM_ART_PATH);
+                    mDBColumnsMap.put(ListViewCardsAdapter.FIELD_1, DBAccessHelper.SONG_DURATION);
+                    mDBColumnsMap.put(ListViewCardsAdapter.FIELD_2, DBAccessHelper.SONG_ARTIST);
+                    mDBColumnsMap.put(ListViewCardsAdapter.FIELD_3, DBAccessHelper.SONG_TRACK_NUMBER);
+                    break;
+            }
+
+        }
+
+        /**
+         * Builds the cursor query's selection clause based on the activity's
+         * current usage case.
+         */
+        private String buildQuerySelectionClause() {
+            switch (mFragmentId) {
+                case Common.ARTISTS_FLIPPED_SONGS_FRAGMENT:
+                    mQuerySelection = " AND " + DBAccessHelper.SONG_ALBUM + "=" + "'"
+                                    + mHeaderText.replace("'", "''") + "'" + " AND "
+                                    + DBAccessHelper.SONG_ARTIST + "=" + "'"
+                                    + mHeaderSubText.replace("'", "''") + "'";
+                    break;
+                case Common.ALBUM_ARTISTS_FLIPPED_SONGS_FRAGMENT:
+                    mQuerySelection = " AND " + DBAccessHelper.SONG_ALBUM + "=" + "'"
+                                    + mHeaderText.replace("'", "''") + "'" + " AND "
+                                    + DBAccessHelper.SONG_ALBUM_ARTIST + "=" + "'"
+                                    + mHeaderSubText.replace("'", "''") + "'";
+                    break;
+                case Common.ALBUMS_FLIPPED_FRAGMENT:
+                    mQuerySelection = " AND " + DBAccessHelper.SONG_ALBUM + "=" + "'"
+                                    + mHeaderText.replace("'", "''") + "'" + " AND "
+                                    + DBAccessHelper.SONG_ARTIST + "=" + "'"
+                                    + mHeaderSubText.replace("'", "''") + "'";
+                    break;
+            }
+
+            return mQuerySelection;
+        }
+
+        @Override
+        public void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            mHandler.postDelayed(initGridView, 200);
+
+        }
+
+    }
+
+    /**
+     * Item click listener for the GridView/ListView.
+     */
+    private AdapterView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
+
+        @Override
+        public void onItemClick(AdapterView<?> arg0, View view, int index, long id) {
+
+
+        }
+
+    };
+
+    /**
+     * Runnable that loads the GridView after a set interval.
+     */
+    private Runnable initGridView = new Runnable() {
+
+        @Override
+        public void run() {
+            android.view.animation.TranslateAnimation animation = new
+                    android.view.animation.TranslateAnimation(Animation.RELATIVE_TO_SELF, 0.0f,
+                    Animation.RELATIVE_TO_SELF, 0.0f,
+                    Animation.RELATIVE_TO_SELF, 2.0f,
+                    Animation.RELATIVE_TO_SELF, 0.0f);
+
+            animation.setDuration(150);
+            animation.setInterpolator(new AccelerateDecelerateInterpolator());
+
+            mListViewAdapter = new BrowserSubListAdapter(mContext, BrowserSubListActivity.this, mDBColumnsMap);
+            //mListView.setAdapter(mListViewAdapter);
+
+            //GridView animation adapter.
+            final SwingBottomInAnimationAdapter animationAdapter = new SwingBottomInAnimationAdapter(mListViewAdapter, 100, 150);
+            animationAdapter.setShouldAnimate(true);
+            animationAdapter.setShouldAnimateFromPosition(0);
+            animationAdapter.setAbsListView(mListView);
+            mListView.setAdapter(animationAdapter);
+            mListView.setOnItemClickListener(onItemClickListener);
+
+            PauseOnScrollHelper scrollHelper = new PauseOnScrollHelper(mApp.getPicasso(), null, false, true);
+            mListView.setOnScrollListener(scrollHelper);
+
+            animation.setAnimationListener(new Animation.AnimationListener() {
+
+                @Override
+                public void onAnimationEnd(Animation arg0) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation arg0) {
+                    // TODO Auto-generated method stub
+
+                }
+
+                @Override
+                public void onAnimationStart(Animation arg0) {
+                    mListView.setVisibility(View.VISIBLE);
+
+                }
+
+            });
+
+            mListView.startAnimation(animation);
+        }
+
+    };
+
+    /**
+     * Slides away the header layout.
+     */
+    private void slideAwayHeader() {
+        TranslateAnimation slideDown = new TranslateAnimation(mHeaderLayout, 400, new AccelerateInterpolator(2.0f),
+                View.INVISIBLE, Animation.RELATIVE_TO_SELF,
+                0.0f, Animation.RELATIVE_TO_SELF, 0.0f,
+                Animation.RELATIVE_TO_SELF, 0.0f,
+                Animation.RELATIVE_TO_SELF, -2.0f);
+
+        slideDown.setAnimationListener(new Animation.AnimationListener() {
+
+            @Override
+            public void onAnimationStart(Animation animation) {
+                mHeaderLayout.setVisibility(View.VISIBLE);
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mHeaderLayout.setVisibility(View.INVISIBLE);
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+
+        });
+
+        slideDown.animate();
+    }
+
+    /**
+     * Slides away the GridView.
+     */
+    private void slideAwayGridView() {
+        android.view.animation.TranslateAnimation animation = new
+                android.view.animation.TranslateAnimation(Animation.RELATIVE_TO_SELF, 0.0f,
+                Animation.RELATIVE_TO_SELF, 0.0f,
+                Animation.RELATIVE_TO_SELF, 0.0f,
+                Animation.RELATIVE_TO_SELF, 2.0f);
+
+        animation.setDuration(400);
+        animation.setInterpolator(new AccelerateInterpolator(2.0f));
+        animation.setAnimationListener(new Animation.AnimationListener() {
+
+            @Override
+            public void onAnimationEnd(Animation arg0) {
+                mListView.setVisibility(View.INVISIBLE);
+                BrowserSubListActivity.super.onBackPressed();
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation arg0) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void onAnimationStart(Animation arg0) {
+
+            }
+
+        });
+
+        mListView.startAnimation(animation);
+    }
+
+    public Cursor getCursor() {
+        return mCursor;
+    }
+
+    @Override
+    public void onBackPressed() {
+        slideAwayHeader();
+        slideAwayGridView();
+
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+
+    }
+
+}

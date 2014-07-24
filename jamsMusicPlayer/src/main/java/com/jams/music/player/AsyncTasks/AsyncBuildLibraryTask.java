@@ -400,7 +400,7 @@ public class AsyncBuildLibraryTask extends AsyncTask<String, String, Void> {
             																   mMediaStoreSelection, 
             																   projection, 
             																   sortOrder);
-            
+
             //Close the music folders cursor.
             musicFoldersCursor.close(); 
         }
@@ -583,7 +583,7 @@ public class AsyncBuildLibraryTask extends AsyncTask<String, String, Void> {
 	 * query to specific music folders.
 	 */
 	private String buildMusicFoldersSelection(Cursor musicFoldersCursor) {
-		String mediaStoreSelection = MediaStore.Audio.Media.IS_MUSIC + "!= 0 AND (";
+		String mediaStoreSelection = MediaStore.Audio.Media.IS_MUSIC + "!=0 AND (";
         int folderPathColIndex = musicFoldersCursor.getColumnIndex(DBAccessHelper.FOLDER_PATH);
         int includeColIndex = musicFoldersCursor.getColumnIndex(DBAccessHelper.INCLUDE);
         

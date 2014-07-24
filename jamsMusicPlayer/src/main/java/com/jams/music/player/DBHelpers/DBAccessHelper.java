@@ -695,9 +695,9 @@ public class DBAccessHelper extends SQLiteOpenHelper {
     	
 	    if (currentLibrary.equals(context.getResources().getString(R.string.all_libraries))) {
 	    	if (mApp.getSharedPreferences().getBoolean("GOOGLE_PLAY_MUSIC_ENABLED", false)==true) {
-	    		querySelection = "";
+	    		querySelection += "";
 	    	} else {
-	    		querySelection = " AND " + DBAccessHelper.SONG_SOURCE + "<>" + "'GOOGLE_PLAY_MUSIC'"; 
+	    		querySelection += " AND " + DBAccessHelper.SONG_SOURCE + "<>" + "'GOOGLE_PLAY_MUSIC'";
 	    	}
 	    	
 	    	return getFragmentCursorHelper(querySelection, fragmentId);
@@ -705,7 +705,7 @@ public class DBAccessHelper extends SQLiteOpenHelper {
 	    } else if (currentLibrary.equals(context.getResources().getString(R.string.google_play_music_no_asterisk))) {
 	    	//Check to make sure that Google Play Music is enabled.
 	    	if (mApp.getSharedPreferences().getBoolean("GOOGLE_PLAY_MUSIC_ENABLED", false)==true) {
-	    		querySelection = " AND " + DBAccessHelper.SONG_SOURCE + "=" + "'GOOGLE_PLAY_MUSIC'";
+	    		querySelection += " AND " + DBAccessHelper.SONG_SOURCE + "=" + "'GOOGLE_PLAY_MUSIC'";
 	    		return getFragmentCursorHelper(querySelection, fragmentId);
 	    	} else {
 	    		return null;
@@ -714,19 +714,19 @@ public class DBAccessHelper extends SQLiteOpenHelper {
 	    } else if (currentLibrary.equals(context.getResources().getString(R.string.on_this_device))) { 
 	    	//Check if Google Play Music is enabled.
 	    	if (mApp.getSharedPreferences().getBoolean("GOOGLE_PLAY_MUSIC_ENABLED", false)==true) {
-	    		querySelection = " AND (" + DBAccessHelper.SONG_SOURCE + "<>" + "'GOOGLE_PLAY_MUSIC'" + " OR "
+	    		querySelection += " AND (" + DBAccessHelper.SONG_SOURCE + "<>" + "'GOOGLE_PLAY_MUSIC'" + " OR "
 	    				  		 + DBAccessHelper.LOCAL_COPY_PATH + "<> '')";
 	    	} else {
-	    		querySelection = " AND " + DBAccessHelper.SONG_SOURCE + "<>" + "'GOOGLE_PLAY_MUSIC'"; 
+	    		querySelection += " AND " + DBAccessHelper.SONG_SOURCE + "<>" + "'GOOGLE_PLAY_MUSIC'";
 	    	}
 	    	
 	    	return getFragmentCursorHelper(querySelection, fragmentId);
 	    	
     	} else {
 	    	if (mApp.getSharedPreferences().getBoolean("GOOGLE_PLAY_MUSIC_ENABLED", false)==true) {
-			    querySelection = " AND " + DBAccessHelper.LIBRARY_NAME + "=" + "'" + currentLibrary + "'";
+			    querySelection += " AND " + DBAccessHelper.LIBRARY_NAME + "=" + "'" + currentLibrary + "'";
 	    	} else {
-			    querySelection = " AND " + DBAccessHelper.LIBRARY_NAME + "=" + "'" + currentLibrary + "'"
+			    querySelection += " AND " + DBAccessHelper.LIBRARY_NAME + "=" + "'" + currentLibrary + "'"
 	    	              	   + " AND " + DBAccessHelper.SONG_SOURCE + "<>" + "'GOOGLE_PLAY_MUSIC'";
 	    	}
 	    	
@@ -917,7 +917,7 @@ public class DBAccessHelper extends SQLiteOpenHelper {
     								 _ID + ", " + SONG_ARTIST + ", " + SONG_FILE_PATH + ", " + SONG_ALBUM_ARTIST +
     								 ", " + SONG_YEAR + ", " + SONG_SOURCE + ", " + SONG_DURATION + ", " + SONG_ID + ", " +
     								 LOCAL_COPY_PATH + ", " + SONG_ALBUM_ART_PATH + ", " + SONG_TITLE +
-    	    						 ", " + SONG_ALBUM + ", " + SONG_GENRE + " FROM " + 
+    	    						 ", " + SONG_ALBUM + ", " + SONG_GENRE + ", " + SONGS_COUNT + " FROM " +
     								 MUSIC_LIBRARY_TABLE +" WHERE " + BLACKLIST_STATUS + "=" + "'" + 
     								 "0" + "'" + selection + " GROUP BY " + 
     								 SONG_ALBUM + " ORDER BY " + SONG_YEAR
@@ -933,7 +933,7 @@ public class DBAccessHelper extends SQLiteOpenHelper {
     public Cursor getAllUniqueAlbumsByAlbumArtistInLibrary(String selection) {
     	String selectDistinctQuery = "SELECT DISTINCT(" + SONG_ALBUM + "), " + MUSIC_LIBRARY_TABLE + "." +
 									 _ID + ", " + SONG_ARTIST + ", " + SONG_ALBUM_ARTIST + ", " + SONG_FILE_PATH + ", " + LOCAL_COPY_PATH +
-									 ", " + SONG_YEAR + ", " + SONG_SOURCE + ", " + SONG_DURATION + ", " +
+									 ", " + SONG_YEAR + ", " + SONG_SOURCE + ", " + SONG_DURATION + ", " + SONGS_COUNT + ", " +
 									 SONG_ALBUM_ART_PATH + ", " + SONG_TITLE + ", " + SONG_ALBUM + ", " + SONG_GENRE + " FROM " + 
 									 MUSIC_LIBRARY_TABLE + " INNER JOIN " + LIBRARIES_TABLE + " ON (" 
 									 + MUSIC_LIBRARY_TABLE + "." + _ID + "=" + LIBRARIES_TABLE + "." 
@@ -1693,7 +1693,10 @@ public class DBAccessHelper extends SQLiteOpenHelper {
     	
     	String[] columns = { _ID, BLACKLIST_STATUS };
     	Cursor cursor = getDatabase().query(MUSIC_LIBRARY_TABLE, columns, null, null, null, null, null);
-    	
+
+        if (cursor==null)
+            return null;
+
     	if (cursor.getCount() > 0) {
     		for (int i=0; i < cursor.getCount(); i++) {
     			cursor.moveToPosition(i);
@@ -1704,11 +1707,8 @@ public class DBAccessHelper extends SQLiteOpenHelper {
     		
     	}
     	
-    	if (cursor!=null) {
-    		cursor.close();
-    		cursor = null;
-    	}
-    	
+
+    	cursor.close();
     	return songIdBlacklistStatusPair;
     }
     
@@ -1755,7 +1755,7 @@ public class DBAccessHelper extends SQLiteOpenHelper {
     */
     public Cursor getAllUniqueAlbumsByArtist(String selection) {
     	String selectDistinctQuery = "SELECT DISTINCT(" + SONG_ALBUM + "), " + 
-    								 _ID + ", " + SONG_ARTIST + ", " + SONG_FILE_PATH +
+    								 _ID + ", " + SONG_ARTIST + ", " + SONG_FILE_PATH + ", " + SONGS_COUNT +
     								 ", " + SONG_YEAR + ", " + SONG_SOURCE + ", " + SONG_DURATION + ", " +
     								 LOCAL_COPY_PATH + ", " + SONG_ALBUM_ART_PATH + ", " + SONG_TITLE +
     	    						 ", " + SONG_ALBUM + ", " + SONG_GENRE + " FROM " + 
@@ -1774,7 +1774,7 @@ public class DBAccessHelper extends SQLiteOpenHelper {
     public Cursor getAllUniqueAlbumsByArtistInLibrary(String selection) {
     	String selectDistinctQuery = "SELECT DISTINCT(" + SONG_ALBUM + "), " + MUSIC_LIBRARY_TABLE + "." +
 									 _ID + ", " + SONG_ARTIST + ", " + SONG_FILE_PATH + ", " + LOCAL_COPY_PATH +
-									 ", " + SONG_YEAR + ", " + SONG_SOURCE + ", " + SONG_DURATION + ", " +
+									 ", " + SONG_YEAR + ", " + SONG_SOURCE + ", " + SONG_DURATION + ", " + SONGS_COUNT + ", " +
 									 SONG_ALBUM_ART_PATH + ", " + SONG_TITLE + ", " + SONG_ALBUM + ", " + SONG_GENRE + " FROM " + 
 									 MUSIC_LIBRARY_TABLE + " INNER JOIN " + LIBRARIES_TABLE + " ON (" 
 									 + MUSIC_LIBRARY_TABLE + "." + _ID + "=" + LIBRARIES_TABLE + "." 

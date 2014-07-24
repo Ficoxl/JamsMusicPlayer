@@ -1,50 +1,36 @@
 package com.jams.music.player.GridViewFragment;
 
 import android.content.Context;
-import android.content.res.Resources;
+import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Paint;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
-import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
-import android.view.animation.LinearInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
-import android.widget.EditText;
 import android.widget.GridView;
-import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.andraskindler.quickscroll.QuickScrollGridView;
-import com.jams.music.player.Animations.FadeAnimation;
+import com.jams.music.player.BrowserSubGridActivity.BrowserSubGridActivity;
 import com.jams.music.player.DBHelpers.DBAccessHelper;
-import com.jams.music.player.Helpers.ImageViewCoordHelper;
 import com.jams.music.player.Helpers.PauseOnScrollHelper;
 import com.jams.music.player.Helpers.TypefaceHelper;
 import com.jams.music.player.Helpers.UIElementsHelper;
-import com.jams.music.player.BrowserInnerSubFragment.BrowserInnerSubFragment;
 import com.jams.music.player.MainActivity.MainActivity;
 import com.jams.music.player.R;
 import com.jams.music.player.Utils.Common;
@@ -106,18 +92,7 @@ public class GridViewFragment extends Fragment {
         * button in Android L (API 21). */
         mPlayAllText = (TextView) mRootView.findViewById(R.id.fragment_grid_view_play_all);
         mPlayAllText.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Medium"));
-        mPlayAllText.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                if (mApp.isShuffleOn())
-                    ((MainActivity) getActivity()).playAll(true);
-                else
-                    ((MainActivity) getActivity()).playAll(false);
-
-            }
-
-        });
+        mPlayAllText.setOnClickListener(playAllClickListener);
 
         //Grab the fragment. This will determine which data to load into the cursor.
         mFragmentId = getArguments().getInt(Common.FRAGMENT_ID);
@@ -193,6 +168,10 @@ public class GridViewFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
+            if (mApp.isShuffleOn())
+                ((MainActivity) getActivity()).playAll(true);
+            else
+                ((MainActivity) getActivity()).playAll(false);
 
         }
 
@@ -206,73 +185,40 @@ public class GridViewFragment extends Fragment {
 		@Override
 		public void onItemClick(AdapterView<?> arg0, View view, int index, long id) {
 
-            fadeOutViews();
+            //Determine the new activity's fragment id.
+            int newFragmentId = getNewFragmentId();
 
-            //Grab a handle on the album art ImageView within the grid.
-            ImageView albumArt = (ImageView) view.findViewById(R.id.gridViewImage);
-
-            //Grab the album art image data.
-            int[] screenLocation = new int[2];
-            albumArt.getLocationOnScreen(screenLocation);
-            String albumArtPath = (String) view.getTag(R.string.album_art);
-            Bitmap thumbnail = ((BitmapDrawable) albumArt.getDrawable()).getBitmap();
-            ImageViewCoordHelper info = new ImageViewCoordHelper(albumArtPath, thumbnail);
-
-            //Pass on the album art view info to the new fragment.
             Bundle bundle = new Bundle();
-            int orientation = getResources().getConfiguration().orientation;
+            bundle.putString("headerImagePath", (String) view.getTag(R.string.album_art));
+            bundle.putString("headerText", (String) view.getTag(R.string.title_text));
+            bundle.putString("subText", (String) view.getTag(R.string.field_1));
+            bundle.putInt("fragmentId", newFragmentId);
 
-            bundle.putInt("orientation", orientation);
-            bundle.putString("headerImagePath", info.mAlbumArtPath);
-            bundle.putInt("left", screenLocation[0]);
-            bundle.putInt("top", screenLocation[1]);
-            bundle.putInt("width", albumArt.getWidth());
-            bundle.putInt("height", albumArt.getHeight());
+            Intent intent = new Intent(mContext, BrowserSubGridActivity.class);
+            intent.putExtras(bundle);
+            startActivity(intent);
+            getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
 
-            //Fire up the new fragment.
-            BrowserInnerSubFragment fragment = new BrowserInnerSubFragment();
-            fragment.setArguments(bundle);
-
-            FragmentManager manager = getActivity().getSupportFragmentManager();
-            FragmentTransaction transaction = manager.beginTransaction();
-            transaction.add(R.id.mainActivityContainer2, fragment, "horizListSubFragment")
-                       .addToBackStack("horizListSubFragment")
-                       .commit();
-			
 		}
     	
     };
 
     /**
-     * Fades out all view elements in the fragment (including the actionbar).
+     * Determines the next activity's fragment id based on the
+     * current activity's fragment id.
      */
-    private void fadeOutViews() {
-        FadeAnimation fadeOutActionBar = new FadeAnimation(mApp.getActionBarView(getActivity()),
-                                                           300, 1.0f, 0.0f, null);
+    private int getNewFragmentId() {
+        switch (mFragmentId) {
+            case Common.ARTISTS_FRAGMENT:
+                return Common.ARTISTS_FLIPPED_FRAGMENT;
+            case Common.ALBUM_ARTISTS_FRAGMENT:
+                return Common.ALBUM_ARTISTS_FLIPPED_FRAGMENT;
+            case Common.ALBUMS_FRAGMENT:
+                return Common.ALBUMS_FLIPPED_FRAGMENT;
+            default:
+                return -1;
+        }
 
-        FadeAnimation fadeOutGridView = new FadeAnimation(mGridView, 300, 1.0f, 0.0f, null);
-
-        fadeOutActionBar.animate();
-        fadeOutGridView.animate();
-
-    }
-    
-    @Override
-    public void onDestroyView() {
-    	super.onDestroyView();
-    	mRootView = null;
-    	
-    	if (mCursor!=null) {
-        	mCursor.close();
-        	mCursor = null;
-    	}
-    	
-    	onItemClickListener = null;
-    	mGridView = null;
-    	mGridViewAdapter = null;
-    	mContext = null;
-    	mHandler = null;
-    	
     }
     
     /**
@@ -405,6 +351,24 @@ public class GridViewFragment extends Fragment {
         }
 
     };
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mRootView = null;
+
+        if (mCursor!=null) {
+            mCursor.close();
+            mCursor = null;
+        }
+
+        onItemClickListener = null;
+        mGridView = null;
+        mGridViewAdapter = null;
+        mContext = null;
+        mHandler = null;
+
+    }
 
     /*
      * Getter methods.

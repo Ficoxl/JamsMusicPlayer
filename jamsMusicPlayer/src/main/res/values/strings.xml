@@ -818,4 +818,7 @@
     <string name="song_small">song</string>
     <string name="albums_small">albums</string>
     <string name="songs_small">songs</string>
+    <string name="title_activity_browser_sub">BrowserSubActivity</string>
+    <string name="title_activity_browsser_sub_grid">BrowsserSubGridActivity</string>
+
 </resources>

@@ -5,8 +5,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/song_artist_album_layout" >
+        android:layout_height="match_parent" >
 
         <ScrollView
             android:id="@+id/lyrics_scroll_view"

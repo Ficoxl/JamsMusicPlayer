@@ -46,9 +46,6 @@ public class MainActivity extends FragmentActivity {
 	private DrawerLayout mDrawerLayout;
 	private RelativeLayout mNavDrawerLayout;
 	private RelativeLayout mCurrentQueueDrawerLayout;
-    private RelativeLayout mFragmentContainer1;
-    private RelativeLayout mFragmentContainer2;
-    private RelativeLayout mFragmentContainer3;
 	private ActionBarDrawerToggle mDrawerToggle;
     private QueueDrawerFragment mQueueDrawerFragment;
 	
@@ -86,9 +83,6 @@ public class MainActivity extends FragmentActivity {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.main_activity_drawer_root);
         mNavDrawerLayout = (RelativeLayout) findViewById(R.id.nav_drawer_container);
         mCurrentQueueDrawerLayout = (RelativeLayout) findViewById(R.id.current_queue_drawer_container);
-        mFragmentContainer1 = (RelativeLayout) findViewById(R.id.mainActivityContainer);
-        mFragmentContainer2 = (RelativeLayout) findViewById(R.id.mainActivityContainer2);
-        mFragmentContainer3 = (RelativeLayout) findViewById(R.id.mainActivityContainer3);
 
         //Load the drawer fragments.
         loadDrawerFragments();
