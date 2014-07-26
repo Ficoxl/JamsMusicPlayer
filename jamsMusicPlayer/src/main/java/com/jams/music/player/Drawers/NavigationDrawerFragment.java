@@ -26,11 +26,8 @@ import android.widget.TextView;
 
 import com.jams.music.player.Helpers.UIElementsHelper;
 import com.jams.music.player.R;
-import com.jams.music.player.FoldersFragment.FilesFoldersFragment;
-import com.jams.music.player.GenresFragment.GenresFragment;
 import com.jams.music.player.Helpers.TypefaceHelper;
 import com.jams.music.player.MainActivity.MainActivity;
-import com.jams.music.player.PlaylistsFragment.PlaylistsFragment;
 import com.jams.music.player.SettingsActivity.SettingsActivity;
 import com.jams.music.player.Utils.Common;
 

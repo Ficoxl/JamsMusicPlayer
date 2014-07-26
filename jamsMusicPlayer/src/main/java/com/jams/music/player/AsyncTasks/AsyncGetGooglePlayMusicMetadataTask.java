@@ -835,7 +835,7 @@ public class AsyncGetGooglePlayMusicMetadataTask extends AsyncTask<String, Strin
     protected void onProgressUpdate(String... progressParams) {
     	super.onProgressUpdate(progressParams);
     	
-    	//Update the notification.
+    	/*//Update the notification.
     	BuildMusicLibraryService.mBuilder.setTicker(null);
     	BuildMusicLibraryService.mBuilder.setContentTitle(mContext.getResources().getString(R.string.getting_google_play_music_library));
     	BuildMusicLibraryService.mBuilder.setContentText(currentTask);
@@ -843,7 +843,7 @@ public class AsyncGetGooglePlayMusicMetadataTask extends AsyncTask<String, Strin
     	BuildMusicLibraryService.mBuilder.setProgress(100000, currentProgressValue, false);
     	BuildMusicLibraryService.mNotification = BuildMusicLibraryService.mBuilder.build();
     	BuildMusicLibraryService.mNotifyManager.notify(BuildMusicLibraryService.mNotificationId, 
-    												   BuildMusicLibraryService.mNotification);
+    												   BuildMusicLibraryService.mNotification);*/
     	
     }
 
@@ -852,9 +852,6 @@ public class AsyncGetGooglePlayMusicMetadataTask extends AsyncTask<String, Strin
     	
     	//Release the wakelock.
     	wakeLock.release();
-    	
-		AsyncCacheLocalArtworkTask task = new AsyncCacheLocalArtworkTask(mContext);
-		task.execute();
         	
     }
 

@@ -140,7 +140,7 @@ public class PreferenceDialogLauncherActivity extends FragmentActivity {
 			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 			GooglePlayMusicAuthenticationDialog dialog = new GooglePlayMusicAuthenticationDialog();
 			Bundle bundle = new Bundle();
-			bundle.putBoolean("FIRST_RUN", false);
+			bundle.putBoolean(Common.FIRST_RUN, false);
 			dialog.setArguments(bundle);
 			dialog.show(ft, "gMusicAuthDialog");
 			

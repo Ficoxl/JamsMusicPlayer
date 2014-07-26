@@ -143,6 +143,15 @@ public class Common extends Application {
 	public static final int GENRES_FLIPPED_FRAGMENT = 12;
 	public static final int GENRES_FLIPPED_SONGS_FRAGMENT = 13;
 
+    //Constants for identifying playback routes.
+    public static final int PLAY_ALL_SONGS = 0;
+    public static final int PLAY_ALL_BY_ARTIST = 1;
+    public static final int PLAY_ALL_BY_ALBUM_ARTIST = 2;
+    public static final int PLAY_ALL_BY_ALBUM = 3;
+    public static final int PLAY_ALL_IN_PLAYLIST = 4;
+    public static final int PLAY_ALL_IN_GENRE = 5;
+    public static final int PLAY_ALL_IN_FOLDER = 6;
+
 	//Device orientation constants.
 	public static final int ORIENTATION_PORTRAIT = 0;
 	public static final int ORIENTATION_LANDSCAPE = 1;
@@ -180,6 +189,7 @@ public class Common extends Application {
     public static final String CURRENT_LIBRARY = "CurrentLibrary";
     public static final String CURRENT_LIBRARY_POSITION = "CurrentLibraryPosition";
     public static final String SHUFFLE_ON = "ShuffleOn";
+    public static final String FIRST_RUN = "FirstRun";
 
     //Repeat mode constants.
     public static final int REPEAT_OFF = 0;
@@ -201,7 +211,7 @@ public class Common extends Application {
 		mDBAccessHelper = new DBAccessHelper(mContext);
 
     	//Playback kickstarter.
-    	mPlaybackKickstarter = new PlaybackKickstarter();
+    	mPlaybackKickstarter = new PlaybackKickstarter(this.getApplicationContext());
 
         //Picasso.
         mPicasso = new Picasso.Builder(mContext).build();

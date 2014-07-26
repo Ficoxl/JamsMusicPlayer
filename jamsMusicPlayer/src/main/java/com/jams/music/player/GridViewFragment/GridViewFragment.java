@@ -27,6 +27,7 @@ import android.widget.TextView;
 
 import com.andraskindler.quickscroll.QuickScrollGridView;
 import com.jams.music.player.BrowserSubGridActivity.BrowserSubGridActivity;
+import com.jams.music.player.BrowserSubListActivity.BrowserSubListActivity;
 import com.jams.music.player.DBHelpers.DBAccessHelper;
 import com.jams.music.player.Helpers.PauseOnScrollHelper;
 import com.jams.music.player.Helpers.TypefaceHelper;
@@ -155,7 +156,7 @@ public class GridViewFragment extends Fragment {
 
 		@Override
 		public void run() {
-			new AsyncRunQuery().execute();
+			new AsyncRunQuery().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 			
 		}
     	
@@ -188,13 +189,19 @@ public class GridViewFragment extends Fragment {
             //Determine the new activity's fragment id.
             int newFragmentId = getNewFragmentId();
 
+            Intent intent;
+            if (newFragmentId==Common.ALBUMS_FLIPPED_FRAGMENT) {
+                intent = new Intent(mContext, BrowserSubListActivity.class);
+            } else {
+                intent = new Intent(mContext, BrowserSubGridActivity.class);
+            }
+
             Bundle bundle = new Bundle();
             bundle.putString("headerImagePath", (String) view.getTag(R.string.album_art));
             bundle.putString("headerText", (String) view.getTag(R.string.title_text));
             bundle.putString("subText", (String) view.getTag(R.string.field_1));
             bundle.putInt("fragmentId", newFragmentId);
 
-            Intent intent = new Intent(mContext, BrowserSubGridActivity.class);
             intent.putExtras(bundle);
             startActivity(intent);
             getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
@@ -267,6 +274,11 @@ public class GridViewFragment extends Fragment {
 			case Common.PLAYLISTS_FRAGMENT:
 				break;
 			case Common.GENRES_FRAGMENT:
+                mDBColumnsMap.put(GridViewCardsAdapter.TITLE_TEXT, DBAccessHelper.SONG_GENRE);
+                mDBColumnsMap.put(GridViewCardsAdapter.SOURCE, DBAccessHelper.SONG_SOURCE);
+                mDBColumnsMap.put(GridViewCardsAdapter.FILE_PATH, DBAccessHelper.SONG_FILE_PATH);
+                mDBColumnsMap.put(GridViewCardsAdapter.ARTWORK_PATH, DBAccessHelper.SONG_ALBUM_ART_PATH);
+                mDBColumnsMap.put(GridViewCardsAdapter.FIELD_1, DBAccessHelper.GENRE_SONG_COUNT);
 				break;
 			case Common.FOLDERS_FRAGMENT:
 				break;

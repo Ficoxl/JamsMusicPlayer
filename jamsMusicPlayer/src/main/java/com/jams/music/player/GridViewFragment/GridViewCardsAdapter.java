@@ -3,11 +3,15 @@ package com.jams.music.player.GridViewFragment;
 import android.content.Context;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,6 +29,7 @@ import android.widget.Toast;
 
 import com.andraskindler.quickscroll.Scrollable;
 import com.jams.music.player.AsyncTasks.AsyncAddToQueueTask;
+import com.jams.music.player.DBHelpers.DBAccessHelper;
 import com.jams.music.player.Dialogs.AddToPlaylistDialog;
 import com.jams.music.player.Dialogs.CautionEditArtistsDialog;
 import com.jams.music.player.Dialogs.ID3sArtistEditorDialog;
@@ -32,6 +37,8 @@ import com.jams.music.player.Helpers.TypefaceHelper;
 import com.jams.music.player.Helpers.UIElementsHelper;
 import com.jams.music.player.R;
 import com.jams.music.player.Utils.Common;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.util.HashMap;
 
@@ -213,6 +220,33 @@ public class GridViewCardsAdapter extends SimpleCursorAdapter implements Scrolla
         mApp.getPicasso().load(artworkPath)
                          .placeholder(UIElementsHelper.getEmptyColorPatch(mContext))
                          .into(mHolder.gridViewArt);
+
+        //Preload the next 6 album art images.
+        for (int i=position; i < position+6; i++) {
+            if (i >= mGridViewFragment.getCursor().getCount())
+                break;
+
+            Cursor tempCursor = (Cursor) getItem(i);
+            mApp.getPicasso().load(tempCursor.getString(tempCursor.getColumnIndex(DBAccessHelper.SONG_ALBUM_ART_PATH))).into(new Target() {
+
+                @Override
+                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+
+                }
+
+                @Override
+                public void onBitmapFailed(Drawable errorDrawable) {
+
+                }
+
+                @Override
+                public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                }
+
+            });
+
+        }
 
 		return convertView;
 	}

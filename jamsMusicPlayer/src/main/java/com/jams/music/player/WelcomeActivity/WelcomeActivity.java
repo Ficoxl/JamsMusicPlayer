@@ -27,6 +27,7 @@ import com.jams.music.player.R;
 import com.jams.music.player.AsyncTasks.AsyncBuildLibraryTask;
 import com.jams.music.player.AsyncTasks.AsyncSaveMusicFoldersTask;
 import com.jams.music.player.MiscFragments.BuildingLibraryProgressFragment;
+import com.jams.music.player.Services.BuildMusicLibraryService;
 import com.jams.music.player.Utils.Common;
 import com.viewpagerindicator.LinePageIndicator;
 
@@ -39,7 +40,7 @@ public class WelcomeActivity extends FragmentActivity {
 	private String mAccountName;
 	
 	private MusicFoldersFragment mMusicFoldersFragment;
-	private BuildingLibraryProgressFragment mBuildingLibraryProgressFragment;
+	public static BuildingLibraryProgressFragment mBuildingLibraryProgressFragment;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -99,7 +100,7 @@ public class WelcomeActivity extends FragmentActivity {
 			if (page==0 || page==2) {
 				new AsyncSaveMusicFoldersTask(mContext.getApplicationContext(), 
 											  mMusicFoldersFragment.getMusicFoldersSelectionFragment()
-											  				   .getMusicFoldersHashMap())
+											  				       .getMusicFoldersHashMap())
 											 .execute();
 			}
 			
@@ -131,9 +132,8 @@ public class WelcomeActivity extends FragmentActivity {
 			
 			//Launch the scanning AsyncTask.
 			if (page==5) {
-				AsyncBuildLibraryTask task = new AsyncBuildLibraryTask(mContext.getApplicationContext());
-				task.setOnBuildLibraryProgressUpdate(mBuildingLibraryProgressFragment);
-				task.execute();
+                Intent intent = new Intent(mContext, BuildMusicLibraryService.class);
+                startService(intent);
 				
 				//Disables swiping events on the pager.
 				welcomeViewPager.setCurrentItem(5);

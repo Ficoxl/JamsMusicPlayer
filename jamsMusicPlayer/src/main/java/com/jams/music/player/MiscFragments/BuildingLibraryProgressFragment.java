@@ -1,6 +1,8 @@
 package com.jams.music.player.MiscFragments;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
@@ -15,11 +17,14 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.jams.music.player.AsyncTasks.AsyncBuildLibraryTask;
 import com.jams.music.player.R;
 import com.jams.music.player.AsyncTasks.AsyncBuildLibraryTask.OnBuildLibraryProgressUpdate;
 import com.jams.music.player.Helpers.TypefaceHelper;
 import com.jams.music.player.MainActivity.MainActivity;
+import com.jams.music.player.Services.BuildMusicLibraryService;
 import com.jams.music.player.Utils.Common;
+import com.jams.music.player.WelcomeActivity.WelcomeActivity;
 
 public class BuildingLibraryProgressFragment extends Fragment implements OnBuildLibraryProgressUpdate {
 	
@@ -89,21 +94,31 @@ public class BuildingLibraryProgressFragment extends Fragment implements OnBuild
 	}
 
 	@Override
-	public void onProgressUpdate(String mCurrentTask, int overallProgress,
-			int maxProgress) {
-		//mCurrentTaskText.setText(mCurrentTask);
-		mProgressBar.setProgress(overallProgress);
+	public void onProgressUpdate(AsyncBuildLibraryTask task, String mCurrentTask,
+                                 int overallProgress, int maxProgress,
+                                 boolean mediaStoreTransferDone) {
+        /**
+         * overallProgress refers to the progress that the service's notification
+         * progress bar will display. Since this fragment will only show the progress
+         * of building the library (and not scanning the album art), we need to
+         * multiply the overallProgress by 4 (the building library task only takes
+         * up a quarter of the overall progress bar).
+         */
+		mProgressBar.setProgress(overallProgress*4);
+
+        //This fragment only shows the MediaStore transfer progress.
+        if (mediaStoreTransferDone)
+            onFinishBuildingLibrary(task);
 		
 	}
 
 	@Override
-	public void onFinishBuildingLibrary() {
+	public void onFinishBuildingLibrary(AsyncBuildLibraryTask task) {
+        task.mBuildLibraryProgressUpdate.remove(0);
 		Intent intent = new Intent(mContext, MainActivity.class);
 		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		mContext.startActivity(intent);
-		
-		mApp.getSharedPreferences().edit().putBoolean("FIRST_RUN", false).commit();
-		
+
 	}
 	
 }

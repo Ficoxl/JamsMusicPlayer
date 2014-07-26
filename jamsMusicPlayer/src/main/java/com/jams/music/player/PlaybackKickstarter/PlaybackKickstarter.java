@@ -27,10 +27,14 @@ public class PlaybackKickstarter implements NowPlayingActivityListener, PrepareS
 	private Common mApp;
 	
 	private String mQuerySelection;
-	private int mFragmentId;
+	private int mPlaybackRouteId;
 	private int mCurrentSongIndex;
     private boolean mPlayAll;
-	
+
+    public PlaybackKickstarter(Context context) {
+        mContext = context;
+    }
+
 	private BuildCursorListener mBuildCursorListener;
 	
 	/**
@@ -49,10 +53,10 @@ public class PlaybackKickstarter implements NowPlayingActivityListener, PrepareS
 		
 		/**
 		 * Called when the service cursor failed to be built. 
-		 * Also returns the failure reason via the exception 
-		 * parameter.
+		 * Also returns the failure reason via the exception's
+         * message parameter.
 		 */
-		public void onServiceCursorFailed(Exception exception);
+		public void onServiceCursorFailed(String exceptionMessage);
 
         /**
          * Called when/if the service is already running and
@@ -72,15 +76,14 @@ public class PlaybackKickstarter implements NowPlayingActivityListener, PrepareS
 	 */
 	public void initPlayback(Context context, 
 						     String querySelection,
-							 int fragmentId, 
+							 int playbackRouteId,
 							 int currentSongIndex,
 							 boolean showNowPlayingActivity,
                              boolean playAll) {
-		
-		mContext = context;
-		mApp = (Common) context.getApplicationContext();
+
+		mApp = (Common) mContext.getApplicationContext();
 		mQuerySelection = querySelection;
-		mFragmentId = fragmentId;
+		mPlaybackRouteId = playbackRouteId;
 		mCurrentSongIndex = currentSongIndex;
         mPlayAll = playAll;
 		
@@ -131,7 +134,7 @@ public class PlaybackKickstarter implements NowPlayingActivityListener, PrepareS
 	 * onServiceCursorReady() (see below). The service then takes over 
 	 * the rest of the process.
 	 */
-	class AsyncBuildCursorTask extends AsyncTask<Boolean, Boolean, Cursor> {
+	class AsyncBuildCursorTask extends AsyncTask<Boolean, String, Cursor> {
 
         private boolean mIsUpdating = false;
 
@@ -143,14 +146,19 @@ public class PlaybackKickstarter implements NowPlayingActivityListener, PrepareS
 		protected Cursor doInBackground(Boolean... params) {
 			
 			try {
-				return mApp.getDBAccessHelper().getFragmentCursor(mContext, mQuerySelection, mFragmentId);
+				return mApp.getDBAccessHelper().getPlaybackCursor(mContext, mQuerySelection, mPlaybackRouteId);
 			} catch (Exception exception) {
 				exception.printStackTrace();
-				getBuildCursorListener().onServiceCursorFailed(exception);
+				publishProgress(new String[] { exception.getMessage() });
 				return null;
 			}
 			
 		}
+
+        @Override
+        public void onProgressUpdate(String... params) {
+            getBuildCursorListener().onServiceCursorFailed(params[0]);
+        }
 		
 		@Override
 		public void onPostExecute(Cursor cursor) {
@@ -162,7 +170,7 @@ public class PlaybackKickstarter implements NowPlayingActivityListener, PrepareS
                     getBuildCursorListener().onServiceCursorUpdated(cursor);
 
             } else {
-                getBuildCursorListener().onServiceCursorFailed(new Exception());
+                getBuildCursorListener().onServiceCursorFailed("Playback cursor null.");
             }
 
 		}
@@ -215,11 +223,11 @@ public class PlaybackKickstarter implements NowPlayingActivityListener, PrepareS
         return mQuerySelection;
     }
 
-    public int getPreviousFragmentId() {
-        return mFragmentId;
+    public int getPreviousPlaybackRouteId() {
+        return mPlaybackRouteId;
     }
 
-    public int getPreviousCurrentFragmentId() {
+    public int getPreviousCurrentSongIndex() {
         return mCurrentSongIndex;
     }
 

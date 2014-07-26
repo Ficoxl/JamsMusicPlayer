@@ -111,7 +111,27 @@ public class BrowserSubGridActivity extends FragmentActivity {
 
             @Override
             public void onClick(View v) {
-                //TODO
+                int playbackRouteId = Common.PLAY_ALL_SONGS;
+                switch (mFragmentId) {
+                    case Common.ARTISTS_FLIPPED_FRAGMENT:
+                        playbackRouteId = Common.PLAY_ALL_BY_ARTIST;
+                        break;
+                    case Common.ALBUM_ARTISTS_FLIPPED_FRAGMENT:
+                        playbackRouteId = Common.PLAY_ALL_BY_ALBUM_ARTIST;
+                        break;
+                    case Common.GENRES_FLIPPED_FRAGMENT:
+                        playbackRouteId = Common.PLAY_ALL_IN_GENRE;
+                        break;
+                }
+
+                mApp.getPlaybackKickstarter()
+                    .initPlayback(mContext,
+                            mQuerySelection,
+                            playbackRouteId,
+                            0,
+                            true,
+                            false);
+
             }
 
         });
@@ -352,8 +372,8 @@ public class BrowserSubGridActivity extends FragmentActivity {
         switch (mFragmentId) {
             case Common.ARTISTS_FLIPPED_FRAGMENT:
                 return Common.ARTISTS_FLIPPED_SONGS_FRAGMENT;
-            case Common.ALBUM_ARTISTS_FRAGMENT:
-                return Common.ALBUM_ARTISTS_FLIPPED_FRAGMENT;
+            case Common.ALBUM_ARTISTS_FLIPPED_FRAGMENT:
+                return Common.ALBUM_ARTISTS_FLIPPED_SONGS_FRAGMENT;
             default:
                 return -1;
         }

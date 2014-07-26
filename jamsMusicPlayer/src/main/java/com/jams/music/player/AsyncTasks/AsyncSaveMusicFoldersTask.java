@@ -7,6 +7,7 @@ import java.util.List;
 import android.content.ContentValues;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.jams.music.player.R;
 import com.jams.music.player.DBHelpers.DBAccessHelper;
@@ -40,7 +41,7 @@ public class AsyncSaveMusicFoldersTask extends AsyncTask<String, Void, Boolean> 
 			for (int i=0; i < mMusicFolders.size(); i++) {
 				String path = mPathsList.get(i);
 				boolean include = mMusicFolders.get(path);
-				
+
 				//Trim down the folder path to include only the folder and its parent.
 				int secondSlashIndex = path.lastIndexOf("/", path.lastIndexOf("/")-1);
 				if ((secondSlashIndex < path.length()) && secondSlashIndex!=-1)

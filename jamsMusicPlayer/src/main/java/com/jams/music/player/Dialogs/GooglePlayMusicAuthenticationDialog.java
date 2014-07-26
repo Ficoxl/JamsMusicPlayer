@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.jams.music.player.R;
 import com.jams.music.player.AsyncTasks.AsyncGoogleMusicAuthenticationTask;
 import com.jams.music.player.Helpers.TypefaceHelper;
+import com.jams.music.player.Utils.Common;
 
 public class GooglePlayMusicAuthenticationDialog extends DialogFragment {
 
@@ -34,7 +35,7 @@ public class GooglePlayMusicAuthenticationDialog extends DialogFragment {
 		View rootView = parentActivity.getLayoutInflater().inflate(R.layout.dialog_google_authentication_layout, null);
 		
 		//Check if this dialog was called from the Welcome sequence.
-		mFirstRun = getArguments().getBoolean("FIRST_RUN");
+		mFirstRun = getArguments().getBoolean(Common.FIRST_RUN);
 		
 		infoText = (TextView) rootView.findViewById(R.id.google_authentication_dialog_text);
 		infoText.setTypeface(TypefaceHelper.getTypeface(getActivity(), "RobotoCondensed-Light"));

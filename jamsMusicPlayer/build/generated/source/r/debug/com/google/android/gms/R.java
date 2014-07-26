@@ -95,12 +95,12 @@ public final class R {
 		public static final int common_signin_btn_text_normal_light = 0x7f02008a;
 		public static final int common_signin_btn_text_pressed_dark = 0x7f02008b;
 		public static final int common_signin_btn_text_pressed_light = 0x7f02008c;
-		public static final int ic_plusone_medium_off_client = 0x7f0200e8;
-		public static final int ic_plusone_small_off_client = 0x7f0200e9;
-		public static final int ic_plusone_standard_off_client = 0x7f0200ea;
-		public static final int ic_plusone_tall_off_client = 0x7f0200eb;
-		public static final int powered_by_google_dark = 0x7f020142;
-		public static final int powered_by_google_light = 0x7f020143;
+		public static final int ic_plusone_medium_off_client = 0x7f0200e9;
+		public static final int ic_plusone_small_off_client = 0x7f0200ea;
+		public static final int ic_plusone_standard_off_client = 0x7f0200eb;
+		public static final int ic_plusone_tall_off_client = 0x7f0200ec;
+		public static final int powered_by_google_dark = 0x7f020143;
+		public static final int powered_by_google_light = 0x7f020144;
 	}
 	public static final class id {
 		public static final int book_now = 0x7f0a0019;
@@ -128,12 +128,12 @@ public final class R {
 		public static final int google_play_services_version = 0x7f0c0009;
 	}
 	public static final class string {
-		public static final int auth_client_needs_enabling_title = 0x7f0d0297;
-		public static final int auth_client_needs_installation_title = 0x7f0d0298;
-		public static final int auth_client_needs_update_title = 0x7f0d0299;
-		public static final int auth_client_play_services_err_notification_msg = 0x7f0d029a;
-		public static final int auth_client_requested_by_msg = 0x7f0d029b;
-		public static final int auth_client_using_bad_version_title = 0x7f0d029c;
+		public static final int auth_client_needs_enabling_title = 0x7f0d0299;
+		public static final int auth_client_needs_installation_title = 0x7f0d029a;
+		public static final int auth_client_needs_update_title = 0x7f0d029b;
+		public static final int auth_client_play_services_err_notification_msg = 0x7f0d029c;
+		public static final int auth_client_requested_by_msg = 0x7f0d029d;
+		public static final int auth_client_using_bad_version_title = 0x7f0d029e;
 		public static final int common_google_play_services_enable_button = 0x7f0d006f;
 		public static final int common_google_play_services_enable_text = 0x7f0d0070;
 		public static final int common_google_play_services_enable_title = 0x7f0d0071;
@@ -159,7 +159,7 @@ public final class R {
 		public static final int common_google_play_services_update_title = 0x7f0d0085;
 		public static final int common_signin_button_text = 0x7f0d0086;
 		public static final int common_signin_button_text_long = 0x7f0d0087;
-		public static final int wallet_buy_button_place_holder = 0x7f0d0288;
+		public static final int wallet_buy_button_place_holder = 0x7f0d028a;
 	}
 	public static final class style {
 		public static final int Theme_IAPTheme = 0x7f0e0024;

@@ -54,14 +54,13 @@ public class MusicFoldersSelectionFragment extends Fragment {
 	private HashMap<String, Boolean> mMusicFolders;
 	
 	private static boolean CALLED_FROM_WELCOME = false;
-	public static boolean DONE_PROCESSING_FOLDERS = false;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		
 		mContext = getActivity().getApplicationContext();
 		mApp = (Common) mContext;
-		View rootView = (View) getActivity().getLayoutInflater().inflate(R.layout.fragment_folders, null);		
+		View rootView = getActivity().getLayoutInflater().inflate(R.layout.fragment_folders, null);
 		mMusicFolders = new HashMap<String, Boolean>();
 
         mFoldersListView = (ListView) rootView.findViewById(R.id.folders_list_view);
@@ -132,8 +131,8 @@ public class MusicFoldersSelectionFragment extends Fragment {
 			if (path.contains("//")) {
 				path.replace("//", "/");
 			}
-			
-			mMusicFolders.put(path, include);
+
+			mMusicFolders.put(path, true);
 		}
 		
 		//Close the cursor.

@@ -3,6 +3,7 @@ package com.jams.music.player.MusicFoldersSelectionFragment;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,9 @@ import com.jams.music.player.R;
 import com.jams.music.player.Helpers.TypefaceHelper;
 import com.jams.music.player.Helpers.UIElementsHelper;
 import com.jams.music.player.Utils.Common;
+
+import java.util.ArrayList;
+import java.util.Set;
 
 public class MultiselectListViewAdapter extends ArrayAdapter<String> {
 
@@ -125,19 +129,45 @@ public class MultiselectListViewAdapter extends ArrayAdapter<String> {
 			//Only respond to user presses.
 			if (checkBox.isPressed()) {
 				String filePath = (String) checkBox.getTag();
-				mFragment.getMusicFoldersHashMap().put(filePath, isChecked);
+                if (isChecked)
+				    mFragment.getMusicFoldersHashMap().put(filePath, true);
+                else
+                    if (mFragment.getMusicFoldersHashMap().containsKey(filePath))
+                        removeKeyAndSubFolders(filePath);
+                    else
+                        mFragment.getMusicFoldersHashMap().put(filePath, false);
 				
 			}
 			
 		}
     	
     };
-    
+
+    /**
+     * Loops through the HashMap and removes the specified key and
+     * all other keys that start with the specified key.
+     */
+    private void removeKeyAndSubFolders(String key) {
+        //Get a list of all file paths (keys).
+        Set<String> keySet = mFragment.getMusicFoldersHashMap().keySet();
+        String[] keyArray = new String[keySet.size()];
+        keySet.toArray(keyArray);
+
+        if (keyArray==null || keyArray.length==0)
+            return;
+
+        for (int i=0; i < keyArray.length; i++)
+            if (keyArray[i].startsWith(key))
+                mFragment.getMusicFoldersHashMap().remove(keyArray[i]);
+
+    }
+
     static class FoldersMultiselectHolder {
 		public TextView fileFolderNameText;
 		public TextView fileFolderSizeText;
 		public CheckBox fileFoldersCheckbox;
 		public ImageView fileFoldersImage;
+
     }
    
 }

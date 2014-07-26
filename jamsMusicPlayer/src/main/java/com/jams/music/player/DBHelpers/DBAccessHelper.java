@@ -8,6 +8,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import com.jams.music.player.R;
 import com.jams.music.player.Utils.Common;
@@ -100,6 +101,7 @@ public class DBAccessHelper extends SQLiteOpenHelper {
     public static final String SAVED_POSITION = "saved_position";
     public static final String ALBUMS_COUNT = "albums_count";
     public static final String SONGS_COUNT = "songs_count";
+    public static final String GENRES_SONG_COUNT = "genres_song_count";
     
     //Playlist fields.
     public static final String PLAYLIST_ID = "playlist_id";
@@ -125,7 +127,7 @@ public class DBAccessHelper extends SQLiteOpenHelper {
 	 * @param context
 	 * @return
 	 */
-	public static DBAccessHelper getInstance(Context context) {
+	public static synchronized DBAccessHelper getInstance(Context context) {
 	    if (sInstance==null)
 	    	sInstance = new DBAccessHelper(context.getApplicationContext());
 	    
@@ -136,10 +138,10 @@ public class DBAccessHelper extends SQLiteOpenHelper {
 	 * Returns a writable instance of the database. Provides an additional 
 	 * null check for additional stability.
 	 */
-	private SQLiteDatabase getDatabase() {
+	private synchronized SQLiteDatabase getDatabase() {
 		if (mDatabase==null)
 			mDatabase = getWritableDatabase();
-		
+
 		return mDatabase;
 	}
 	
@@ -196,7 +198,7 @@ public class DBAccessHelper extends SQLiteOpenHelper {
 			    						   SONG_DURATION, SONG_FILE_PATH, 
 			    						   SONG_TRACK_NUMBER, SONG_GENRE, 
 			    						   SONG_PLAY_COUNT, SONG_YEAR, ALBUMS_COUNT,
-			    						   SONGS_COUNT, SONG_LAST_MODIFIED, SONG_SCANNED,
+			    						   SONGS_COUNT, GENRES_SONG_COUNT, SONG_LAST_MODIFIED, SONG_SCANNED,
 			    						   BLACKLIST_STATUS, ADDED_TIMESTAMP, RATING, 
 			    						   LAST_PLAYED_TIMESTAMP, SONG_SOURCE, SONG_ALBUM_ART_PATH,
 			    						   SONG_DELETED, ARTIST_ART_LOCATION, ALBUM_ID, 
@@ -692,14 +694,14 @@ public class DBAccessHelper extends SQLiteOpenHelper {
      */
     public Cursor getFragmentCursor(Context context, String querySelection, int fragmentId) {
     	String currentLibrary = mApp.getCurrentLibraryNormalized();
-    	
+
 	    if (currentLibrary.equals(context.getResources().getString(R.string.all_libraries))) {
 	    	if (mApp.getSharedPreferences().getBoolean("GOOGLE_PLAY_MUSIC_ENABLED", false)==true) {
 	    		querySelection += "";
 	    	} else {
 	    		querySelection += " AND " + DBAccessHelper.SONG_SOURCE + "<>" + "'GOOGLE_PLAY_MUSIC'";
 	    	}
-	    	
+
 	    	return getFragmentCursorHelper(querySelection, fragmentId);
 	    	
 	    } else if (currentLibrary.equals(context.getResources().getString(R.string.google_play_music_no_asterisk))) {
@@ -814,6 +816,97 @@ public class DBAccessHelper extends SQLiteOpenHelper {
     		return null;
     	}
     	
+    }
+
+    /**
+     * Returns the playback cursor based on the specified query selection.
+     */
+    public Cursor getPlaybackCursor(Context context, String querySelection, int fragmentId) {
+        String currentLibrary = mApp.getCurrentLibraryNormalized();
+
+        if (currentLibrary.equals(context.getResources().getString(R.string.all_libraries))) {
+            if (mApp.getSharedPreferences().getBoolean("GOOGLE_PLAY_MUSIC_ENABLED", false)==true) {
+                querySelection += "";
+            } else {
+                querySelection += " AND " + DBAccessHelper.SONG_SOURCE + "<>" + "'GOOGLE_PLAY_MUSIC'";
+            }
+
+            return getPlaybackCursorHelper(querySelection, fragmentId);
+
+        } else if (currentLibrary.equals(context.getResources().getString(R.string.google_play_music_no_asterisk))) {
+            //Check to make sure that Google Play Music is enabled.
+            if (mApp.getSharedPreferences().getBoolean("GOOGLE_PLAY_MUSIC_ENABLED", false)==true) {
+                querySelection += " AND " + DBAccessHelper.SONG_SOURCE + "=" + "'GOOGLE_PLAY_MUSIC'";
+                return getPlaybackCursorHelper(querySelection, fragmentId);
+            } else {
+                return null;
+            }
+
+        } else if (currentLibrary.equals(context.getResources().getString(R.string.on_this_device))) {
+            //Check if Google Play Music is enabled.
+            if (mApp.getSharedPreferences().getBoolean("GOOGLE_PLAY_MUSIC_ENABLED", false)==true) {
+                querySelection += " AND (" + DBAccessHelper.SONG_SOURCE + "<>" + "'GOOGLE_PLAY_MUSIC'" + " OR "
+                        + DBAccessHelper.LOCAL_COPY_PATH + "<> '')";
+            } else {
+                querySelection += " AND " + DBAccessHelper.SONG_SOURCE + "<>" + "'GOOGLE_PLAY_MUSIC'";
+            }
+
+            return getPlaybackCursorHelper(querySelection, fragmentId);
+
+        } else {
+            if (mApp.getSharedPreferences().getBoolean("GOOGLE_PLAY_MUSIC_ENABLED", false)==true) {
+                querySelection += " AND " + DBAccessHelper.LIBRARY_NAME + "=" + "'" + currentLibrary + "'";
+            } else {
+                querySelection += " AND " + DBAccessHelper.LIBRARY_NAME + "=" + "'" + currentLibrary + "'"
+                        + " AND " + DBAccessHelper.SONG_SOURCE + "<>" + "'GOOGLE_PLAY_MUSIC'";
+            }
+
+            return getPlaybackCursorInLibraryHelper(querySelection, fragmentId);
+        }
+
+    }
+
+    /**
+     * Helper method for getPlaybackCursor(). Returns the correct
+     * cursor retrieval method for the specified playback/fragment route.
+     */
+    private Cursor getPlaybackCursorHelper(String querySelection, int fragmentId) {
+        switch (fragmentId) {
+            case Common.PLAY_ALL_BY_ARTIST:
+            case Common.PLAY_ALL_BY_ALBUM_ARTIST:
+            case Common.PLAY_ALL_BY_ALBUM:
+            case Common.PLAY_ALL_SONGS:
+            case Common.PLAY_ALL_IN_GENRE:
+                return getAllSongsSearchable(querySelection);
+            case Common.PLAY_ALL_IN_PLAYLIST:
+            case Common.PLAY_ALL_IN_FOLDER:
+                //TODO
+            default:
+                return null;
+        }
+
+    }
+
+    /**
+     * Helper method for getPlaybackCursor(). Returns the correct
+     * cursor retrieval method for the specified playback/fragment
+     * route in the specified library.
+     */
+    private Cursor getPlaybackCursorInLibraryHelper(String querySelection, int fragmentId) {
+        switch (fragmentId) {
+            case Common.PLAY_ALL_BY_ARTIST:
+            case Common.PLAY_ALL_BY_ALBUM_ARTIST:
+            case Common.PLAY_ALL_BY_ALBUM:
+            case Common.PLAY_ALL_SONGS:
+            case Common.PLAY_ALL_IN_GENRE:
+                return getAllSongsInLibrarySearchable(querySelection);
+            case Common.PLAY_ALL_IN_PLAYLIST:
+            case Common.PLAY_ALL_IN_FOLDER:
+                //TODO
+            default:
+                return null;
+        }
+
     }
     
     /**

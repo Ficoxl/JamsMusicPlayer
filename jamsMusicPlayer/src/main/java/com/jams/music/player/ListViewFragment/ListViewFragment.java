@@ -230,13 +230,17 @@ public class ListViewFragment extends Fragment {
 
 		@Override
 		public void onItemClick(AdapterView<?> arg0, View view, int index, long id) {
-			mApp.getPlaybackKickstarter()
-				.initPlayback(mContext,
-                              mQuerySelection,
-                              Common.SONGS_FRAGMENT,
-                              index,
-                              true,
-                              false);
+            switch (mFragmentId) {
+                case Common.SONGS_FRAGMENT:
+                    mApp.getPlaybackKickstarter()
+                        .initPlayback(mContext,
+                                      mQuerySelection,
+                                      Common.PLAY_ALL_SONGS,
+                                      index,
+                                      true,
+                                      false);
+                    break;
+            }
 			
 		}
     	

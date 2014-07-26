@@ -27,7 +27,9 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
 import android.view.animation.DecelerateInterpolator;
+import android.view.animation.RotateAnimation;
 import android.view.animation.ScaleAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -39,6 +41,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jams.music.player.Animations.FadeAnimation;
+import com.jams.music.player.Animations.TranslateAnimation;
 import com.jams.music.player.AsyncTasks.AsyncRemovePinnedSongsTask;
 import com.jams.music.player.DBHelpers.DBAccessHelper;
 import com.jams.music.player.Drawers.QueueDrawerFragment;
@@ -361,6 +364,41 @@ public class NowPlayingActivity extends FragmentActivity {
             e.printStackTrace();
         }
 
+    }
+
+    /**
+     * Slides in the controls bar from the bottom along with a
+     * slight rotation.
+     */
+    private void animateInControlsBar() {
+        android.view.animation.TranslateAnimation slideUp =
+                new android.view.animation.TranslateAnimation(Animation.RELATIVE_TO_SELF, 0.0f,
+                                                              Animation.RELATIVE_TO_SELF, 0.0f,
+                                                              Animation.RELATIVE_TO_SELF, 2.0f,
+                                                              Animation.RELATIVE_TO_SELF, 0.0f);
+        slideUp.setDuration(300);
+        slideUp.setInterpolator(new DecelerateInterpolator(2.0f));
+
+        slideUp.setAnimationListener(new Animation.AnimationListener() {
+
+            @Override
+            public void onAnimationStart(Animation animation) {
+                mControlsLayoutHeaderParent.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+
+        });
+
+        mControlsLayoutHeaderParent.startAnimation(slideUp);
     }
     
     /**
@@ -944,7 +982,7 @@ public class NowPlayingActivity extends FragmentActivity {
 			 * swiping between different pages.
 			 */
 
-			if (mApp.getService().getCursor().getCount()!=1) {
+			if (mApp.isServiceRunning() && mApp.getService().getCursor().getCount()!=1) {
 				
 				/* Change tracks ONLY when the user has finished the swiping gesture (swipeVelocity will be zero).
 				 * Also, don't skip tracks if the new pager position is the same as the current mCursor position (indicates 
@@ -1178,6 +1216,9 @@ public class NowPlayingActivity extends FragmentActivity {
             mIsCreating = false;
         }
 
+        //Animate the controls bar in.
+        //animateInControlsBar();
+
         //Update the seekbar.
         try {
             setSeekbarDuration(mApp.getService().getCurrentMediaPlayer().getDuration()/1000);
@@ -1195,17 +1236,17 @@ public class NowPlayingActivity extends FragmentActivity {
 
         }, 1000);
 
-		if (getIntent().hasExtra(START_SERVICE) && 
+		if (getIntent().hasExtra(START_SERVICE) &&
 			getNowPlayingActivityListener()!=null) {
 			getNowPlayingActivityListener().onNowPlayingActivityReady();
-			
+
 			/**
-			 * To prevent the service from being restarted every time this 
-			 * activity is resume, we're gonna have to remove the "START_SERVICE" 
+			 * To prevent the service from being restarted every time this
+			 * activity is resume, we're gonna have to remove the "START_SERVICE"
 			 * extra from the intent.
 			 */
 			getIntent().removeExtra(START_SERVICE);
-			
+
 		}
 
 	}

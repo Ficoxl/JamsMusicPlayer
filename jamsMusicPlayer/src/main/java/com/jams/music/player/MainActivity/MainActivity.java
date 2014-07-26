@@ -1,7 +1,9 @@
 package com.jams.music.player.MainActivity;
 
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.drawable.ColorDrawable;
@@ -122,6 +124,12 @@ public class MainActivity extends FragmentActivity {
     	mDrawerLayout.setDrawerListener(mDrawerToggle);
     	getActionBar().setDisplayHomeAsUpEnabled(true);
     	getActionBar().setDisplayShowHomeEnabled(true);
+
+        //Check if this is the first time the app is being started.
+        if (mApp.getSharedPreferences().getBoolean(Common.FIRST_RUN, true)==true) {
+            showAlbumArtScanningDialog();
+            mApp.getSharedPreferences().edit().putBoolean(Common.FIRST_RUN, false).commit();
+        }
     	
 	}
 	
@@ -304,15 +312,34 @@ public class MainActivity extends FragmentActivity {
 		   						   .commit();
 		
 	}
-	
+
 	/**
 	 * Called when the user taps on the "Play all" or "Shuffle all" action button.
 	 */
 	public void playAll(boolean shuffle) {
 		//Start the playback sequence.
-		mApp.getPlaybackKickstarter().initPlayback(mContext, "", Common.SONGS_FRAGMENT, 0, true, true);
-		
+		mApp.getPlaybackKickstarter().initPlayback(mContext, "", Common.PLAY_ALL_SONGS, 0, true, true);
+
 	}
+
+    /**
+     * Displays the message dialog for album art processing.
+     */
+    private void showAlbumArtScanningDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.album_art);
+        builder.setMessage(R.string.scanning_for_album_art_details);
+        builder.setPositiveButton(R.string.got_it, new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+
+        });
+
+        builder.create().show();
+    }
 	
 	/**
 	 * Initializes the ActionBar.

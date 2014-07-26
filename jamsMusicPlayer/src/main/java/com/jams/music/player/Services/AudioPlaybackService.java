@@ -1628,7 +1628,11 @@ public class AudioPlaybackService extends Service {
 	public boolean prepareMediaPlayer(int songIndex) {
 		
 		try {
-			
+
+            //Stop here if we're at the end of the queue.
+            if (songIndex==-1)
+                return true;
+
 			//Reset mMediaPlayer to it's uninitialized state.
 	    	getMediaPlayer().reset();
 	    	
@@ -1697,6 +1701,10 @@ public class AudioPlaybackService extends Service {
 	public boolean prepareMediaPlayer2(int songIndex) {
 		
 		try {
+
+            //Stop here if we're at the end of the queue.
+            if (songIndex==-1)
+                return true;
 			
 			//Reset mMediaPlayer2 to its uninitialized state.
 	    	getMediaPlayer2().reset();
@@ -3031,9 +3039,9 @@ public class AudioPlaybackService extends Service {
         }
 
         @Override
-        public void onServiceCursorFailed(Exception exception) {
+        public void onServiceCursorFailed(String exceptionMessage) {
             //We don't have a valid cursor, so stop the service.
-            exception.printStackTrace();
+            Log.e("SERVICE CURSOR EXCEPTION", "onServiceCursorFailed(): " + exceptionMessage);
             Toast.makeText(mContext, R.string.unable_to_start_playback, Toast.LENGTH_SHORT).show();
             stopSelf();
 

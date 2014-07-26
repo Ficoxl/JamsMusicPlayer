@@ -1,7 +1,5 @@
 package com.jams.music.player.Dialogs;
 
-import java.io.File;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -15,9 +13,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.jams.music.player.R;
 import com.jams.music.player.Helpers.TypefaceHelper;
-import com.jams.music.player.PlaylistsFragment.PlaylistsFragment;
+import com.jams.music.player.R;
+
+import java.io.File;
 
 public class RenamePlaylistDialog extends DialogFragment {
 
@@ -98,7 +97,7 @@ public class RenamePlaylistDialog extends DialogFragment {
 				Toast.makeText(parentActivity, R.string.playlist_renamed, Toast.LENGTH_SHORT).show();
 				
 				//Refresh the playlists list view.
-				PlaylistsFragment playlistsFragment = new PlaylistsFragment();
+				//PlaylistsFragment playlistsFragment = new PlaylistsFragment();
 				//playlistsFragment.refreshPlaylists();
 				
 				//playlistsDBHelper.close();

@@ -154,7 +154,7 @@ public class LauncherActivity extends FragmentActivity {
         int updatedStartCount = mApp.getSharedPreferences().getInt("START_COUNT", 1);
 		
 		//Launch the appropriate activity based on the "FIRST RUN" flag.
-		if (mApp.getSharedPreferences().getBoolean("FIRST_RUN", true)==true) {	
+		if (mApp.getSharedPreferences().getBoolean(Common.FIRST_RUN, true)==true) {
 			
         	//Create the default Playlists directory if it doesn't exist.
         	File playlistsDirectory = new File(Environment.getExternalStorageDirectory() + "/Playlists/");
@@ -163,7 +163,7 @@ public class LauncherActivity extends FragmentActivity {
         	}
 			
 			//Disable equalizer for HTC devices by default.
-			if (mApp.getSharedPreferences().getBoolean("FIRST_RUN", true)==true && 
+			if (mApp.getSharedPreferences().getBoolean(Common.FIRST_RUN, true)==true &&
 				Build.PRODUCT.contains("HTC")) {
 				mApp.getSharedPreferences().edit().putBoolean("EQUALIZER_ENABLED", false).commit();
 			}

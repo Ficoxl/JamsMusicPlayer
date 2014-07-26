@@ -1,21 +1,5 @@
 package com.jams.music.player.Dialogs;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.NoSuchElementException;
-
-import org.jaudiotagger.audio.AudioFile;
-import org.jaudiotagger.audio.AudioFileIO;
-import org.jaudiotagger.audio.exceptions.CannotReadException;
-import org.jaudiotagger.audio.exceptions.CannotWriteException;
-import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
-import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
-import org.jaudiotagger.tag.FieldDataInvalidException;
-import org.jaudiotagger.tag.FieldKey;
-import org.jaudiotagger.tag.KeyNotFoundException;
-import org.jaudiotagger.tag.Tag;
-import org.jaudiotagger.tag.TagException;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -34,14 +18,25 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.jams.music.player.R;
-import com.jams.music.player.AlbumArtistsFlippedSongsActivity.AlbumArtistsFlippedSongsFragment;
-import com.jams.music.player.AlbumsFlippedActivity.AlbumsFlippedFragment;
-import com.jams.music.player.ArtistsFlippedSongsActivity.ArtistsFlippedSongsFragment;
 import com.jams.music.player.DBHelpers.DBAccessHelper;
-import com.jams.music.player.GenresFlippedActivity.GenresFlippedFragment;
 import com.jams.music.player.Helpers.TypefaceHelper;
-import com.jams.music.player.MainActivity.MainActivity;
+import com.jams.music.player.R;
+
+import org.jaudiotagger.audio.AudioFile;
+import org.jaudiotagger.audio.AudioFileIO;
+import org.jaudiotagger.audio.exceptions.CannotReadException;
+import org.jaudiotagger.audio.exceptions.CannotWriteException;
+import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
+import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
+import org.jaudiotagger.tag.FieldDataInvalidException;
+import org.jaudiotagger.tag.FieldKey;
+import org.jaudiotagger.tag.KeyNotFoundException;
+import org.jaudiotagger.tag.Tag;
+import org.jaudiotagger.tag.TagException;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.NoSuchElementException;
 
 public class ID3sSongEditorDialog extends DialogFragment {
 	
@@ -402,7 +397,7 @@ public class ID3sSongEditorDialog extends DialogFragment {
 				if (saveSucceeded==true) {
 					Toast.makeText(getActivity().getApplicationContext(), R.string.song_tags_saved, Toast.LENGTH_SHORT).show();
 					
-					//Reinitialize the calling fragment.
+/*					//Reinitialize the calling fragment.
 					if (CALLING_FRAGMENT.equals("SONGS_FRAGMENT")) {
 
 
@@ -418,7 +413,7 @@ public class ID3sSongEditorDialog extends DialogFragment {
 					} else if (CALLING_FRAGMENT.equals("GENRES_FLIPPED_SONGS_FRAGMENT")) {
 						GenresFlippedFragment.getCursor();
 						GenresFlippedFragment.genresFlippedListViewAdapter.notifyDataSetChanged();
-					}
+					}*/
 					
 				} else {
 					Toast.makeText(parentActivity, R.string.error_occurred_tags, Toast.LENGTH_LONG).show();

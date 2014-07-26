@@ -110,7 +110,27 @@ public class BrowserSubListActivity extends FragmentActivity {
 
             @Override
             public void onClick(View v) {
-                //TODO
+                int playbackRouteId = Common.PLAY_ALL_SONGS;
+                switch (mFragmentId) {
+                    case Common.ARTISTS_FLIPPED_SONGS_FRAGMENT:
+                        playbackRouteId = Common.PLAY_ALL_BY_ALBUM;
+                        break;
+                    case Common.ALBUM_ARTISTS_FLIPPED_SONGS_FRAGMENT:
+                        playbackRouteId = Common.PLAY_ALL_BY_ALBUM;
+                        break;
+                    case Common.GENRES_FLIPPED_SONGS_FRAGMENT:
+                        playbackRouteId = Common.PLAY_ALL_BY_ALBUM;
+                        break;
+                }
+
+                mApp.getPlaybackKickstarter()
+                    .initPlayback(mContext,
+                            mQuerySelection,
+                            playbackRouteId,
+                            0,
+                            true,
+                            false);
+
             }
 
         });
@@ -341,13 +361,28 @@ public class BrowserSubListActivity extends FragmentActivity {
     }
 
     /**
-     * Item click listener for the GridView/ListView.
+     * Item click listener for the ListView.
      */
     private AdapterView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
 
         @Override
         public void onItemClick(AdapterView<?> arg0, View view, int index, long id) {
+            int playbackRouteId = Common.PLAY_ALL_SONGS;
+            switch (mFragmentId) {
+                case Common.ARTISTS_FLIPPED_SONGS_FRAGMENT:
+                case Common.ALBUM_ARTISTS_FLIPPED_SONGS_FRAGMENT:
+                case Common.GENRES_FLIPPED_FRAGMENT:
+                    playbackRouteId = Common.PLAY_ALL_BY_ALBUM;
+                    break;
+            }
 
+            mApp.getPlaybackKickstarter()
+                .initPlayback(mContext,
+                        mQuerySelection,
+                        playbackRouteId,
+                        index,
+                        true,
+                        false);
 
         }
 
