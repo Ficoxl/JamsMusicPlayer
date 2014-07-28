@@ -1,17 +1,24 @@
 package com.jams.music.player.Helpers;
 
+import android.content.ContentUris;
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.util.Log;
 
 import com.jams.music.player.DBHelpers.DBAccessHelper;
+import com.jams.music.player.DBHelpers.MediaStoreAccessHelper;
 import com.jams.music.player.R;
 import com.jams.music.player.Utils.Common;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import com.squareup.picasso.Transformation;
+
+import java.util.ArrayList;
 
 /**
  * Helper class for the current song.
@@ -32,7 +39,7 @@ public class SongHelper {
 	private String mArtist;
 	private String mAlbum;
 	private String mAlbumArtist;
-	private long mDuration;
+	private String mDuration;
 	private String mFilePath;
 	private String mGenre;
 	private String mId;
@@ -72,20 +79,20 @@ public class SongHelper {
 		
 		if (mApp.isServiceRunning()) {
 			mApp.getService().getCursor().moveToPosition(mApp.getService().getPlaybackIndecesList().get(index));
-			
-			this.setId(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_ID)));
-			this.setTitle(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_TITLE)));
-			this.setAlbum(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_ALBUM)));
-			this.setArtist(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_ARTIST)));
-			this.setAlbumArtist(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_ALBUM_ARTIST)));
-			this.setGenre(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_GENRE)));
-			this.setDuration(mApp.getService().getCursor().getLong(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_DURATION)));
-			
-			this.setAlbumArtPath(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_ALBUM_ART_PATH)));
-			this.setFilePath(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_FILE_PATH)));
-			this.setSource(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_SOURCE)));
-			this.setLocalCopyPath(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.LOCAL_COPY_PATH)));	
-			this.setSavedPosition(mApp.getService().getCursor().getLong(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SAVED_POSITION)));
+
+            this.setId(mApp.getService().getCursor().getString(getIdColumnIndex()));
+            this.setTitle(mApp.getService().getCursor().getString(getTitleColumnIndex()));
+            this.setAlbum(mApp.getService().getCursor().getString(getAlbumColumnIndex()));
+            this.setArtist(mApp.getService().getCursor().getString(getArtistColumnIndex()));
+            this.setAlbumArtist(mApp.getService().getCursor().getString(getAlbumArtistColumnIndex()));
+            this.setGenre(determineGenreName(context));
+            this.setDuration(determineDuration());
+
+            this.setFilePath(mApp.getService().getCursor().getString(getFilePathColumnIndex()));
+            this.setAlbumArtPath(determineAlbumArtPath());
+            this.setSource(determineSongSource());
+            this.setLocalCopyPath(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.LOCAL_COPY_PATH)));
+            this.setSavedPosition(determineSavedPosition());
 
             mApp.getPicasso()
                 .load(getAlbumArtPath())
@@ -112,19 +119,19 @@ public class SongHelper {
         if (mApp.isServiceRunning()) {
             mApp.getService().getCursor().moveToPosition(mApp.getService().getPlaybackIndecesList().get(index));
 
-            this.setId(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_ID)));
-            this.setTitle(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_TITLE)));
-            this.setAlbum(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_ALBUM)));
-            this.setArtist(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_ARTIST)));
-            this.setAlbumArtist(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_ALBUM_ARTIST)));
-            this.setGenre(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_GENRE)));
-            this.setDuration(mApp.getService().getCursor().getLong(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_DURATION)));
+            this.setId(mApp.getService().getCursor().getString(getIdColumnIndex()));
+            this.setTitle(mApp.getService().getCursor().getString(getTitleColumnIndex()));
+            this.setAlbum(mApp.getService().getCursor().getString(getAlbumColumnIndex()));
+            this.setArtist(mApp.getService().getCursor().getString(getArtistColumnIndex()));
+            this.setAlbumArtist(mApp.getService().getCursor().getString(getAlbumArtistColumnIndex()));
+            this.setGenre(determineGenreName(context));
+            this.setDuration(determineDuration());
 
-            this.setAlbumArtPath(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_ALBUM_ART_PATH)));
-            this.setFilePath(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_FILE_PATH)));
-            this.setSource(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_SOURCE)));
+            this.setFilePath(mApp.getService().getCursor().getString(getFilePathColumnIndex()));
+            this.setAlbumArtPath(determineAlbumArtPath());
+            this.setSource(determineSongSource());
             this.setLocalCopyPath(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.LOCAL_COPY_PATH)));
-            this.setSavedPosition(mApp.getService().getCursor().getLong(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SAVED_POSITION)));
+            this.setSavedPosition(determineSavedPosition());
 
             mApp.getPicasso()
                     .load(getAlbumArtPath())
@@ -152,19 +159,19 @@ public class SongHelper {
         if (mApp.isServiceRunning()) {
             mApp.getService().getCursor().moveToPosition(mApp.getService().getPlaybackIndecesList().get(index));
 
-            this.setId(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_ID)));
-            this.setTitle(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_TITLE)));
-            this.setAlbum(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_ALBUM)));
-            this.setArtist(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_ARTIST)));
-            this.setAlbumArtist(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_ALBUM_ARTIST)));
-            this.setGenre(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_GENRE)));
-            this.setDuration(mApp.getService().getCursor().getLong(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_DURATION)));
+            this.setId(mApp.getService().getCursor().getString(getIdColumnIndex()));
+            this.setTitle(mApp.getService().getCursor().getString(getTitleColumnIndex()));
+            this.setAlbum(mApp.getService().getCursor().getString(getAlbumColumnIndex()));
+            this.setArtist(mApp.getService().getCursor().getString(getArtistColumnIndex()));
+            this.setAlbumArtist(mApp.getService().getCursor().getString(getAlbumArtistColumnIndex()));
+            this.setGenre(determineGenreName(context));
+            this.setDuration(determineDuration());
 
-            this.setAlbumArtPath(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_ALBUM_ART_PATH)));
-            this.setFilePath(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_FILE_PATH)));
-            this.setSource(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_SOURCE)));
+            this.setFilePath(mApp.getService().getCursor().getString(getFilePathColumnIndex()));
+            this.setAlbumArtPath(determineAlbumArtPath());
+            this.setSource(determineSongSource());
             this.setLocalCopyPath(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.LOCAL_COPY_PATH)));
-            this.setSavedPosition(mApp.getService().getCursor().getLong(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SAVED_POSITION)));
+            this.setSavedPosition(determineSavedPosition());
 
         }
 
@@ -229,6 +236,261 @@ public class SongHelper {
 
     };
 
+    private int getIdColumnIndex() {
+        if (mApp.getService().getCursor().getColumnIndex(MediaStore.Audio.Media.IS_MUSIC)==-1) {
+            //We're dealing with Jams' internal DB schema.
+            return mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_ID);
+        } else {
+            String isMusicColName = MediaStore.Audio.Media.IS_MUSIC;
+            int isMusicColumnIndex = mApp.getService().getCursor().getColumnIndex(isMusicColName);
+
+            //Check if the current row is from Jams' internal DB schema or MediaStore.
+            if (mApp.getService().getCursor().getString(isMusicColumnIndex).isEmpty())
+                //We're dealing with Jams' internal DB schema.
+                return mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_ID);
+            else
+                //The current row is from MediaStore's DB schema.
+                return mApp.getService().getCursor().getColumnIndex(MediaStore.Audio.Media._ID);
+
+        }
+
+    }
+
+    private int getFilePathColumnIndex() {
+        if (mApp.getService().getCursor().getColumnIndex(MediaStore.Audio.Media.IS_MUSIC)==-1) {
+            //We're dealing with Jams' internal DB schema.
+            return mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_FILE_PATH);
+        } else {
+            String isMusicColName = MediaStore.Audio.Media.IS_MUSIC;
+            int isMusicColumnIndex = mApp.getService().getCursor().getColumnIndex(isMusicColName);
+
+            //Check if the current row is from Jams' internal DB schema or MediaStore.
+            if (mApp.getService().getCursor().getString(isMusicColumnIndex).isEmpty())
+                //We're dealing with Jams' internal DB schema.
+                return mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_FILE_PATH);
+            else
+                //The current row is from MediaStore's DB schema.
+                return mApp.getService().getCursor().getColumnIndex(MediaStore.Audio.Media.DATA);
+
+        }
+
+    }
+
+    private int getTitleColumnIndex() {
+        if (mApp.getService().getCursor().getColumnIndex(MediaStore.Audio.Media.IS_MUSIC)==-1) {
+            //We're dealing with Jams' internal DB schema.
+            return mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_TITLE);
+        } else {
+            String isMusicColName = MediaStore.Audio.Media.IS_MUSIC;
+            int isMusicColumnIndex = mApp.getService().getCursor().getColumnIndex(isMusicColName);
+
+            //Check if the current row is from Jams' internal DB schema or MediaStore.
+            if (mApp.getService().getCursor().getString(isMusicColumnIndex).isEmpty())
+                //We're dealing with Jams' internal DB schema.
+                return mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_TITLE);
+            else
+                //The current row is from MediaStore's DB schema.
+                return mApp.getService().getCursor().getColumnIndex(MediaStore.Audio.Media.TITLE);
+
+        }
+
+    }
+
+    private int getArtistColumnIndex() {
+        if (mApp.getService().getCursor().getColumnIndex(MediaStore.Audio.Media.IS_MUSIC)==-1) {
+            //We're dealing with Jams' internal DB schema.
+            return mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_ARTIST);
+        } else {
+            String isMusicColName = MediaStore.Audio.Media.IS_MUSIC;
+            int isMusicColumnIndex = mApp.getService().getCursor().getColumnIndex(isMusicColName);
+
+            //Check if the current row is from Jams' internal DB schema or MediaStore.
+            if (mApp.getService().getCursor().getString(isMusicColumnIndex).isEmpty())
+                //We're dealing with Jams' internal DB schema.
+                return mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_ARTIST);
+            else
+                //The current row is from MediaStore's DB schema.
+                return mApp.getService().getCursor().getColumnIndex(MediaStore.Audio.Media.ARTIST);
+
+        }
+
+    }
+
+    private int getAlbumColumnIndex() {
+        if (mApp.getService().getCursor().getColumnIndex(MediaStore.Audio.Media.IS_MUSIC)==-1) {
+            //We're dealing with Jams' internal DB schema.
+            return mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_ALBUM);
+        } else {
+            String isMusicColName = MediaStore.Audio.Media.IS_MUSIC;
+            int isMusicColumnIndex = mApp.getService().getCursor().getColumnIndex(isMusicColName);
+
+            //Check if the current row is from Jams' internal DB schema or MediaStore.
+            if (mApp.getService().getCursor().getString(isMusicColumnIndex).isEmpty())
+                //We're dealing with Jams' internal DB schema.
+                return mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_ALBUM);
+            else
+                //The current row is from MediaStore's DB schema.
+                return mApp.getService().getCursor().getColumnIndex(MediaStore.Audio.Media.ALBUM);
+
+        }
+
+    }
+
+    private int getAlbumArtistColumnIndex() {
+        if (mApp.getService().getCursor().getColumnIndex(MediaStore.Audio.Media.IS_MUSIC)==-1) {
+            //We're dealing with Jams' internal DB schema.
+            return mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_ALBUM_ARTIST);
+        } else {
+            String isMusicColName = MediaStore.Audio.Media.IS_MUSIC;
+            int isMusicColumnIndex = mApp.getService().getCursor().getColumnIndex(isMusicColName);
+
+            //Check if the current row is from Jams' internal DB schema or MediaStore.
+            if (mApp.getService().getCursor().getString(isMusicColumnIndex).isEmpty())
+                //We're dealing with Jams' internal DB schema.
+                return mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_ALBUM_ARTIST);
+            else
+                //The current row is from MediaStore's DB schema.
+                if (mApp.getService().getCursor().getColumnIndex(MediaStoreAccessHelper.ALBUM_ARTIST)!=-1)
+                    return mApp.getService().getCursor().getColumnIndex(MediaStoreAccessHelper.ALBUM_ARTIST);
+                else
+                    return mApp.getService().getCursor().getColumnIndex(MediaStore.Audio.Media.ARTIST);
+
+        }
+
+    }
+
+    private String determineGenreName(Context context) {
+        if (mApp.getService().getCursor().getColumnIndex(MediaStore.Audio.Media.IS_MUSIC)==-1) {
+            //We're dealing with Jams' internal DB schema.
+            int colIndex = mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_GENRE);
+            return mApp.getService().getCursor().getString(colIndex);
+        } else {
+            String isMusicColName = MediaStore.Audio.Media.IS_MUSIC;
+            int isMusicColumnIndex = mApp.getService().getCursor().getColumnIndex(isMusicColName);
+
+            //Check if the current row is from Jams' internal DB schema or MediaStore.
+            if (mApp.getService().getCursor().getString(isMusicColumnIndex).isEmpty()) {
+                //We're dealing with Jams' internal DB schema.
+                int colIndex = mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_GENRE);
+                return mApp.getService().getCursor().getString(colIndex);
+
+            } else {
+                //The current row is from MediaStore's DB schema.
+                return ""; //We're not using the genres field for now, so we'll leave it blank.
+
+            }
+
+        }
+
+    }
+
+    private String determineAlbumArtPath() {
+        if (mApp.getService().getCursor().getColumnIndex(MediaStore.Audio.Media.IS_MUSIC)==-1) {
+            //We're dealing with Jams' internal DB schema.
+            int colIndex = mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_ALBUM_ART_PATH);
+            return mApp.getService().getCursor().getString(colIndex);
+        } else {
+            String isMusicColName = MediaStore.Audio.Media.IS_MUSIC;
+            int isMusicColumnIndex = mApp.getService().getCursor().getColumnIndex(isMusicColName);
+
+            //Check if the current row is from Jams' internal DB schema or MediaStore.
+            if (mApp.getService().getCursor().getString(isMusicColumnIndex).isEmpty()) {
+                //We're dealing with Jams' internal DB schema.
+                int colIndex = mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_ALBUM_ART_PATH);
+                return mApp.getService().getCursor().getString(colIndex);
+
+            } else {
+                //The current row is from MediaStore's DB schema.
+                final Uri ART_CONTENT_URI = Uri.parse("content://media/external/audio/albumart");
+                int albumIdColIndex = mApp.getService().getCursor().getColumnIndex(MediaStore.Audio.Media.ALBUM_ID);
+                long albumId = mApp.getService().getCursor().getLong(albumIdColIndex);
+
+                return ContentUris.withAppendedId(ART_CONTENT_URI, albumId).toString();
+
+            }
+
+        }
+
+    }
+
+    private String determineDuration() {
+        if (mApp.getService().getCursor().getColumnIndex(MediaStore.Audio.Media.IS_MUSIC)==-1) {
+            //We're dealing with Jams' internal DB schema.
+            int colIndex = mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_DURATION);
+            return mApp.getService().getCursor().getString(colIndex);
+        } else {
+            String isMusicColName = MediaStore.Audio.Media.IS_MUSIC;
+            int isMusicColumnIndex = mApp.getService().getCursor().getColumnIndex(isMusicColName);
+
+            //Check if the current row is from Jams' internal DB schema or MediaStore.
+            if (mApp.getService().getCursor().getString(isMusicColumnIndex).isEmpty()) {
+                //We're dealing with Jams' internal DB schema.
+                int colIndex = mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_DURATION);
+                return mApp.getService().getCursor().getString(colIndex);
+
+            } else {
+                //The current row is from MediaStore's DB schema.
+                int durationColIndex = mApp.getService().getCursor().getColumnIndex(MediaStore.Audio.Media.DURATION);
+                long duration = mApp.getService().getCursor().getLong(durationColIndex);
+
+                return mApp.convertMillisToMinsSecs(duration);
+
+            }
+
+        }
+
+    }
+
+    private String determineSongSource() {
+        if (mApp.getService().getCursor().getColumnIndex(MediaStore.Audio.Media.IS_MUSIC)==-1) {
+            //We're dealing with Jams' internal DB schema.
+            int colIndex = mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_SOURCE);
+            return mApp.getService().getCursor().getString(colIndex);
+        } else {
+            String isMusicColName = MediaStore.Audio.Media.IS_MUSIC;
+            int isMusicColumnIndex = mApp.getService().getCursor().getColumnIndex(isMusicColName);
+
+            //Check if the current row is from Jams' internal DB schema or MediaStore.
+            if (mApp.getService().getCursor().getString(isMusicColumnIndex).isEmpty()) {
+                //We're dealing with Jams' internal DB schema.
+                int colIndex = mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SONG_SOURCE);
+                return mApp.getService().getCursor().getString(colIndex);
+
+            } else {
+                //The current row is from MediaStore's DB schema.
+                return DBAccessHelper.LOCAL;
+
+            }
+
+        }
+
+    }
+
+    private long determineSavedPosition() {
+        if (mApp.getService().getCursor().getColumnIndex(MediaStore.Audio.Media.IS_MUSIC)==-1) {
+            //We're dealing with Jams' internal DB schema.
+            int colIndex = mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SAVED_POSITION);
+            return mApp.getService().getCursor().getLong(colIndex);
+        } else {
+            String isMusicColName = MediaStore.Audio.Media.IS_MUSIC;
+            int isMusicColumnIndex = mApp.getService().getCursor().getColumnIndex(isMusicColName);
+
+            //Check if the current row is from Jams' internal DB schema or MediaStore.
+            if (mApp.getService().getCursor().getString(isMusicColumnIndex).isEmpty()) {
+                //We're dealing with Jams' internal DB schema.
+                int colIndex = mApp.getService().getCursor().getColumnIndex(DBAccessHelper.SAVED_POSITION);
+                return mApp.getService().getCursor().getLong(colIndex);
+
+            } else {
+                //The current row is from MediaStore's DB schema.
+                return -1;
+
+            }
+
+        }
+
+    }
+
     public int getSongIndex() {
         return mIndex;
     }
@@ -265,11 +527,11 @@ public class SongHelper {
 		mAlbumArtist = albumArtist;
 	}
 	
-	public long getDuration() {
+	public String getDuration() {
 		return mDuration;
 	}
 	
-	public void setDuration(long duration) {
+	public void setDuration(String duration) {
 		mDuration = duration;
 	}
 	

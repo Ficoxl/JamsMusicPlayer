@@ -8,70 +8,18 @@
         android:layout_height="fill_parent" 
         android:visibility="visible"
         android:orientation="horizontal" >
-       
-	    <RelativeLayout
-	        android:id="@+id/folders_view_layout_content"
-	        android:layout_width="fill_parent"
-	        android:layout_height="fill_parent"
-	        android:layout_weight="1" >
-	        
-	        <RelativeLayout
-			    android:layout_width="match_parent"
-			    android:layout_height="wrap_content"
-			    android:layout_marginTop="5dp"
-			    android:layout_below="@+id/current_directory_path"
-			    android:id="@+id/back_to_parent_directory_view" >
-		
-			    <ImageView
-			        android:id="@+id/back_to_parent_directory_icon"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:layout_alignParentLeft="true"
-			        android:layout_centerVertical="true"
-			        android:layout_marginLeft="15dp"
-			        android:paddingTop="10dp"
-			        android:paddingBottom="10dp"
-			        android:src="@drawable/back_folders_view_light" />
-			
-			    <TextView
-			        android:id="@+id/back_to_parent_directory_text"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:layout_centerVertical="true"
-			        android:layout_marginLeft="15dp"
-			        android:layout_toRightOf="@+id/back_to_parent_directory_icon"
-			        android:text="@string/back_to_parent_directory"
-			        android:textAppearance="?android:attr/textAppearanceMedium" />
-			
-			</RelativeLayout>
 
-		    <TextView
-		        android:id="@+id/current_directory_path"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_alignParentLeft="true"
-		        android:layout_alignParentTop="true"
-		        android:layout_marginLeft="15dp"
-		        android:layout_marginRight="15dp"
-		        android:layout_marginTop="15dp"
-		        android:ellipsize="end"
-		        android:maxLines="1"
-		        android:layout_below="@+id/current_directory_text"
-		        android:text="/mnt/sdcard/Music"
-		        android:textAppearance="?android:attr/textAppearanceSmall" />
-		
-		    <ListView
+            <ListView
 		        android:id="@+id/folders_list_view"
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
-		        android:layout_below="@+id/back_to_parent_directory_view"
-		        android:layout_centerHorizontal="true"
+                android:layout_centerHorizontal="true"
 		        android:drawSelectorOnTop="true"
-		        android:layout_marginTop="5dp" >
+		        android:layout_marginTop="5dp"
+                android:layout_weight="1"
+                android:layout_below="@+id/current_directory_text">
 		    </ListView>
-	        
-	   	</RelativeLayout>
-	   	
+
 	    <LinearLayout
 	        android:id="@+id/folders_view_details_pane"
 	        android:layout_width="match_parent"

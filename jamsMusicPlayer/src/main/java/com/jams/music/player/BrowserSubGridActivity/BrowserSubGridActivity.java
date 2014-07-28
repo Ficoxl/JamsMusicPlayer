@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
+import android.view.DragEvent;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
@@ -86,6 +87,9 @@ public class BrowserSubGridActivity extends FragmentActivity {
         mFragmentId = getIntent().getExtras().getInt("fragmentId");
         mHeaderText = getIntent().getExtras().getString("headerText");
         mHeaderSubText = getIntent().getExtras().getString("subText");
+
+        if (mHeaderText==null || mHeaderText.isEmpty())
+            mHeaderText = mContext.getResources().getString(R.string.unknown_genre);
 
         mHeaderLayout = (RelativeLayout) findViewById(R.id.browser_sub_header_layout);
         mHeaderImage = (ImageView) findViewById(R.id.browser_sub_header_image);
@@ -306,6 +310,13 @@ public class BrowserSubGridActivity extends FragmentActivity {
                     mDBColumnsMap.put(BrowserSubGridAdapter.FILE_PATH, DBAccessHelper.SONG_FILE_PATH);
                     mDBColumnsMap.put(BrowserSubGridAdapter.ARTWORK_PATH, DBAccessHelper.SONG_ALBUM_ART_PATH);
                     mDBColumnsMap.put(BrowserSubGridAdapter.FIELD_1, DBAccessHelper.SONGS_COUNT);
+                case Common.GENRES_FLIPPED_FRAGMENT:
+                    mDBColumnsMap.put(BrowserSubGridAdapter.TITLE_TEXT, DBAccessHelper.SONG_ALBUM);
+                    mDBColumnsMap.put(BrowserSubGridAdapter.SOURCE, DBAccessHelper.SONG_SOURCE);
+                    mDBColumnsMap.put(BrowserSubGridAdapter.FILE_PATH, DBAccessHelper.SONG_FILE_PATH);
+                    mDBColumnsMap.put(BrowserSubGridAdapter.ARTWORK_PATH, DBAccessHelper.SONG_ALBUM_ART_PATH);
+                    mDBColumnsMap.put(BrowserSubGridAdapter.FIELD_1, DBAccessHelper.SONG_ARTIST);
+                    mDBColumnsMap.put(BrowserSubGridAdapter.FIELD_2, DBAccessHelper.SONG_ARTIST); //Used by GenresFlippedSongs.
                     break;
             }
 
@@ -325,6 +336,8 @@ public class BrowserSubGridActivity extends FragmentActivity {
                     break;
                 case Common.ALBUMS_FLIPPED_FRAGMENT:
                     mQuerySelection = " AND " + DBAccessHelper.SONG_ALBUM + "=";
+                case Common.GENRES_FLIPPED_FRAGMENT:
+                    mQuerySelection = " AND " + DBAccessHelper.SONG_GENRE + "=";
                     break;
             }
 
@@ -342,7 +355,7 @@ public class BrowserSubGridActivity extends FragmentActivity {
     }
 
     /**
-     * Item click listener for the GridView/ListView.
+     * Item click listener for the GridView.
      */
     private AdapterView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
 
@@ -352,6 +365,7 @@ public class BrowserSubGridActivity extends FragmentActivity {
             Bundle bundle = new Bundle();
             bundle.putString("headerImagePath", (String) view.getTag(R.string.album_art));
             bundle.putString("headerText", (String) view.getTag(R.string.title_text));
+            bundle.putString("field2", (String) view.getTag(R.string.field_2));
             bundle.putString("subText", mHeaderText);
             bundle.putInt("fragmentId", getNewFragmentId());
 
@@ -374,6 +388,8 @@ public class BrowserSubGridActivity extends FragmentActivity {
                 return Common.ARTISTS_FLIPPED_SONGS_FRAGMENT;
             case Common.ALBUM_ARTISTS_FLIPPED_FRAGMENT:
                 return Common.ALBUM_ARTISTS_FLIPPED_SONGS_FRAGMENT;
+            case Common.GENRES_FLIPPED_FRAGMENT:
+                return Common.GENRES_FLIPPED_SONGS_FRAGMENT;
             default:
                 return -1;
         }

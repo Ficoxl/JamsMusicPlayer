@@ -13,6 +13,7 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.comparator.NameFileComparator;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -23,17 +24,24 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
+import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
@@ -45,6 +53,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.andraskindler.quickscroll.QuickScroll;
+import com.jams.music.player.Helpers.PauseOnScrollHelper;
+import com.jams.music.player.ListViewFragment.ListViewCardsAdapter;
 import com.jams.music.player.R;
 import com.jams.music.player.AsyncTasks.AsyncDeleteTask;
 import com.jams.music.player.AsyncTasks.AsyncMoveTask;
@@ -67,13 +78,9 @@ public class FilesFoldersFragment extends Fragment {
 	private Context mContext;
 	private FilesFoldersFragment mFilesFoldersFragment;
 	private Common mApp;
-	private boolean mLandscape = false;
 	
 	//UI Elements.
-	private RelativeLayout backToParentDirectoryLayout;
 	private ListView listView;
-	private TextView currentDirectoryText;
-	private TextView currentDirectoryPath;
 	private View foldersViewLayout;
 	private TextView landscapeFolderName;
 	private TextView landscapeFreeSpaceText;
@@ -89,7 +96,7 @@ public class FilesFoldersFragment extends Fragment {
 	private List<String> fileFolderNameList = null; 
 	private List<String> fileFolderPathList = null;
 	private List<String> fileFolderSizeList = null;
-	private List<String> fileFolderTypeList = null;
+	private List<Integer> fileFolderTypeList = null;
 	
 	//File size/unit dividers
 	private final long kiloBytes = 1024;
@@ -124,7 +131,13 @@ public class FilesFoldersFragment extends Fragment {
 	private Handler mHandler = new Handler();
 	public static boolean REFRESH_REQUIRED = false;
 	private String currentFolderPath;
-	
+
+    public static final int FOLDER = 0;
+    public static final int FILE = 1;
+    public static final int AUDIO_FILE = 3;
+    public static final int PICTURE_FILE = 4;
+    public static final int VIDEO_FILE = 5;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_folders, container, false);
@@ -137,37 +150,23 @@ public class FilesFoldersFragment extends Fragment {
 
         listView = (ListView) rootView.findViewById(R.id.folders_list_view);
         listView.setFastScrollEnabled(true);
-        registerForContextMenu(listView);
+        listView.setVisibility(View.INVISIBLE);
         
 		//Set the background color based on the theme.
-		if (mApp.getCurrentTheme()==Common.LIGHT_THEME) {
-			rootView.setBackgroundColor(0xFFEEEEEE);
-			listView.setDivider(getResources().getDrawable(R.drawable.transparent_drawable));
-			listView.setDividerHeight(10);
-			RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) listView.getLayoutParams();
-			layoutParams.setMargins(20, 20, 20, 20);
-			listView.setLayoutParams(layoutParams);
+        rootView.setBackgroundColor(UIElementsHelper.getBackgroundColor(mContext));
 
-		} else if (mApp.getCurrentTheme()==Common.DARK_THEME) {
-			rootView.setBackgroundColor(0xFF111111);
-			listView.setDividerHeight(0);
-			listView.setDivider(getResources().getDrawable(R.drawable.transparent_drawable));
-			listView.setDividerHeight(10);
-			RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) listView.getLayoutParams();
-			layoutParams.setMargins(20, 20, 20, 20);
-			listView.setLayoutParams(layoutParams);
+        //Apply the ListView params.
+        //Apply the ListViews' dividers.
+        if (mApp.getCurrentTheme()==Common.DARK_THEME) {
+            listView.setDivider(mContext.getResources().getDrawable(R.drawable.icon_list_divider));
+        } else {
+            listView.setDivider(mContext.getResources().getDrawable(R.drawable.icon_list_divider_light));
+        }
 
-		}
-		
-		//Get the orientation parameter and store it locally.
-		if (getOrientation(getActivity()).equals("PORTRAIT")) {
-			mLandscape = false;
-		} else {
-			mLandscape = true;
-		}
-		
-		//Initialize landscape view's side pane.
-		if (mLandscape) {
+        listView.setDividerHeight(1);
+
+        //Initialize landscape view's side pane.
+		if (mApp.getOrientation()==Common.ORIENTATION_LANDSCAPE) {
 			try {
 				landscapeFolderName = (TextView) rootView.findViewById(R.id.landscape_folder_name);
 				landscapeFreeSpaceText = (TextView) rootView.findViewById(R.id.landscape_size_text);
@@ -178,93 +177,34 @@ public class FilesFoldersFragment extends Fragment {
 				landscapeLastModifiedValue = (TextView) rootView.findViewById(R.id.landscape_last_modified_value);
 				
 				landscapeFolderName.setTextColor(UIElementsHelper.getThemeBasedTextColor(mContext));
-				landscapeFolderName.setTypeface(TypefaceHelper.getTypeface(mContext, "RobotoCondensed-Light"));
-				landscapeFolderName.setPaintFlags(landscapeFolderName.getPaintFlags() 
-		        								   | Paint.ANTI_ALIAS_FLAG
-		        								   | Paint.FAKE_BOLD_TEXT_FLAG
-		        								   | Paint.SUBPIXEL_TEXT_FLAG);
+				landscapeFolderName.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
 				
 				landscapeFreeSpaceText.setTextColor(UIElementsHelper.getThemeBasedTextColor(mContext));
-				landscapeFreeSpaceText.setTypeface(TypefaceHelper.getTypeface(mContext, "RobotoCondensed-Light"));
-				landscapeFreeSpaceText.setPaintFlags(landscapeFreeSpaceText.getPaintFlags() 
-		        								   | Paint.ANTI_ALIAS_FLAG
-		        								   | Paint.FAKE_BOLD_TEXT_FLAG
-		        								   | Paint.SUBPIXEL_TEXT_FLAG);
+				landscapeFreeSpaceText.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
 				
 				landscapeFreeSpaceValue.setTextColor(UIElementsHelper.getThemeBasedTextColor(mContext));
-				landscapeFreeSpaceValue.setTypeface(TypefaceHelper.getTypeface(mContext, "RobotoCondensed-Light"));
-				landscapeFreeSpaceValue.setPaintFlags(landscapeFreeSpaceValue.getPaintFlags() 
-		        								   | Paint.ANTI_ALIAS_FLAG
-		        								   | Paint.SUBPIXEL_TEXT_FLAG);
+				landscapeFreeSpaceValue.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
 				
 				landscapeItemsText.setTextColor(UIElementsHelper.getThemeBasedTextColor(mContext));
-				landscapeItemsText.setTypeface(TypefaceHelper.getTypeface(mContext, "RobotoCondensed-Light"));
-				landscapeItemsText.setPaintFlags(landscapeItemsText.getPaintFlags() 
-		        								   | Paint.ANTI_ALIAS_FLAG
-		        								   | Paint.FAKE_BOLD_TEXT_FLAG
-		        								   | Paint.SUBPIXEL_TEXT_FLAG);
+				landscapeItemsText.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
 				
 				landscapeItemsValue.setTextColor(UIElementsHelper.getThemeBasedTextColor(mContext));
-				landscapeItemsValue.setTypeface(TypefaceHelper.getTypeface(mContext, "RobotoCondensed-Light"));
-				landscapeItemsValue.setPaintFlags(landscapeItemsValue.getPaintFlags() 
-		        								   | Paint.ANTI_ALIAS_FLAG
-		        								   | Paint.SUBPIXEL_TEXT_FLAG);
+				landscapeItemsValue.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
 				
 				landscapeLastModifiedText.setTextColor(UIElementsHelper.getThemeBasedTextColor(mContext));
-				landscapeLastModifiedText.setTypeface(TypefaceHelper.getTypeface(mContext, "RobotoCondensed-Light"));
-				landscapeLastModifiedText.setPaintFlags(landscapeLastModifiedText.getPaintFlags() 
-		        								   | Paint.ANTI_ALIAS_FLAG
-		        								   | Paint.FAKE_BOLD_TEXT_FLAG
-		        								   | Paint.SUBPIXEL_TEXT_FLAG);
+				landscapeLastModifiedText.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
 				
 				landscapeLastModifiedValue.setTextColor(UIElementsHelper.getThemeBasedTextColor(mContext));
-				landscapeLastModifiedValue.setTypeface(TypefaceHelper.getTypeface(mContext, "RobotoCondensed-Light"));
-				landscapeLastModifiedValue.setPaintFlags(landscapeLastModifiedValue.getPaintFlags() 
-		        								   | Paint.ANTI_ALIAS_FLAG
-		        								   | Paint.SUBPIXEL_TEXT_FLAG);
+				landscapeLastModifiedValue.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
 				
 			} catch (Exception e) {
 				e.printStackTrace();
-				mLandscape = false;
 			}
 
 		}
-        
-    	currentDirectoryText = (TextView) rootView.findViewById(R.id.current_directory_text);
-        currentDirectoryPath = (TextView) rootView.findViewById(R.id.current_directory_path);
-        
-        currentDirectoryText.setTextColor(UIElementsHelper.getThemeBasedTextColor(mContext));
-        currentDirectoryText.setTypeface(TypefaceHelper.getTypeface(mContext, "RobotoCondensed-Light"));
-        currentDirectoryText.setPaintFlags(currentDirectoryText.getPaintFlags() 
-        								   | Paint.ANTI_ALIAS_FLAG
-        								   | Paint.FAKE_BOLD_TEXT_FLAG
-        								   | Paint.SUBPIXEL_TEXT_FLAG);
-        
-        currentDirectoryPath.setTextColor(UIElementsHelper.getThemeBasedTextColor(mContext));
-        currentDirectoryPath.setTypeface(TypefaceHelper.getTypeface(mContext, "RobotoCondensed-Light"));
-        currentDirectoryPath.setPaintFlags(currentDirectoryPath.getPaintFlags() 
-        								   | Paint.ANTI_ALIAS_FLAG
-        								   | Paint.FAKE_BOLD_TEXT_FLAG
-        								   | Paint.SUBPIXEL_TEXT_FLAG);
-
-        //Initialize the "Back to Parent Directory" view that provides access to the current folder's parent directory.
-  		backToParentDirectoryLayout = (RelativeLayout) rootView.findViewById(R.id.back_to_parent_directory_view);
-  		TextView backToParentDirectoryText = (TextView) rootView.findViewById(R.id.back_to_parent_directory_text);
-  		
-  		backToParentDirectoryText.setTextColor(UIElementsHelper.getThemeBasedTextColor(mContext));
-  		backToParentDirectoryText.setTypeface(TypefaceHelper.getTypeface(mContext, "RobotoCondensed-Light"));
-  		backToParentDirectoryText.setPaintFlags(backToParentDirectoryText.getPaintFlags() | Paint.ANTI_ALIAS_FLAG | Paint.SUBPIXEL_TEXT_FLAG);
-  		
-  		ImageView backToParentDirectoryIcon = (ImageView) rootView.findViewById(R.id.back_to_parent_directory_icon);
-  		backToParentDirectoryIcon.setImageResource(UIElementsHelper.getIcon(mContext, "back_folder_view"));
-  		
-  		//Since the dialog starts off in the root directory "/", keep the "Back to Parent Directory" view hidden by default.
-  		backToParentDirectoryLayout.setVisibility(View.GONE);
 		
-		if (mLandscape) {
+		if (mApp.getOrientation()==Common.ORIENTATION_LANDSCAPE) {
 			foldersViewLayout = (LinearLayout) rootView.findViewById(R.id.folders_view_layout);
-		} else {
-			foldersViewLayout = (RelativeLayout) rootView.findViewById(R.id.folders_view_layout);
 		}
 		
 		//KitKat translucent navigation/status bar.
@@ -285,116 +225,68 @@ public class FilesFoldersFragment extends Fragment {
             listView.setClipToPadding(false);
             listView.setPadding(0, 0, 0, navigationBarHeight);
         }
-		
+
+        rootDir = mApp.getSharedPreferences().getString("DEFAULT_FOLDER", "/");
+        currentDir = rootDir;
+        mHandler.postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                slideUpListView();
+            }
+
+        }, 250);
         return rootView;
     }
-    
+
     /**
-     * Displays a new folder and its contents.
+     * Slides in the ListView.
      */
-    public void loadAndDisplayFolder() {
-		AlphaAnimation fadeIn = new AlphaAnimation(0.0f, 1.0f);
-		fadeIn.setDuration(300);
-		
-		fadeIn.setAnimationListener(new AnimationListener() {
+    private void slideUpListView() {
 
-			@Override
-			public void onAnimationEnd(Animation animation) {
-				foldersViewLayout.setVisibility(View.VISIBLE);
-				
-			}
-
-			@Override
-			public void onAnimationRepeat(Animation animation) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onAnimationStart(Animation animation) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-		});
-    	
-  		backToParentDirectoryLayout.setOnClickListener(new View.OnClickListener() {
-
-  			@Override
-  			public void onClick(View v) {
-  				//Get the current folder's parent folder.
-  				File currentFolder = new File(currentDir);
-  				String parentFolder = "";
-  				try {
-  					parentFolder = currentFolder.getParentFile().getCanonicalPath();
-  				} catch (IOException e) {
-  					// TODO Auto-generated catch block
-  					e.printStackTrace();
-  				} catch (Exception e) {
-  					e.printStackTrace();
-  				}
-  				
-  				currentDir = parentFolder;
-  				getDir(parentFolder);
-  				
-  			}
-  			
-  		});
-        
-        rootDir = mApp.getSharedPreferences().getString("DEFAULT_FOLDER", "/");
-        
-        //Check if the default folder exists. If not, fallback to the root dir.
-        if (new File(rootDir).exists()==false) {
-        	rootDir = "/";
-        	Toast.makeText(mContext, R.string.default_folder_does_not_exist, Toast.LENGTH_LONG).show();
-        }
-        
-        currentDir = rootDir;
         getDir(rootDir);
-		
-		listView.setOnItemClickListener(new OnItemClickListener() {
 
-			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, int index, long arg3) {
-				String newPath = fileFolderPathList.get(index);
-				currentDir = newPath;
-				
-				//Indicates that the selected item is the "Back to Parent Directory" button.
-				if (fileFolderTypeList.get(index)==null) {
-					getDir(newPath);
-				} else {
-					
-					//Check if the selected item is a folder or a file.
-					if (fileFolderTypeList.get(index).equals("FOLDER")) {
-						getDir(newPath);
-					} else {
-						playFile(index);
-					}
-					
-				}
-				
-			}
-			
-		});
-		
-		foldersViewLayout.startAnimation(fadeIn);
+        TranslateAnimation animation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0.0f,
+                                                              Animation.RELATIVE_TO_SELF, 0.0f,
+                                                              Animation.RELATIVE_TO_SELF, 2.0f,
+                                                              Animation.RELATIVE_TO_SELF, 0.0f);
+
+        animation.setDuration(600);
+        animation.setInterpolator(new AccelerateDecelerateInterpolator());
+        animation.setAnimationListener(new AnimationListener() {
+
+            @Override
+            public void onAnimationEnd(Animation arg0) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation arg0) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void onAnimationStart(Animation arg0) {
+               listView.setVisibility(View.VISIBLE);
+
+            }
+
+        });
+
+        listView.startAnimation(animation);
     }
     
     /**
      * Retrieves the folder hierarchy for the specified folder.
      */
-    public void getDir(String dirPath) {
+    private void getDir(String dirPath) {
     	
-		currentDirectoryPath.setText(dirPath);
+		getActivity().invalidateOptionsMenu();
 		fileFolderNameList = new ArrayList<String>();
 		fileFolderPathList = new ArrayList<String>();
 		fileFolderSizeList = new ArrayList<String>();
-		fileFolderTypeList = new ArrayList<String>();
-		
-		//If the current directory is not the topmost directory, add a back button.
-		if (!dirPath.equals(Environment.getExternalStorageDirectory().getPath())) {
-			
-		}
+		fileFolderTypeList = new ArrayList<Integer>();
 		
 		File f = new File(dirPath);
 		File[] files = f.listFiles();
@@ -410,19 +302,25 @@ public class FilesFoldersFragment extends Fragment {
 				if(file.isHidden()==SHOW_HIDDEN_FILES && file.canRead()) {
 					
 					if (file.isDirectory()) {
-						
-						try {
-							String path = file.getCanonicalPath();
-							fileFolderPathList.add(path);
-						} catch (IOException e) {
-							continue;
-						}
-						
+
+                        /*
+						 * Starting with Android 4.2, /storage/emulated/legacy/...
+						 * is a symlink that points to the actual directory where
+						 * the user's files are stored. We need to detect the
+						 * actual directory's file path here.
+						 */
+                        String filePath;
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
+                            filePath = getRealFilePath(file.getAbsolutePath());
+                        else
+                            filePath = file.getAbsolutePath();
+
+                        fileFolderPathList.add(filePath);
 						fileFolderNameList.add(file.getName());
 						File[] listOfFiles = file.listFiles();
 						
 						if (listOfFiles!=null) {
-							fileFolderTypeList.add("FOLDER");
+							fileFolderTypeList.add(FOLDER);
 							if (listOfFiles.length==1) {
 								fileFolderSizeList.add("" + listOfFiles.length + " item");
 							} else {
@@ -430,7 +328,7 @@ public class FilesFoldersFragment extends Fragment {
 							}
 							
 						} else {
-							fileFolderTypeList.add("FOLDER");
+							fileFolderTypeList.add(FOLDER);
 							fileFolderSizeList.add("Unknown items");
 						}
 						
@@ -473,7 +371,7 @@ public class FilesFoldersFragment extends Fragment {
 							getFileExtension(fileName).equalsIgnoreCase("wav")) {
 							
 							//The file is an audio file.
-							fileFolderTypeList.add("AUDIO");
+							fileFolderTypeList.add(AUDIO_FILE);
 							fileFolderSizeList.add("" + getFormattedFileSize(file.length()));
 							
 						} else if (getFileExtension(fileName).equalsIgnoreCase("jpg") ||
@@ -483,7 +381,7 @@ public class FilesFoldersFragment extends Fragment {
 								   getFileExtension(fileName).equalsIgnoreCase("webp")) {
 							
 							//The file is a picture file.
-							fileFolderTypeList.add("PICTURE");
+							fileFolderTypeList.add(PICTURE_FILE);
 							fileFolderSizeList.add("" + getFormattedFileSize(file.length()));
 							
 						} else if (getFileExtension(fileName).equalsIgnoreCase("3gp") ||
@@ -494,13 +392,13 @@ public class FilesFoldersFragment extends Fragment {
 								   getFileExtension(fileName).equalsIgnoreCase("mkv")) {
 							
 							//The file is a video file.
-							fileFolderTypeList.add("VIDEO");
+							fileFolderTypeList.add(VIDEO_FILE);
 							fileFolderSizeList.add("" + getFormattedFileSize(file.length()));
 							
 						} else {
 							
 							//We don't have an icon for this file type so give it the generic file flag.
-							fileFolderTypeList.add("GENERIC_FILE");
+							fileFolderTypeList.add(FILE);
 							fileFolderSizeList.add("" + getFormattedFileSize(file.length()));
 							
 						}
@@ -512,16 +410,8 @@ public class FilesFoldersFragment extends Fragment {
 			}
 			
 		}
-
-		//Display the "Back to Parent Directory" view if the current directory isn't the root directory.
-		if (!currentDir.equals("/")) {
-			backToParentDirectoryLayout.setVisibility(View.VISIBLE);
-		} else {
-			backToParentDirectoryLayout.setVisibility(View.GONE);
-		}
 		
-		FoldersListViewAdapter foldersListViewAdapter = new FoldersListViewAdapter(getActivity(), 
-																				   false,
+		FoldersListViewAdapter foldersListViewAdapter = new FoldersListViewAdapter(getActivity(),
 																				   fileFolderNameList,
 																				   fileFolderTypeList, 
 																				   fileFolderSizeList, 
@@ -529,8 +419,34 @@ public class FilesFoldersFragment extends Fragment {
 		
 		listView.setAdapter(foldersListViewAdapter);
 		foldersListViewAdapter.notifyDataSetChanged();
+
+        listView.setOnItemClickListener(new OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View view, int index, long arg3) {
+                String newPath = fileFolderPathList.get(index);
+                if ((Integer) view.getTag(R.string.folder_list_item_type)==FOLDER)
+                    currentDir = newPath;
+
+                //Indicates that the selected item is the "Back to Parent Directory" button.
+                if (fileFolderTypeList.get(index)==null) {
+                    getDir(newPath);
+                } else {
+
+                    //Check if the selected item is a folder or a file.
+                    if (fileFolderTypeList.get(index).equals(FOLDER)) {
+                        getDir(newPath);
+                    } else {
+                        playFile(index);
+                    }
+
+                }
+
+            }
+
+        });
 		
-		if (mLandscape) {
+		if (mApp.getOrientation()==Common.ORIENTATION_LANDSCAPE) {
 			try {
 				String folderName = f.getName();
 				if (folderName.isEmpty()) {
@@ -564,13 +480,61 @@ public class FilesFoldersFragment extends Fragment {
 	
 			} catch (Exception e) {
 				e.printStackTrace();
-				mLandscape = false;
 			}
 			
 		}
 		
     }
-    
+
+    /**
+     * Resolves the /storage/emulated/legacy paths to
+     * their true folder path representations. Required
+     * for Nexuses and other devices with no SD card.
+     */
+    @SuppressLint("SdCardPath")
+    private String getRealFilePath(String filePath) {
+
+        if (filePath.equals("/storage/emulated/0") ||
+                filePath.equals("/storage/emulated/0/") ||
+                filePath.equals("/storage/emulated/legacy") ||
+                filePath.equals("/storage/emulated/legacy/") ||
+                filePath.equals("/storage/sdcard0") ||
+                filePath.equals("/storage/sdcard0/") ||
+                filePath.equals("/sdcard") ||
+                filePath.equals("/sdcard/") ||
+                filePath.equals("/mnt/sdcard") ||
+                filePath.equals("/mnt/sdcard/")) {
+
+            return Environment.getExternalStorageDirectory().toString();
+        }
+
+        return filePath;
+    }
+
+    /**
+     * Calculates the parent dir of the current dir and calls getDir().
+     * Returns true if the parent dir is the rootDir
+     */
+    public boolean getParentDir() {
+
+        if (currentDir.equals("/"))
+            return true;
+
+        //Get the current folder's parent folder.
+        File currentFolder = new File(currentDir);
+        String parentFolder = "";
+        try {
+            parentFolder = currentFolder.getParentFile().getCanonicalPath();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        FilesFoldersFragment.currentDir = parentFolder;
+        getDir(parentFolder);
+        return false;
+
+    }
+
     /**
      * Takes in a file size value and formats it.
      */
@@ -687,8 +651,7 @@ public class FilesFoldersFragment extends Fragment {
      * Plays the specified file.
      */
     public void playFile(int index) {
-		String newPath = fileFolderPathList.get(index);		
-    	
+
 		//Check to make sure that the file is in a valid format.
 		String fileName = fileFolderNameList.get(index);
 		if (getFileExtension(fileName).equalsIgnoreCase("mp3") ||
@@ -709,88 +672,28 @@ public class FilesFoldersFragment extends Fragment {
 			getFileExtension(fileName).equalsIgnoreCase("ogg") ||
 			getFileExtension(fileName).equalsIgnoreCase("mkv") ||
 			getFileExtension(fileName).equalsIgnoreCase("wav")) {
-			
-			//Extract the metadata from the audio file (if any).
-			ArrayList<Object> metadata = new ArrayList<Object>();
-			metadata = extractFileMetadata(fileFolderPathList.get(index));
-			
-			//Check if the audio file has a title. If not, use the file name.
-			String title = "";
-			if (metadata.get(0)==null) {
-				title = fileFolderNameList.get(index);
-			} else {
-				title = (String) metadata.get(0);
-			}
-			
-			Intent intent = new Intent(mContext, NowPlayingActivity.class);
-			intent.putExtra("DURATION", (String) metadata.get(3));
-			intent.putExtra("SONG_NAME", title);
-			intent.putExtra("NUMBER_SONGS", 1);
-			
-			if (metadata.get(1)==null) {
-				intent.putExtra("ARTIST", "Unknown Artist");
-			} else {
-				intent.putExtra("ARTIST", (String) metadata.get(1));
-			}
-			
-			if (metadata.get(2)==null) {
-				intent.putExtra("ALBUM", "Unknown Album");
-			} else {
-				intent.putExtra("ALBUM", (String) metadata.get(2));
-			}
-			
-			if (metadata.get(3)==null) {
-				intent.putExtra("SELECTED_SONG_DURATION", 0);
-			} else {
-				intent.putExtra("SELECTED_SONG_DURATION", (String) metadata.get(3));
-			}
-			
-			intent.putExtra("DATA_URI", fileFolderPathList.get(index));
-			
-			if (metadata.get(4)==null) {
-				intent.putExtra("EMBEDDED_ART", (byte[]) null);
-			} else {
-				intent.putExtra("EMBEDDED_ART", (byte[]) metadata.get(4));
-			}
 
-			intent.putExtra("NEW_PLAYLIST", true);
-			intent.putExtra("CALLED_FROM_FOOTER", false);
-			intent.putExtra("CALLED_FROM_FOLDERS", true);
-			intent.putExtra("CALLING_FRAGMENT", "FOLDERS_FRAGMENT");
-			
-			//Get the song's folder path and retrieve all the audio file paths in that folder.
-			File file = new File(newPath);
-			String parentFolder = file.getParent();
-			
-			if (parentFolder==null) {
-				//We're in the root directory, so use that as the parent.
-				parentFolder = "/";
-			}
-			
-			getAudioFilePathsInFolder(parentFolder);
-			
-			//Get the index of the selected song's file path.
-			intent.putExtra("SONG_SELECTED_INDEX", audioFilePathsInFolder.indexOf(newPath));
-			
-			//Pass on the list of file paths to NowPlayingActivity (which will assemble them into a cursor).
-			intent.putStringArrayListExtra("FOLDER_AUDIO_FILE_PATHS", audioFilePathsInFolder);
-			
-			startActivity(intent);
-			getActivity().overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
-			
-			audioFilePathsInFolder.clear();
-			
+            //Build the query's selection clause.
+            Log.e("DEBUG", ">>>>CURRENT DIR: " + currentDir);
+            String querySelection = MediaStore.Audio.Media.DATA + " LIKE "
+                                  + "'" + currentDir.replace("'", "''") + "/%'";
+
+            //Exclude all subfolders from this playback sequence.
+            for (int i=0; i < fileFolderPathList.size(); i++) {
+                if (fileFolderTypeList.get(i)==FOLDER)
+                    querySelection += " AND " + MediaStore.Audio.Media.DATA + " NOT LIKE "
+                                   + "'" + fileFolderPathList.get(i).replace("'", "''") + "/%'";
+
+            }
+
+            mApp.getPlaybackKickstarter().initPlayback(mContext,
+                                                       querySelection,
+                                                       Common.PLAY_ALL_IN_FOLDER,
+                                                       index,
+                                                       true, false);
+
 		} else {
-			
-			//Show an "Invalid file format" dialog.
-			FragmentTransaction ft = getFragmentManager().beginTransaction();
-	        InvalidFileDialog invalidDialog = new InvalidFileDialog();
-	        
-	        Bundle bundle = new Bundle();
-	        bundle.putString("FILE_NAME", fileName);
-	        
-	        invalidDialog.setArguments(bundle);
-	        invalidDialog.show(ft, "invalidFileDialog");
+            Toast.makeText(mContext, R.string.cant_play_this_file, Toast.LENGTH_SHORT).show();
 			
 		}
 		
@@ -922,7 +825,7 @@ public class FilesFoldersFragment extends Fragment {
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
     	AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
     	contextMenuItemPath = (String) info.targetView.getTag(R.string.folder_path);
-    	if (info.targetView.getTag(R.string.folder_list_item_type).equals("FOLDER") 
+    	if (info.targetView.getTag(R.string.folder_list_item_type).equals(FOLDER) 
     		&& v.getId()==R.id.folders_list_view) {
     		//Long-pressed a folder.
     		menu.setHeaderTitle(R.string.folder_actions);
@@ -1377,22 +1280,9 @@ public class FilesFoldersFragment extends Fragment {
 
     }
     
-    //Retrieves the orientation of the device.
-    public String getOrientation(Context context) {
-
-        if(context.getResources().getDisplayMetrics().widthPixels > 
-           context.getResources().getDisplayMetrics().heightPixels) { 
-            return "LANDSCAPE";
-        } else {
-            return "PORTRAIT";
-        }     
-        
-    }
-    
     /*
      * Getter methods. 
      */
-    
     public String getCurrentDir() {
     	return currentDir;
     }
@@ -1400,7 +1290,6 @@ public class FilesFoldersFragment extends Fragment {
     /*
      * Setter methods.
      */
-    
     public void setCurrentDir(String currentDir) {
     	this.currentDir = currentDir;
     }

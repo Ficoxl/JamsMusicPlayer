@@ -996,7 +996,7 @@ public class AudioPlaybackService extends Service {
                     .putString(MediaMetadataRetriever.METADATA_KEY_ARTIST, getCurrentSong().getArtist())
                     .putString(MediaMetadataRetriever.METADATA_KEY_TITLE, getCurrentSong().getTitle())
                     .putString(MediaMetadataRetriever.METADATA_KEY_ALBUM, getCurrentSong().getAlbum())
-                    .putLong(MediaMetadataRetriever.METADATA_KEY_DURATION, getCurrentSong().getDuration())
+                    .putLong(MediaMetadataRetriever.METADATA_KEY_DURATION, getCurrentMediaPlayer().getDuration())
                     .putBitmap(RemoteControlClientCompat.MetadataEditorCompat.METADATA_KEY_ARTWORK, getCurrentSong().getAlbumArt())
                     .apply();
 
@@ -1025,7 +1025,7 @@ public class AudioPlaybackService extends Service {
 		
 		Cursor[] cursorArray = { getCursor(), newCursor };
 		mMergeCursor = new MergeCursor(cursorArray);
-		mCursor = (Cursor) mMergeCursor;
+		setCursor(mMergeCursor);
 		getCursor().moveToPosition(mPlaybackIndecesList.get(mCurrentSongIndex));
 		mEnqueuePerformed = true;
 		
@@ -2664,29 +2664,6 @@ public class AudioPlaybackService extends Service {
     public int getRepeatSongRangePointB() {
     	return mRepeatSongRangePointB;
     }
-	
-	/**
-	 * Pulls all song data at the current cursor index into 
-	 * a new SongHelper object. The cursor position is not 
-	 * modified during this operation.
-	 */
-	public SongHelper getSongDataAtCurrentIndex() {
-		SongHelper songHelper = new SongHelper();
-		
-		songHelper.setId(getCursor().getString(getCursor().getColumnIndex(DBAccessHelper.SONG_ID)));
-		songHelper.setTitle(getCursor().getString(getCursor().getColumnIndex(DBAccessHelper.SONG_TITLE)));
-		songHelper.setAlbum(getCursor().getString(getCursor().getColumnIndex(DBAccessHelper.SONG_ALBUM)));
-		songHelper.setArtist(getCursor().getString(getCursor().getColumnIndex(DBAccessHelper.SONG_ARTIST)));
-		songHelper.setGenre(getCursor().getString(getCursor().getColumnIndex(DBAccessHelper.SONG_GENRE)));
-		songHelper.setDuration(getCursor().getLong(getCursor().getColumnIndex(DBAccessHelper.SONG_DURATION)));
-		
-		songHelper.setAlbumArtPath(getCursor().getString(getCursor().getColumnIndex(DBAccessHelper.SONG_ALBUM_ART_PATH)));
-		songHelper.setFilePath(getCursor().getString(getCursor().getColumnIndex(DBAccessHelper.SONG_FILE_PATH)));
-		songHelper.setSource(getCursor().getString(getCursor().getColumnIndex(DBAccessHelper.SONG_SOURCE)));
-		songHelper.setLocalCopyPath(getCursor().getString(getCursor().getColumnIndex(DBAccessHelper.LOCAL_COPY_PATH)));
-		
-		return songHelper;
-	}
     
     /**
      * Returns the current repeat mode. The repeat mode 

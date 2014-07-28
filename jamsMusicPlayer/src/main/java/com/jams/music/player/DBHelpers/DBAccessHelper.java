@@ -768,9 +768,9 @@ public class DBAccessHelper extends SQLiteOpenHelper {
     	case Common.ALBUMS_FLIPPED_FRAGMENT:
     		return getAllSongsInAlbumByArtist(querySelection);
     	case Common.GENRES_FLIPPED_FRAGMENT:
-    		//TODO case stub.
+    		return getAllUniqueAlbumsInGenre(querySelection);
     	case Common.GENRES_FLIPPED_SONGS_FRAGMENT:
-    		//TODO case stub.
+    		return getAllSongsInAlbumInGenre(querySelection);
     	default:
     		return null;
     	}
@@ -809,9 +809,9 @@ public class DBAccessHelper extends SQLiteOpenHelper {
     	case Common.ALBUMS_FLIPPED_FRAGMENT:
     		return getAllSongsInAlbumByArtistInLibrary(querySelection);
     	case Common.GENRES_FLIPPED_FRAGMENT:
-    		//TODO case stub.
+    		return getAllUniqueAlbumsInGenreInLibrary(querySelection);
     	case Common.GENRES_FLIPPED_SONGS_FRAGMENT:
-    		//TODO case stub.
+    		return getAllSongsByInAlbumInGenreInLibrary(querySelection);
     	default:
     		return null;
     	}
@@ -1624,7 +1624,7 @@ public class DBAccessHelper extends SQLiteOpenHelper {
     	String selectDistinctQuery = "SELECT DISTINCT(" + SONG_ALBUM + "), " + 
 				 _ID + ", " + SONG_ARTIST + ", " + SONG_FILE_PATH + ", " + 
     			 BLACKLIST_STATUS + ", " + SONG_GENRE + ", " + SONG_YEAR + ", " +
-				 SONG_ALBUM_ART_PATH + ", " + SONG_SOURCE + ", " + 
+				 SONG_ALBUM_ART_PATH + ", " + SONG_SOURCE + ", " + SONGS_COUNT + ", " +
     			 SONG_ALBUM_ARTIST + ", " + SONG_DURATION + ", " + LOCAL_COPY_PATH
 				 + " FROM " + MUSIC_LIBRARY_TABLE + " WHERE " + 
 				 BLACKLIST_STATUS + "=" + "'" + 
@@ -1643,7 +1643,7 @@ public class DBAccessHelper extends SQLiteOpenHelper {
     	String selectDistinctQuery = "SELECT DISTINCT(" + SONG_ALBUM + "), " + 
 									 MUSIC_LIBRARY_TABLE + "." + _ID + ", " + SONG_FILE_PATH + ", " + SONG_ALBUM_ARTIST + ", "
 									 + SONG_SOURCE + ", " + SONG_DURATION + ", " + SONG_ALBUM_ART_PATH + ", " + SONG_ARTIST 
-									 + ", " + SONG_GENRE + ", " + SONG_YEAR + ", " + LOCAL_COPY_PATH + " FROM " + MUSIC_LIBRARY_TABLE 
+									 + ", " + SONG_GENRE + ", " + SONG_YEAR + ", " + SONGS_COUNT + ", " + LOCAL_COPY_PATH + " FROM " + MUSIC_LIBRARY_TABLE
 									 + " INNER JOIN " + LIBRARIES_TABLE + " ON (" 
 									 + MUSIC_LIBRARY_TABLE + "." + _ID + "=" + LIBRARIES_TABLE + "." 
 									 + SONG_ID + ") WHERE " + MUSIC_LIBRARY_TABLE + "." + 

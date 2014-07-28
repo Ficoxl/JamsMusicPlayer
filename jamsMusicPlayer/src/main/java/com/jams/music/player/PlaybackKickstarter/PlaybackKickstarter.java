@@ -5,9 +5,11 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.jams.music.player.DBHelpers.MediaStoreAccessHelper;
 import com.jams.music.player.R;
 import com.jams.music.player.NowPlayingActivity.NowPlayingActivity;
 import com.jams.music.player.NowPlayingActivity.NowPlayingActivity.NowPlayingActivityListener;
@@ -146,7 +148,24 @@ public class PlaybackKickstarter implements NowPlayingActivityListener, PrepareS
 		protected Cursor doInBackground(Boolean... params) {
 			
 			try {
-				return mApp.getDBAccessHelper().getPlaybackCursor(mContext, mQuerySelection, mPlaybackRouteId);
+                if (mPlaybackRouteId==Common.PLAY_ALL_IN_FOLDER) {
+                    //Return a cursor directly from MediaStore.
+                    Log.e("DEBUG", ">>>>>>" + mQuerySelection);
+                    try {
+                        Cursor cursor = MediaStoreAccessHelper.getAllSongsWithSelection(mContext,
+                                                                                        mQuerySelection,
+                                                                                        null,
+                                                                                        MediaStore.Audio.Media.DATA + " ASC");
+                        Log.e("DEBUG", ">>>>CURSOR COUNT: " + cursor.getCount());
+                        return cursor;
+                    } catch (Exception e) {
+                        return null;
+                    }
+
+                } else {
+                    Log.e("DEBUG", ">>>>NOOOOOOOOOOO");
+                    return mApp.getDBAccessHelper().getPlaybackCursor(mContext, mQuerySelection, mPlaybackRouteId);
+                }
 			} catch (Exception exception) {
 				exception.printStackTrace();
 				publishProgress(new String[] { exception.getMessage() });

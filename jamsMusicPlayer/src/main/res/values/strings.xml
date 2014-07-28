@@ -822,5 +822,8 @@
     <string name="title_activity_browsser_sub_grid">BrowsserSubGridActivity</string>
     <string name="finished_scanning_album_art">Finished scanning for album art.</string>
     <string name="scanning_for_album_art_details">Jams will continue scanning for album art in the background. You\'ll be notified once this process is done. To view its progress, swipe down your notification drawer.</string>
+    <string name="up">Up</string>
+    <string name="add">Add</string>
+    <string name="cant_play_this_file">Can\'t play this file.</string>
 
 </resources>

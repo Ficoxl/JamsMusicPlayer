@@ -65,6 +65,7 @@ public class BrowserSubListActivity extends FragmentActivity {
     private String mHeaderImagePath;
     private String mHeaderText;
     private String mHeaderSubText;
+    private String mField2;
     private int mFragmentId;
 
     @Override
@@ -85,6 +86,10 @@ public class BrowserSubListActivity extends FragmentActivity {
         mFragmentId = getIntent().getExtras().getInt("fragmentId");
         mHeaderText = getIntent().getExtras().getString("headerText");
         mHeaderSubText = getIntent().getExtras().getString("subText");
+        mField2 = getIntent().getExtras().getString("field2");
+
+        if (mHeaderText==null || mHeaderText.isEmpty())
+            mHeaderText = mContext.getResources().getString(R.string.unknown_genre);
 
         mHeaderLayout = (RelativeLayout) findViewById(R.id.browser_sub_header_layout);
         mHeaderImage = (ImageView) findViewById(R.id.browser_sub_header_image);
@@ -292,24 +297,9 @@ public class BrowserSubListActivity extends FragmentActivity {
 
             switch (mFragmentId) {
                 case Common.ARTISTS_FLIPPED_SONGS_FRAGMENT:
-                    mDBColumnsMap.put(ListViewCardsAdapter.TITLE_TEXT, DBAccessHelper.SONG_TITLE);
-                    mDBColumnsMap.put(ListViewCardsAdapter.SOURCE, DBAccessHelper.SONG_SOURCE);
-                    mDBColumnsMap.put(ListViewCardsAdapter.FILE_PATH, DBAccessHelper.SONG_FILE_PATH);
-                    mDBColumnsMap.put(ListViewCardsAdapter.ARTWORK_PATH, DBAccessHelper.SONG_ALBUM_ART_PATH);
-                    mDBColumnsMap.put(ListViewCardsAdapter.FIELD_1, DBAccessHelper.SONG_DURATION);
-                    mDBColumnsMap.put(ListViewCardsAdapter.FIELD_2, DBAccessHelper.SONG_ARTIST);
-                    mDBColumnsMap.put(ListViewCardsAdapter.FIELD_3, DBAccessHelper.SONG_TRACK_NUMBER);
-                    break;
                 case Common.ALBUM_ARTISTS_FLIPPED_SONGS_FRAGMENT:
-                    mDBColumnsMap.put(ListViewCardsAdapter.TITLE_TEXT, DBAccessHelper.SONG_TITLE);
-                    mDBColumnsMap.put(ListViewCardsAdapter.SOURCE, DBAccessHelper.SONG_SOURCE);
-                    mDBColumnsMap.put(ListViewCardsAdapter.FILE_PATH, DBAccessHelper.SONG_FILE_PATH);
-                    mDBColumnsMap.put(ListViewCardsAdapter.ARTWORK_PATH, DBAccessHelper.SONG_ALBUM_ART_PATH);
-                    mDBColumnsMap.put(ListViewCardsAdapter.FIELD_1, DBAccessHelper.SONG_DURATION);
-                    mDBColumnsMap.put(ListViewCardsAdapter.FIELD_2, DBAccessHelper.SONG_ARTIST);
-                    mDBColumnsMap.put(ListViewCardsAdapter.FIELD_3, DBAccessHelper.SONG_TRACK_NUMBER);
-                    break;
                 case Common.ALBUMS_FLIPPED_FRAGMENT:
+                case Common.GENRES_FLIPPED_SONGS_FRAGMENT:
                     mDBColumnsMap.put(ListViewCardsAdapter.TITLE_TEXT, DBAccessHelper.SONG_TITLE);
                     mDBColumnsMap.put(ListViewCardsAdapter.SOURCE, DBAccessHelper.SONG_SOURCE);
                     mDBColumnsMap.put(ListViewCardsAdapter.FILE_PATH, DBAccessHelper.SONG_FILE_PATH);
@@ -345,6 +335,13 @@ public class BrowserSubListActivity extends FragmentActivity {
                                     + mHeaderText.replace("'", "''") + "'" + " AND "
                                     + DBAccessHelper.SONG_ARTIST + "=" + "'"
                                     + mHeaderSubText.replace("'", "''") + "'";
+                case Common.GENRES_FLIPPED_SONGS_FRAGMENT:
+                    mQuerySelection = " AND " + DBAccessHelper.SONG_ALBUM + "=" + "'"
+                                    + mHeaderText.replace("'", "''") + "'" + " AND "
+                                    + DBAccessHelper.SONG_GENRE + "=" + "'"
+                                    + mHeaderSubText.replace("'", "''") + "'" + " AND "
+                                    + DBAccessHelper.SONG_ARTIST + "=" + "'"
+                                    + mField2.replace("'", "''") + "'";
                     break;
             }
 

@@ -284,6 +284,11 @@ public class AsyncBuildLibraryTask extends AsyncTask<String, String, Void> {
                 else
                     numberOfTracks += " " + mContext.getResources().getString(R.string.songs_small);
 
+                if (numberOfSongsInGenre.equals("1"))
+                    numberOfSongsInGenre += " " + mContext.getResources().getString(R.string.song_small);
+                else
+                    numberOfSongsInGenre += " " + mContext.getResources().getString(R.string.songs_small);
+
             	//Check if any of the other tags were empty/null and set them to "Unknown xxx" values.
             	if (songArtist==null || songArtist.isEmpty()) {
             		songArtist = mContext.getResources().getString(R.string.unknown_artist);
@@ -301,10 +306,10 @@ public class AsyncBuildLibraryTask extends AsyncTask<String, String, Void> {
             	if (songAlbum==null || songAlbum.isEmpty()) {
             		songAlbum = mContext.getResources().getString(R.string.unknown_album);;
             	}
-            	
-            	if (songGenre==null || songGenre.isEmpty()) {
-            		songGenre = mContext.getResources().getString(R.string.unknown_genre);
-            	}
+
+                if (songGenre==null || songGenre.isEmpty()) {
+                    songGenre = mContext.getResources().getString(R.string.unknown_genre);
+                }
             	
             	//Filter out track numbers and remove any bogus values.
             	if (songTrackNumber!=null) {
@@ -427,7 +432,12 @@ public class AsyncBuildLibraryTask extends AsyncTask<String, String, Void> {
         for (genresCursor.moveToFirst(); !genresCursor.isAfterLast(); genresCursor.moveToNext()) {
         	String genreId = genresCursor.getString(0);
         	String genreName = genresCursor.getString(1);
-        	 
+
+            if (genreName==null || genreName.isEmpty() ||
+                genreName.equals(" ") || genreName.equals("   ") ||
+                genreName.equals("    "))
+                genreName = mContext.getResources().getString(R.string.unknown_genre);
+
         	/* Grab a cursor of songs in the each genre id. Limit the songs to 
         	 * the user defined folders using mMediaStoreSelection.
         	 */

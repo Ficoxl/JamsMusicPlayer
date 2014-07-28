@@ -16,6 +16,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -26,9 +27,11 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.ScaleAnimation;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.jams.music.player.Drawers.NavigationDrawerFragment;
 import com.jams.music.player.Drawers.QueueDrawerFragment;
+import com.jams.music.player.FoldersFragment.FilesFoldersFragment;
 import com.jams.music.player.GridViewFragment.GridViewFragment;
 import com.jams.music.player.Helpers.UIElementsHelper;
 import com.jams.music.player.ListViewFragment.ListViewFragment;
@@ -36,6 +39,8 @@ import com.jams.music.player.R;
 import com.jams.music.player.SettingsActivity.SettingsActivity;
 import com.jams.music.player.Utils.Common;
 import com.mikhaellopez.circularimageview.CircularImageView;
+
+import java.io.File;
 
 public class MainActivity extends FragmentActivity {
 
@@ -187,6 +192,7 @@ public class MainActivity extends FragmentActivity {
 		//Get the target fragment from savedInstanceState if it's not null (orientation changes?).
 		if (savedInstanceState!=null) {
 			mCurrentFragmentId = savedInstanceState.getInt(CURRENT_FRAGMENT);
+            invalidateOptionsMenu();
 			
 		} else {
 			//Set the current fragment based on the intent's extras.
@@ -214,7 +220,7 @@ public class MainActivity extends FragmentActivity {
     			mCurrentFragment = getLayoutFragment(Common.GENRES_FRAGMENT);
     			break;
     		case Common.FOLDERS_FRAGMENT:
-    			mCurrentFragment = getLayoutFragment(Common.FOLDERS_FRAGMENT);
+    			mCurrentFragment = new FilesFoldersFragment();
     			break;
     		}
     		
@@ -293,6 +299,7 @@ public class MainActivity extends FragmentActivity {
 		
 		//Close the drawer(s).
 		mDrawerLayout.closeDrawer(Gravity.START);
+        invalidateOptionsMenu();
 
 	}
 	
@@ -340,6 +347,57 @@ public class MainActivity extends FragmentActivity {
 
         builder.create().show();
     }
+
+    /**
+     * Inflates the generic MainActivity ActionBar layout.
+     *
+     * @param inflater The ActionBar's menu inflater.
+     * @param menu The ActionBar menu to work with.
+     */
+    private void showMainActivityActionItems(MenuInflater inflater, Menu menu) {
+        //Inflate the menu.
+        inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_activity, menu);
+
+        //Set the ActionBar background
+        getActionBar().setBackgroundDrawable(UIElementsHelper.getGeneralActionBarBackground(mContext));
+        getActionBar().setTitle(null);
+        getActionBar().setDisplayShowTitleEnabled(false);
+        getActionBar().setDisplayUseLogoEnabled(true);
+        getActionBar().setDisplayShowCustomEnabled(false);
+        getActionBar().setLogo(R.drawable.text_logo);
+    }
+
+    /**
+     * Displays the folder fragment's action items.
+     *
+     * @param filePath The file path to set as the ActionBar's title text.
+     * @param inflater The ActionBar's menu inflater.
+     * @param menu The ActionBar menu to work with.
+     */
+    public void showFolderFragmentActionItems(String filePath, MenuInflater inflater, Menu menu) {
+        inflater.inflate(R.menu.files_folders_fragment, menu);
+
+        //Set the ActionBar background
+        getActionBar().setBackgroundDrawable(UIElementsHelper.getGeneralActionBarBackground(mContext));
+        getActionBar().setDisplayShowTitleEnabled(false);
+        getActionBar().setDisplayUseLogoEnabled(false);
+        getActionBar().setDisplayShowCustomEnabled(true);
+        getActionBar().setLogo(0);
+        getActionBar().setIcon(0);
+
+        LayoutInflater inflator = LayoutInflater.from(this);
+        View view = inflator.inflate(R.layout.custom_actionbar_layout, null);
+
+        TextView titleText = (TextView) view.findViewById(R.id.custom_actionbar_title);
+        titleText.setText(filePath);
+        titleText.setSelected(true);
+        titleText.setTextColor(0xFFFFFFFF);
+
+        //Inject the custom view into the ActionBar.
+        getActionBar().setCustomView(view);
+
+    }
 	
 	/**
 	 * Initializes the ActionBar.
@@ -347,15 +405,10 @@ public class MainActivity extends FragmentActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 
-		//Inflate the menu.
-		MenuInflater inflater = getMenuInflater();
-	    inflater.inflate(R.menu.main_activity, menu);
-	    
-	    //Set the ActionBar background
-	    getActionBar().setBackgroundDrawable(UIElementsHelper.getGeneralActionBarBackground(mContext));
-        getActionBar().setTitle(null);
-	    getActionBar().setDisplayUseLogoEnabled(true);
-        getActionBar().setLogo(R.drawable.text_logo);
+        if (mCurrentFragmentId==Common.FOLDERS_FRAGMENT)
+            showFolderFragmentActionItems(FilesFoldersFragment.currentDir, getMenuInflater(), menu);
+        else
+            showMainActivityActionItems(getMenuInflater(), menu);
 
 		return super.onCreateOptionsMenu(menu);
 	}
@@ -374,11 +427,6 @@ public class MainActivity extends FragmentActivity {
 		case R.id.action_search:
 			//ArtistsFragment.showSearch();
 			return true;
-/*	    case R.id.action_settings:
-	        Intent intent = new Intent(mContext, SettingsActivity.class);
-	        intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-	        startActivity(intent);
-	        return true;*/
 	    case R.id.action_queue_drawer:
 	    	if (mDrawerLayout!=null && mCurrentQueueDrawerLayout!=null) {
 		    	if (mDrawerLayout.isDrawerOpen(mCurrentQueueDrawerLayout)) {
@@ -389,12 +437,12 @@ public class MainActivity extends FragmentActivity {
 		    	
 	    	}
 	    	return true;
-/*	    case R.id.action_play_all:
-	    	playAll(false);
-	    	return true;
-	    case R.id.action_shuffle_all:
-	    	playAll(true);
-	    	return true;*/
+        case R.id.action_up:
+            ((FilesFoldersFragment) mCurrentFragment).getParentDir();
+            return true;
+        case R.id.action_add:
+            //TODO
+            return true;
 	    default:
 	        return super.onOptionsItemSelected(item);
 	    }
@@ -405,6 +453,18 @@ public class MainActivity extends FragmentActivity {
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         mDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (getCurrentFragmentId()==Common.FOLDERS_FRAGMENT)
+            if (((FilesFoldersFragment) mCurrentFragment).getCurrentDir().equals("/"))
+                super.onBackPressed();
+            else
+                ((FilesFoldersFragment) mCurrentFragment).getParentDir();
+        else
+            super.onBackPressed();
+
     }
 	
 	/**
