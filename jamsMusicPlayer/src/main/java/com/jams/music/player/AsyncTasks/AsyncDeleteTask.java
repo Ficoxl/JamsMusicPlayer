@@ -17,17 +17,19 @@ import com.jams.music.player.FoldersFragment.FilesFoldersFragment;
 public class AsyncDeleteTask extends AsyncTask<String, Void, Boolean> {
     private Context mContext;
     private ProgressDialog pd;
-	boolean dialogVisible = true;
+    private FilesFoldersFragment mFragment;
 	
-	private File sourceDir;
-	private String mSourceType;
+	private File mSourceFile;
+	private int mSourceType;
     
     public AsyncDeleteTask(Context context,
+                           FilesFoldersFragment fragment,
     					   File source,
-    					   String sourceType) {
+    					   int sourceType) {
     	
     	mContext = context;
-    	sourceDir = source;
+        mFragment = fragment;
+    	mSourceFile = source;
     	mSourceType = sourceType;
     }
     
@@ -56,19 +58,17 @@ public class AsyncDeleteTask extends AsyncTask<String, Void, Boolean> {
     @Override
     protected Boolean doInBackground(String... params) {
     	
-    	if (mSourceType.equals("DIRECTORY")) {
+    	if (mSourceType==FilesFoldersFragment.FOLDER) {
     		
     		try {
-				FileUtils.deleteDirectory(sourceDir);
+				FileUtils.deleteDirectory(mSourceFile);
 			} catch (Exception e) {
 				return false;
 			}
     		
-    	} else if (mSourceType.equals("FILE")) {
-    		
+    	} else {
     		try {
-    			boolean status = sourceDir.delete();
-    			
+    			boolean status = mSourceFile.delete();
     			if (status==true) {
     				return true;
     			} else {
@@ -80,6 +80,7 @@ public class AsyncDeleteTask extends AsyncTask<String, Void, Boolean> {
     		}
     		
     	}
+
     	return true;
     }
 
@@ -88,14 +89,26 @@ public class AsyncDeleteTask extends AsyncTask<String, Void, Boolean> {
 		super.onPostExecute(result);
 		
     	pd.dismiss();
-    	FilesFoldersFragment.REFRESH_REQUIRED = true;
-    	
     	if (result==true) {
-        	Toast.makeText(mContext, R.string.file_deleted, Toast.LENGTH_SHORT).show();
+            if (mSourceType==FilesFoldersFragment.FOLDER)
+        	    Toast.makeText(mContext, R.string.folder_deleted, Toast.LENGTH_SHORT).show();
+            else
+                Toast.makeText(mContext, R.string.file_deleted, Toast.LENGTH_SHORT).show();
+
     	} else {
-        	Toast.makeText(mContext, R.string.file_could_not_be_deleted, Toast.LENGTH_LONG).show();
+            if (mSourceType==FilesFoldersFragment.FOLDER)
+        	    Toast.makeText(mContext, R.string.folder_could_not_be_deleted, Toast.LENGTH_LONG).show();
+            else
+                Toast.makeText(mContext, R.string.file_could_not_be_deleted, Toast.LENGTH_LONG).show();
+
     	}
-		
+
+        try {
+            mFragment.refreshListView();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
 	}
 
 }

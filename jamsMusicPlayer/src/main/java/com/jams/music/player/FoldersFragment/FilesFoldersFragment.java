@@ -1,5 +1,42 @@
 package com.jams.music.player.FoldersFragment;
 
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.Parcelable;
+import android.provider.MediaStore;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.view.animation.TranslateAnimation;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.jams.music.player.AsyncTasks.AsyncCopyMoveTask;
+import com.jams.music.player.AsyncTasks.AsyncDeleteTask;
+import com.jams.music.player.Helpers.TypefaceHelper;
+import com.jams.music.player.Helpers.UIElementsHelper;
+import com.jams.music.player.MainActivity.MainActivity;
+import com.jams.music.player.R;
+import com.jams.music.player.Utils.Common;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.comparator.NameFileComparator;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
@@ -9,63 +46,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.comparator.NameFileComparator;
-
-import android.annotation.SuppressLint;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.Paint;
-import android.media.MediaMetadataRetriever;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
-import android.provider.MediaStore;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
-import android.util.TypedValue;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
-import android.view.animation.TranslateAnimation;
-import android.widget.AdapterView;
-import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.andraskindler.quickscroll.QuickScroll;
-import com.jams.music.player.Helpers.PauseOnScrollHelper;
-import com.jams.music.player.ListViewFragment.ListViewCardsAdapter;
-import com.jams.music.player.R;
-import com.jams.music.player.AsyncTasks.AsyncDeleteTask;
-import com.jams.music.player.AsyncTasks.AsyncMoveTask;
-import com.jams.music.player.AsyncTasks.AsyncPasteTask;
-import com.jams.music.player.AsyncTasks.AsyncPlayFolderRecursiveTask;
-import com.jams.music.player.Dialogs.InvalidFileDialog;
-import com.jams.music.player.Helpers.TypefaceHelper;
-import com.jams.music.player.Helpers.UIElementsHelper;
-import com.jams.music.player.NowPlayingActivity.NowPlayingActivity;
-import com.jams.music.player.Utils.Common;
 
 /**
  * FilesFoldersFragment. Contained within MainActivity.
@@ -81,14 +61,6 @@ public class FilesFoldersFragment extends Fragment {
 	
 	//UI Elements.
 	private ListView listView;
-	private View foldersViewLayout;
-	private TextView landscapeFolderName;
-	private TextView landscapeFreeSpaceText;
-	private TextView landscapeFreeSpaceValue;
-	private TextView landscapeItemsText;
-	private TextView landscapeItemsValue;
-	private TextView landscapeLastModifiedText;
-	private TextView landscapeLastModifiedValue;
 	
 	//Folder parameter ArrayLists.
 	private String rootDir;
@@ -104,33 +76,21 @@ public class FilesFoldersFragment extends Fragment {
 	private final long gigaBytes = megaBytes * kiloBytes;
 	private final long teraBytes = gigaBytes * kiloBytes;
 	
-	//Temp variable that stores the file/folder path of the long-pressed item.
-	private String contextMenuItemPath;
-	
-	//List of audio file paths within a specific folder.
-	private ArrayList<String> audioFilePathsInFolder = new ArrayList<String>();
-	
 	//List of subdirectories within a directory (Used by "Play Folder Recursively").
 	private ArrayList<String> subdirectoriesList = new ArrayList<String>();
 	
 	//Flag that determines whether hidden files are displayed or not.
 	private boolean SHOW_HIDDEN_FILES = false;
-	
-	//Temp variables that store the source file during a copy/move operation.
-	private File sourceFile = null;
-	private File targetFile = null;
-	
-	//Flags that indicate that a user has selected a file/folder to copy/move but hasn't actually copied/moved it yet.
-	public static boolean COPY_OPERATION_PENDING = false;
-	public static boolean MOVE_OPERATION_PENDING = false;
-	
-	//Temp file that stores the files that needs to be moved.
-	private File moveSourceFile = null;
-	
-	//Handler and flag to update the folder hierarchy once a CRUD operation is finished.
+
+    //Temp file for copy/move operations.
+    public File copyMoveSourceFile;
+
+    //Flag that indicates if copyMoveSourceFile should be moved or copied.
+    public boolean shouldMoveCopiedFile = false;
+    public boolean mIsPasteShown = false;
+
+	//Handler.
 	private Handler mHandler = new Handler();
-	public static boolean REFRESH_REQUIRED = false;
-	private String currentFolderPath;
 
     public static final int FOLDER = 0;
     public static final int FILE = 1;
@@ -165,48 +125,6 @@ public class FilesFoldersFragment extends Fragment {
 
         listView.setDividerHeight(1);
 
-        //Initialize landscape view's side pane.
-		if (mApp.getOrientation()==Common.ORIENTATION_LANDSCAPE) {
-			try {
-				landscapeFolderName = (TextView) rootView.findViewById(R.id.landscape_folder_name);
-				landscapeFreeSpaceText = (TextView) rootView.findViewById(R.id.landscape_size_text);
-				landscapeFreeSpaceValue = (TextView) rootView.findViewById(R.id.landscape_size_value);
-				landscapeItemsText = (TextView) rootView.findViewById(R.id.landscape_items_text);
-				landscapeItemsValue = (TextView) rootView.findViewById(R.id.landscape_items_value);
-				landscapeLastModifiedText = (TextView) rootView.findViewById(R.id.landscape_last_modified_text);
-				landscapeLastModifiedValue = (TextView) rootView.findViewById(R.id.landscape_last_modified_value);
-				
-				landscapeFolderName.setTextColor(UIElementsHelper.getThemeBasedTextColor(mContext));
-				landscapeFolderName.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
-				
-				landscapeFreeSpaceText.setTextColor(UIElementsHelper.getThemeBasedTextColor(mContext));
-				landscapeFreeSpaceText.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
-				
-				landscapeFreeSpaceValue.setTextColor(UIElementsHelper.getThemeBasedTextColor(mContext));
-				landscapeFreeSpaceValue.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
-				
-				landscapeItemsText.setTextColor(UIElementsHelper.getThemeBasedTextColor(mContext));
-				landscapeItemsText.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
-				
-				landscapeItemsValue.setTextColor(UIElementsHelper.getThemeBasedTextColor(mContext));
-				landscapeItemsValue.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
-				
-				landscapeLastModifiedText.setTextColor(UIElementsHelper.getThemeBasedTextColor(mContext));
-				landscapeLastModifiedText.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
-				
-				landscapeLastModifiedValue.setTextColor(UIElementsHelper.getThemeBasedTextColor(mContext));
-				landscapeLastModifiedValue.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
-				
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-		}
-		
-		if (mApp.getOrientation()==Common.ORIENTATION_LANDSCAPE) {
-			foldersViewLayout = (LinearLayout) rootView.findViewById(R.id.folders_view_layout);
-		}
-		
 		//KitKat translucent navigation/status bar.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
         	int topPadding = Common.getStatusBarHeight(mContext);
@@ -244,7 +162,7 @@ public class FilesFoldersFragment extends Fragment {
      */
     private void slideUpListView() {
 
-        getDir(rootDir);
+        getDir(rootDir, null);
 
         TranslateAnimation animation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0.0f,
                                                               Animation.RELATIVE_TO_SELF, 0.0f,
@@ -279,10 +197,18 @@ public class FilesFoldersFragment extends Fragment {
     
     /**
      * Retrieves the folder hierarchy for the specified folder.
+     *
+     * @param dirPath The path of the new folder.
+     * @param restoreState The state of the ListView that should be restored. Pass
+     *                     null if the ListView's position should not be restored.
      */
-    private void getDir(String dirPath) {
+    private void getDir(String dirPath, Parcelable restoreState) {
     	
-		getActivity().invalidateOptionsMenu();
+        ((MainActivity) getActivity()).showFolderFragmentActionItems(dirPath,
+                                                                     getActivity().getMenuInflater(),
+                                                                     ((MainActivity) getActivity()).getMenu(),
+                                                                     mIsPasteShown);
+
 		fileFolderNameList = new ArrayList<String>();
 		fileFolderPathList = new ArrayList<String>();
 		fileFolderSizeList = new ArrayList<String>();
@@ -412,6 +338,7 @@ public class FilesFoldersFragment extends Fragment {
 		}
 		
 		FoldersListViewAdapter foldersListViewAdapter = new FoldersListViewAdapter(getActivity(),
+                                                                                   this,
 																				   fileFolderNameList,
 																				   fileFolderTypeList, 
 																				   fileFolderSizeList, 
@@ -419,6 +346,11 @@ public class FilesFoldersFragment extends Fragment {
 		
 		listView.setAdapter(foldersListViewAdapter);
 		foldersListViewAdapter.notifyDataSetChanged();
+
+        //Restore the ListView's previous state.
+        if (restoreState!=null) {
+            listView.onRestoreInstanceState(restoreState);
+        }
 
         listView.setOnItemClickListener(new OnItemClickListener() {
 
@@ -428,68 +360,37 @@ public class FilesFoldersFragment extends Fragment {
                 if ((Integer) view.getTag(R.string.folder_list_item_type)==FOLDER)
                     currentDir = newPath;
 
-                //Indicates that the selected item is the "Back to Parent Directory" button.
-                if (fileFolderTypeList.get(index)==null) {
-                    getDir(newPath);
+                //Check if the selected item is a folder or a file.
+                if (fileFolderTypeList.get(index)==FOLDER) {
+                    getDir(newPath, null);
                 } else {
-
-                    //Check if the selected item is a folder or a file.
-                    if (fileFolderTypeList.get(index).equals(FOLDER)) {
-                        getDir(newPath);
-                    } else {
-                        playFile(index);
+                    int fileIndex = 0;
+                    for (int i=0; i < index; i++) {
+                        if (fileFolderTypeList.get(i)==AUDIO_FILE)
+                            fileIndex++;
                     }
 
+                    play(AUDIO_FILE, fileIndex, currentDir);
                 }
 
             }
 
         });
 		
-		if (mApp.getOrientation()==Common.ORIENTATION_LANDSCAPE) {
-			try {
-				String folderName = f.getName();
-				if (folderName.isEmpty()) {
-					folderName = "Root Directory";
-				}
-				
-				long millis = f.lastModified();
-				int numberItems = fileFolderNameList.size();
-				long size = f.getFreeSpace();
-				
-				if (size==0) {
-					landscapeFreeSpaceValue.setText(getFormattedFileSize(size));
-				} else {
-					landscapeFreeSpaceValue.setText("Unknown");
-				}
+    }
 
-				landscapeFolderName.setText(folderName);
-				
-				Date date = new Date(millis);
-				DateFormat dateFormat = android.text.format.DateFormat.getDateFormat(getActivity().getApplicationContext());
-				String s = dateFormat.format(date);
-				DateFormat formatter = new SimpleDateFormat("hh:mm aa");
-				String dateFormatted = formatter.format(date);
-				landscapeLastModifiedValue.setText(s + " " + dateFormatted);
-				
-				if (numberItems==1) {
-					landscapeItemsValue.setText(numberItems + " item");
-				} else {
-					landscapeItemsValue.setText(numberItems + " items");
-				}
-	
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			
-		}
-		
+    /**
+     * Refreshes the ListView with the current dataset.
+     */
+    public void refreshListView() {
+        //Update the ListView.
+        getDir(currentDir, listView.onSaveInstanceState());
     }
 
     /**
      * Resolves the /storage/emulated/legacy paths to
      * their true folder path representations. Required
-     * for Nexuses and other devices with no SD card.
+     * for Nexii and other devices with no SD card.
      */
     @SuppressLint("SdCardPath")
     private String getRealFilePath(String filePath) {
@@ -530,7 +431,7 @@ public class FilesFoldersFragment extends Fragment {
         }
 
         FilesFoldersFragment.currentDir = parentFolder;
-        getDir(parentFolder);
+        getDir(parentFolder, null);
         return false;
 
     }
@@ -574,51 +475,6 @@ public class FilesFoldersFragment extends Fragment {
         
     }
     
-    //Extracts specific ID3 metadata from an audio file and returns them in an ArrayList.
-    public ArrayList<Object> extractFileMetadata(String filePath) {
-    	ArrayList<Object> metadata = new ArrayList<Object>();
-    	
-    	MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
-    	mediaMetadataRetriever.setDataSource(filePath);
-    	
-    	metadata.add(mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE));
-    	metadata.add(mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST));
-    	metadata.add(mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM));
-    	metadata.add(mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
-    	metadata.add(mediaMetadataRetriever.getEmbeddedPicture());
-    	
-    	return metadata;
-    	
-    }
-    
-    //Stores an ArrayList of all the audio files' paths within the specified folder.
-    public void getAudioFilePathsInFolder(String folderPath) {
-    	
-    	//We'll use a filter to retrieve a list of all files with a matching extension.
-    	File file = new File(folderPath);
-    	FileExtensionFilter AUDIO_FILES_FILTER = new FileExtensionFilter(new String[] {".mp3", ".3gp", ".mp4",
-    																				   ".m4a", ".aac", ".ts", 
-    																				   ".flac", ".mid", ".xmf", 
-    																				   ".mxmf", ".midi", ".rtttl", 
-    																				   ".rtx", ".ota", "imy", ".ogg", 
-    																				   ".mkv", ".wav" });
-    	
-    	File[] filesInFolder = file.listFiles(AUDIO_FILES_FILTER);
-    	
-    	//Loop through the list of files and add their file paths to the corresponding ArrayList.
-    	for (int i=0; i < filesInFolder.length; i++) {
-    		
-    		try {
-				audioFilePathsInFolder.add(filesInFolder[i].getCanonicalPath());
-			} catch (IOException e) {
-				//Skip any corrupt audilo files.
-				continue;
-			}
-    		
-    	}
-    	
-    }
-    
     /**
      * This method goes through a folder recursively and saves all its
      * subdirectories to an ArrayList (subdirectoriesList). 
@@ -648,37 +504,21 @@ public class FilesFoldersFragment extends Fragment {
     }
     
     /**
-     * Plays the specified file.
+     * Plays the specified file/folder.
+     *
+     * @param itemType Specifies whether the input path is a file path
+     *                 or a folder path.
+     * @param index The index of the first song to play. Pass 0 if itemType
+     *              is FOLDER.
+     * @param folderPath The path of the folder that should be played.
      */
-    public void playFile(int index) {
+    public void play(int itemType, int index, String folderPath) {
+        //Build the query's selection clause.
+        String querySelection = MediaStore.Audio.Media.DATA + " LIKE "
+                              + "'" + folderPath.replace("'", "''") + "/%'";
 
-		//Check to make sure that the file is in a valid format.
-		String fileName = fileFolderNameList.get(index);
-		if (getFileExtension(fileName).equalsIgnoreCase("mp3") ||
-			getFileExtension(fileName).equalsIgnoreCase("3gp") ||
-			getFileExtension(fileName).equalsIgnoreCase("mp4") ||
-			getFileExtension(fileName).equalsIgnoreCase("m4a") ||
-			getFileExtension(fileName).equalsIgnoreCase("aac") ||
-			getFileExtension(fileName).equalsIgnoreCase("ts") ||
-			getFileExtension(fileName).equalsIgnoreCase("flac") ||
-			getFileExtension(fileName).equalsIgnoreCase("mid") ||
-			getFileExtension(fileName).equalsIgnoreCase("xmf") ||
-			getFileExtension(fileName).equalsIgnoreCase("mxmf") ||
-			getFileExtension(fileName).equalsIgnoreCase("midi") ||
-			getFileExtension(fileName).equalsIgnoreCase("rtttl") ||
-			getFileExtension(fileName).equalsIgnoreCase("rtx") ||
-			getFileExtension(fileName).equalsIgnoreCase("ota") ||
-			getFileExtension(fileName).equalsIgnoreCase("imy") ||
-			getFileExtension(fileName).equalsIgnoreCase("ogg") ||
-			getFileExtension(fileName).equalsIgnoreCase("mkv") ||
-			getFileExtension(fileName).equalsIgnoreCase("wav")) {
-
-            //Build the query's selection clause.
-            Log.e("DEBUG", ">>>>CURRENT DIR: " + currentDir);
-            String querySelection = MediaStore.Audio.Media.DATA + " LIKE "
-                                  + "'" + currentDir.replace("'", "''") + "/%'";
-
-            //Exclude all subfolders from this playback sequence.
+        //Exclude all subfolders from this playback sequence if we're playing a file.
+        if (itemType==AUDIO_FILE)
             for (int i=0; i < fileFolderPathList.size(); i++) {
                 if (fileFolderTypeList.get(i)==FOLDER)
                     querySelection += " AND " + MediaStore.Audio.Media.DATA + " NOT LIKE "
@@ -686,592 +526,141 @@ public class FilesFoldersFragment extends Fragment {
 
             }
 
-            mApp.getPlaybackKickstarter().initPlayback(mContext,
-                                                       querySelection,
-                                                       Common.PLAY_ALL_IN_FOLDER,
-                                                       index,
-                                                       true, false);
-
-		} else {
-            Toast.makeText(mContext, R.string.cant_play_this_file, Toast.LENGTH_SHORT).show();
-			
-		}
+        mApp.getPlaybackKickstarter().initPlayback(mContext,
+                                                   querySelection,
+                                                   Common.PLAY_ALL_IN_FOLDER,
+                                                   index,
+                                                   true, false);
 		
     }
-    
-    //Plays the specified folder (recursively, if set).
-    public void playFolder(String folderPath, boolean recursive) {
-    	
-    	//Retrieve the list of audio files within the folder (and subfolders if recursive is true).
-    	if (recursive==false) {
-        	getAudioFilePathsInFolder(folderPath);
-        	
-        	/* Now that we have a list of audio files within the folder, pass them
-        	 * on to NowPlayingActivity (which will assemble the files into a cursor for the service. */
-    		
-        	//Check if the list is empty. If it is, show a Toast message to the user.
-        	if (audioFilePathsInFolder.size() > 0) {
-        		
-        		//Extract the metadata from the first audio file (if any).
-        		ArrayList<Object> metadata = new ArrayList<Object>();
-        		metadata = extractFileMetadata(audioFilePathsInFolder.get(0));
-        		
-        		//Check if the audio file has a title. If not, use the file name.
-        		String title = "";
-        		if (metadata.get(0)==null) {
-        			title = audioFilePathsInFolder.get(0);
-        		} else {
-        			title = (String) metadata.get(0);
-        		}
-        		
-        		Intent intent = new Intent(mContext, NowPlayingActivity.class);
-        		intent.putExtra("DURATION", (String) metadata.get(3));
-        		intent.putExtra("SONG_NAME", title);
-        		intent.putExtra("NUMBER_SONGS", 1);
-        		
-        		if (metadata.get(1)==null) {
-        			intent.putExtra("ARTIST", "Unknown Artist");
-        		} else {
-        			intent.putExtra("ARTIST", (String) metadata.get(1));
-        		}
-        		
-        		if (metadata.get(2)==null) {
-        			intent.putExtra("ALBUM", "Unknown Album");
-        		} else {
-        			intent.putExtra("ALBUM", (String) metadata.get(2));
-        		}
-        		
-        		if (metadata.get(3)==null) {
-        			intent.putExtra("SELECTED_SONG_DURATION", 0);
-        		} else {
-        			intent.putExtra("SELECTED_SONG_DURATION", (String) metadata.get(3));
-        		}
-        		
-        		intent.putExtra("DATA_URI", audioFilePathsInFolder.get(0));
-        		
-        		if (metadata.get(4)==null) {
-        			intent.putExtra("EMBEDDED_ART", (byte[]) null);
-        		} else {
-        			intent.putExtra("EMBEDDED_ART", (byte[]) metadata.get(4));
-        		}
 
-        		intent.putExtra("NEW_PLAYLIST", true);
-        		intent.putExtra("CALLED_FROM_FOOTER", false);
-        		intent.putExtra("CALLED_FROM_FOLDERS", true);
-        		intent.putExtra("CALLING_FRAGMENT", "FOLDERS_FRAGMENT");
-        		
-        		//We're dealing with the first audio file in the list, so just use zero for SONG_SELECTED_INDEX.
-        		intent.putExtra("SONG_SELECTED_INDEX", 0);
-        		
-        		//Pass on the list of file paths to NowPlayingActivity (which will assemble them into a cursor).
-        		intent.putStringArrayListExtra("FOLDER_AUDIO_FILE_PATHS", audioFilePathsInFolder);
-        		
-        		startActivity(intent);
-        		getActivity().overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
-        		
-        	} else {
-        		Toast.makeText(mContext, R.string.no_audio_files_found, Toast.LENGTH_LONG).show();
-        	}
-        	
-    	} else {
-    		//Run the AsyncTask that will excute the recursive methods.
-    		File file = new File(folderPath);
-    		AsyncPlayFolderRecursiveTask task = new AsyncPlayFolderRecursiveTask(getActivity(), file.getName());
-    		String[] params = { folderPath };
-    		task.execute(params);
-    		
-    		file = null;
-    		
-    	}
-    	
-    	//Clean up the ArrayLists.
-    	audioFilePathsInFolder.clear();
-    	subdirectoriesList.clear();
-    	
+    /**
+     * Displays a "Rename" dialog and renames the specified file/folder.
+     *
+     * @param path The path of the folder/file that needs to be renamed.
+     */
+    public void rename(String path) {
+
+        final File renameFile = new File(path);
+        final AlertDialog renameAlertDialog = new AlertDialog.Builder(getActivity()).create();
+        final EditText fileEditText = new EditText(getActivity());
+
+        fileEditText.setHint(R.string.file_name);
+        fileEditText.setSingleLine(true);
+        fileEditText.setText(renameFile.getName());
+
+        renameAlertDialog.setView(fileEditText);
+        renameAlertDialog.setTitle(R.string.rename);
+        renameAlertDialog.setButton(DialogInterface.BUTTON_NEGATIVE,
+                                    mContext.getResources().getString(R.string.cancel),
+                                    new DialogInterface.OnClickListener() {
+
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            renameAlertDialog.dismiss();
+                                        }
+
+                                    });
+
+        renameAlertDialog.setButton(DialogInterface.BUTTON_POSITIVE,
+                                    mContext.getResources().getString(R.string.rename),
+                                    new DialogInterface.OnClickListener() {
+
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+
+                                            //Check if the new file name is empty.
+                                            if (fileEditText.getText().toString().isEmpty()) {
+                                                Toast.makeText(getActivity(), R.string.enter_a_name_for_folder, Toast.LENGTH_LONG).show();
+                                            } else {
+
+                                                File newNameFile = null;
+                                                try {
+                                                    newNameFile = new File(renameFile.getParentFile().getCanonicalPath() + "/" + fileEditText.getText().toString());
+                                                } catch (IOException e) {
+                                                    e.printStackTrace();
+                                                    Toast.makeText(getActivity(), R.string.folder_could_not_be_renamed, Toast.LENGTH_LONG).show();
+                                                    return;
+                                                }
+
+                                                try {
+                                                    if (renameFile.isDirectory())
+                                                        FileUtils.moveDirectory(renameFile, newNameFile);
+                                                    else
+                                                        FileUtils.moveFile(renameFile, newNameFile);
+
+                                                } catch (IOException e) {
+                                                    e.printStackTrace();
+                                                    Toast.makeText(getActivity(), R.string.folder_could_not_be_renamed, Toast.LENGTH_LONG).show();
+                                                    return;
+                                                }
+
+                                                Toast.makeText(getActivity(), R.string.folder_renamed, Toast.LENGTH_SHORT).show();
+                                                renameAlertDialog.dismiss();
+                                                refreshListView();
+
+                                            }
+
+                                        }
+
+                                    });
+
+        renameAlertDialog.show();
+
     }
-    
-    private Runnable refreshFolderHierarchy = new Runnable() {
 
-		@Override
-		public void run() {
-			
-			if (REFRESH_REQUIRED==true) {
+    /**
+     * Stores the specified file/folder's path in a temp variable and displays
+     * the "Paste" option in the ActionBar.
+     *
+     * @param path The path of the file/folder to copy/move.
+     * @param shouldMove Pass true if the file/folder should be moved instead of copied.
+     */
+    public void copyMove(String path, boolean shouldMove) {
+        shouldMoveCopiedFile = shouldMove;
+        copyMoveSourceFile = new File(path);
+        if (!copyMoveSourceFile.exists()) {
+            Toast.makeText(mContext, R.string.cant_copy_this_file_folder, Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-				try {
-					File file = new File(currentFolderPath);
-					
-					if (file!=null) {
-						String parentFile = file.getCanonicalPath();
-						
-						if (!parentFile.equals("/") && parentFile!=null) {
-							getDir(file.getCanonicalPath());
-							REFRESH_REQUIRED = false;
-						}
-						
-					}
+        //Show the paste option in the ActionBar.
+        mIsPasteShown =  true;
+        ((MainActivity) getActivity()).showFolderFragmentActionItems(currentDir,
+                                                                     getActivity().getMenuInflater(),
+                                                                     ((MainActivity) getActivity()).getMenu(),
+                                                                     true);
 
-				} catch (Exception e) {
-					return;
-				}
-			} else {
-				mHandler.postDelayed(refreshFolderHierarchy, 100);
-			}
-			
-		}
-    	
-    };
-    
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-    	AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-    	contextMenuItemPath = (String) info.targetView.getTag(R.string.folder_path);
-    	if (info.targetView.getTag(R.string.folder_list_item_type).equals(FOLDER) 
-    		&& v.getId()==R.id.folders_list_view) {
-    		//Long-pressed a folder.
-    		menu.setHeaderTitle(R.string.folder_actions);
-    		
-    		//Load the appropriate context menu items (Move vs Move Here).
-    		String[] menuItems;
-    		if (MOVE_OPERATION_PENDING==true) {
-        		menuItems = getResources().getStringArray(R.array.folder_view_move_active_context_menu_items);
-    		} else {
-        		menuItems = getResources().getStringArray(R.array.folder_view_context_menu_items);
-    		}
-
-    
-    		for (int i=0; i < menuItems.length; i++) {
-    			menu.add(9868, i, i, menuItems[i]);
-    		}
-    		
-    	} else {
-    		//Long-pressed a file.
-    		menu.setHeaderTitle(R.string.file_actions);
-    		String[] menuItems = getResources().getStringArray(R.array.file_view_context_menu_items);
-    
-    		for (int i=0; i < menuItems.length; i++) {
-    			menu.add(8689, i, i, menuItems[i]);
-    		}
-    		
-    	}
-    	
     }
-    
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-    	//Get the parameters of the ListView item we're dealing with.
-    	AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-    	int index = info.position;
-    	
-    	if (item.getGroupId()==9868) {
-    		//Folder context menu actions.
-        	switch(item.getItemId()) {
-        	case 0:
-        		//Play Folder.
-        		
-        		//Reset the shuffle function if it's currently enabled.
-        		mApp.getSharedPreferences().edit().putBoolean(Common.SHUFFLE_ON, false).commit();
-        		
-        		playFolder(contextMenuItemPath, false);
-        		contextMenuItemPath = "";
-        		break;
-        	case 1:
-        		//Play Folder Recursively.
-        		
-        		//Reset the shuffle function if it's currently enabled.
-        		mApp.getSharedPreferences().edit().putBoolean(Common.SHUFFLE_ON, false).commit();
-        		
-        		playFolder(contextMenuItemPath, true);
-        		contextMenuItemPath = "";
-        		break;
-        	case 2:
-        		//Copy.
-        		sourceFile = new File(contextMenuItemPath);
-        		final AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
-		        alertDialog.setTitle(R.string.copy);
-		        alertDialog.setMessage(mContext.getResources().getString(R.string.copy_instructions));
-		        alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL,
-		        					  mContext.getResources().getString(R.string.ok), 
-		        					  new DialogInterface.OnClickListener() {
-										
-										@Override
-										public void onClick(DialogInterface dialog, int which) {
-											alertDialog.dismiss();
-											
-										}
-										
-									});
-		        
-		        alertDialog.show();
-		        COPY_OPERATION_PENDING = true;
-        		break;
-        	case 3:
-        		//Paste.
-        		targetFile = new File(contextMenuItemPath);
-        		if (COPY_OPERATION_PENDING==true) {
-        			
-        			//Check if the source and destination dirs are the same.
-        			try {
-						if (targetFile.getCanonicalPath().equals(sourceFile.getCanonicalPath())) {
-							Toast.makeText(mContext, R.string.source_target_same, Toast.LENGTH_LONG).show();
-							break;
-						} else {
-							
-							AsyncPasteTask task = null;
-							if (targetFile.isDirectory()) {
-								task = new AsyncPasteTask(getActivity(), sourceFile, targetFile, "DIRECTORY");
-							} else {
-								task = new AsyncPasteTask(getActivity(), sourceFile, targetFile, "FILE");
-							}
-							
-		        			task.execute();
-		        			mHandler.postDelayed(refreshFolderHierarchy, 100);
-		        			break;
-						}
-					} catch (IOException e) {
-						Toast.makeText(mContext, R.string.error_occurred, Toast.LENGTH_LONG).show();
-						break;
-					}
 
-        		} else {
-        			Toast.makeText(mContext, R.string.no_file_copied, Toast.LENGTH_LONG).show();
-        			break;
-        		}
-        		
-        	case 4:
-        		//Move/Move Here.
-        		if (MOVE_OPERATION_PENDING==true) {
-        			//Start the move operation.
-        			String sourceType = "";
-        			if (moveSourceFile.isDirectory()) {
-        				sourceType = "DIRECTORY";
-        			} else {
-        				sourceType = "FILE";
-        			}
-        			
-        			File destinationFolder = new File(contextMenuItemPath);
-        			AsyncMoveTask moveTask = new AsyncMoveTask(getActivity(), 
-        													   moveSourceFile, 
-        													   destinationFolder, 
-        													   sourceType);
-        			moveTask.execute();	
-        			break;
-        		} else {
-        			//Show the move info dialog.
-        			moveSourceFile = new File(contextMenuItemPath);
-            		final AlertDialog moveAlertDialog = new AlertDialog.Builder(getActivity()).create();
-    		        moveAlertDialog.setTitle(R.string.move);
-    		        moveAlertDialog.setMessage(mContext.getResources().getString(R.string.move_instructions));
-    		        moveAlertDialog.setButton(DialogInterface.BUTTON_NEUTRAL,
-    		        					  mContext.getResources().getString(R.string.ok), 
-    		        					  new DialogInterface.OnClickListener() {
-    										
-    										@Override
-    										public void onClick(DialogInterface dialog, int which) {
-    											moveAlertDialog.dismiss();
-    											mHandler.postDelayed(refreshFolderHierarchy, 100);
-    											
-    										}
-    										
-    									});
-    		        
-    		        moveAlertDialog.show();
-    		        MOVE_OPERATION_PENDING = true;
-            		try {
-    					currentFolderPath = moveSourceFile.getParentFile().getCanonicalPath();
-    				} catch (IOException e) {
-    					// TODO Auto-generated catch block
-    					e.printStackTrace();
-    				}
-    		        break;
-        		}
-        		
-        	case 5:
-        		//Rename.
-        		final File renameFile = new File(contextMenuItemPath);
-        		final AlertDialog renameAlertDialog = new AlertDialog.Builder(getActivity()).create();
-        		final EditText fileEditText = new EditText(getActivity());
-        		fileEditText.setHint(R.string.file_name);
-        		fileEditText.setSingleLine(true);
-        		fileEditText.setText(renameFile.getName());
-        		renameAlertDialog.setView(fileEditText);
-        		renameAlertDialog.setTitle(R.string.rename);
-        		renameAlertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, 
-        								    mContext.getResources().getString(R.string.cancel), 
-        								    new DialogInterface.OnClickListener() {
-					
-											@Override
-											public void onClick(DialogInterface dialog, int which) {
-												renameAlertDialog.dismiss();
-												mHandler.removeCallbacks(refreshFolderHierarchy);
-											}
-												
-										});
-        		
-        		renameAlertDialog.setButton(DialogInterface.BUTTON_POSITIVE, 
-										    mContext.getResources().getString(R.string.rename), 
-										    new DialogInterface.OnClickListener() {
-					
-											@Override
-											public void onClick(DialogInterface dialog, int which) {
-												
-												//Check if the new file name is empty.
-												if (fileEditText.getText().toString().isEmpty()) {
-													Toast.makeText(getActivity(), R.string.enter_a_name_for_folder, Toast.LENGTH_LONG).show();
-												} else {
-
-													File newNameFile = null;
-													try {
-														newNameFile = new File(renameFile.getParentFile().getCanonicalPath() + "/" + fileEditText.getText().toString());
-													} catch (IOException e) {
-														Toast.makeText(getActivity(), R.string.folder_could_not_be_renamed, Toast.LENGTH_LONG).show();
-														return;
-													}
-													
-													try {
-														FileUtils.moveFile(renameFile, newNameFile);
-													} catch (IOException e) {
-														Toast.makeText(getActivity(), R.string.folder_could_not_be_renamed, Toast.LENGTH_LONG).show();
-														return;
-													}
-													
-									        		Toast.makeText(getActivity(), R.string.folder_renamed, Toast.LENGTH_SHORT).show();
-									        		REFRESH_REQUIRED = true;
-													renameAlertDialog.dismiss();
-													
-												}
-												
-											}
-												
-										});
-					        		
-        		renameAlertDialog.show();
-        		mHandler.postDelayed(refreshFolderHierarchy, 100);
-        		try {
-					currentFolderPath = renameFile.getParentFile().getCanonicalPath();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-        		break;
-        	case 6:
-        		//Delete.
-        		final File deleteFile = new File(contextMenuItemPath);
-        		final AlertDialog deleteAlertDialog = new AlertDialog.Builder(getActivity()).create();
-		        deleteAlertDialog.setTitle(R.string.delete);
-		        deleteAlertDialog.setMessage(mContext.getResources().getString(R.string.delete_folder_confirmation));
-		        deleteAlertDialog.setButton(DialogInterface.BUTTON_NEGATIVE,
-			        					  	mContext.getResources().getString(R.string.cancel), 
-			        					  	new DialogInterface.OnClickListener() {
-											
-												@Override
-												public void onClick(DialogInterface dialog, int which) {
-													deleteAlertDialog.dismiss();
-												
-												}
-											
-											});
-		        
-		        deleteAlertDialog.setButton(DialogInterface.BUTTON_POSITIVE,
-					  					  	mContext.getResources().getString(R.string.delete), 
-					  					  	new DialogInterface.OnClickListener() {
-												
-												@Override
-												public void onClick(DialogInterface dialog, int which) {
-									        		AsyncDeleteTask task;
-								        			task = new AsyncDeleteTask(getActivity(), deleteFile, "DIRECTORY");
-								        			task.execute();
-													deleteAlertDialog.dismiss();
-													mHandler.postDelayed(refreshFolderHierarchy, 100);
-													
-												}
-												
-											});
-		        
-		        deleteAlertDialog.show();
-        		try {
-					currentFolderPath = deleteFile.getParentFile().getCanonicalPath();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-        		break;	
-        		
-        	case 7:
-        		mApp.getSharedPreferences().edit().putString("DEFAULT_FOLDER", contextMenuItemPath).commit();
-        		String confirmation = contextMenuItemPath + " " + getResources().getString(R.string.is_now_default_folder);
-        		Toast.makeText(mContext, confirmation, Toast.LENGTH_LONG).show();
-        		break;
-            }
-            
-    	} else if (item.getGroupId()==8689) {
-    		//File context menu actions.
-    		switch(item.getItemId()) {
-        	case 0:
-        		//Play File.
-        		playFile(index);
-        		break;
-        	case 1:
-        		//Copy.
-        		sourceFile = new File(contextMenuItemPath);
-        		final AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
-		        alertDialog.setTitle(R.string.copy);
-		        alertDialog.setMessage(mContext.getResources().getString(R.string.copy_instructions));
-		        alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL,
-		        					  mContext.getResources().getString(R.string.ok), 
-		        					  new DialogInterface.OnClickListener() {
-										
-										@Override
-										public void onClick(DialogInterface dialog, int which) {
-											alertDialog.dismiss();
-											
-										}
-										
-									});
-		        
-		        alertDialog.show();
-		        COPY_OPERATION_PENDING = true;
-        		break;
-        	case 2:
-        		//Move.
-    			moveSourceFile = new File(contextMenuItemPath);
-        		final AlertDialog moveAlertDialog = new AlertDialog.Builder(getActivity()).create();
-		        moveAlertDialog.setTitle(R.string.move);
-		        moveAlertDialog.setMessage(mContext.getResources().getString(R.string.move_instructions));
-		        moveAlertDialog.setButton(DialogInterface.BUTTON_NEUTRAL,
-		        					  mContext.getResources().getString(R.string.ok), 
-		        					  new DialogInterface.OnClickListener() {
-										
-										@Override
-										public void onClick(DialogInterface dialog, int which) {
-											moveAlertDialog.dismiss();
-											
-										}
-										
-									});
-		        
-		        moveAlertDialog.show();
-		        MOVE_OPERATION_PENDING = true;
-        		break;
-        	case 3:
-        		//Rename.
-        		final File renameFile = new File(contextMenuItemPath);
-        		final AlertDialog renameAlertDialog = new AlertDialog.Builder(getActivity()).create();
-        		final EditText fileEditText = new EditText(getActivity());
-        		fileEditText.setHint(R.string.file_name);
-        		fileEditText.setSingleLine(true);
-        		fileEditText.setPadding(20, 20, 20, 20);
-        		fileEditText.setText(renameFile.getName());
-        		renameAlertDialog.setView(fileEditText);
-        		renameAlertDialog.setTitle(R.string.rename);
-        		renameAlertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, 
-        								    mContext.getResources().getString(R.string.cancel), 
-        								    new DialogInterface.OnClickListener() {
-					
-											@Override
-											public void onClick(DialogInterface dialog, int which) {
-												renameAlertDialog.dismiss();
-												mHandler.removeCallbacks(refreshFolderHierarchy);
-											}
-												
-										});
-        		
-        		renameAlertDialog.setButton(DialogInterface.BUTTON_POSITIVE, 
-										    mContext.getResources().getString(R.string.rename), 
-										    new DialogInterface.OnClickListener() {
-					
-											@Override
-											public void onClick(DialogInterface dialog, int which) {
-												
-												//Check if the new file name is empty.
-												if (fileEditText.getText().toString().isEmpty()) {
-													Toast.makeText(getActivity(), R.string.enter_a_name_for_file, Toast.LENGTH_LONG).show();
-												} else {
-
-													File newNameFile = null;
-													try {
-														newNameFile = new File(renameFile.getParentFile().getCanonicalPath() + "/" + fileEditText.getText().toString());
-													} catch (IOException e) {
-														Toast.makeText(getActivity(), R.string.file_could_not_be_renamed, Toast.LENGTH_LONG).show();
-														return;
-													}
-													
-													try {
-														FileUtils.moveFile(renameFile, newNameFile);
-													} catch (IOException e) {
-														Toast.makeText(getActivity(), R.string.file_could_not_be_renamed, Toast.LENGTH_LONG).show();
-														return;
-													}
-													
-									        		Toast.makeText(getActivity(), R.string.file_renamed, Toast.LENGTH_SHORT).show();
-									        		REFRESH_REQUIRED = true;
-													renameAlertDialog.dismiss();
-													
-												}
-												
-											}
-												
-										});
-					        		
-        		renameAlertDialog.show();
-        		try {
-					currentFolderPath = renameFile.getParentFile().getCanonicalPath();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-        		
-        		mHandler.postDelayed(refreshFolderHierarchy, 100);
-        		break;
-        	case 4:
-        		//Delete.
-        		final File deleteFile = new File(contextMenuItemPath);
-        		final AlertDialog deleteAlertDialog = new AlertDialog.Builder(getActivity()).create();
-		        deleteAlertDialog.setTitle(R.string.delete);
-		        deleteAlertDialog.setMessage(mContext.getResources().getString(R.string.delete_file_confirmation));
-		        deleteAlertDialog.setButton(DialogInterface.BUTTON_NEGATIVE,
-			        					  	mContext.getResources().getString(R.string.cancel), 
-			        					  	new DialogInterface.OnClickListener() {
-											
-												@Override
-												public void onClick(DialogInterface dialog, int which) {
-													deleteAlertDialog.dismiss();
-												
-												}
-											
-											});
-		        
-		        deleteAlertDialog.setButton(DialogInterface.BUTTON_POSITIVE,
-					  					  	mContext.getResources().getString(R.string.delete), 
-					  					  	new DialogInterface.OnClickListener() {
-												
-												@Override
-												public void onClick(DialogInterface dialog, int which) {
-									        		AsyncDeleteTask task;
-								        			task = new AsyncDeleteTask(getActivity(), deleteFile, "FILE");
-								        			task.execute();
-													deleteAlertDialog.dismiss();
-													mHandler.postDelayed(refreshFolderHierarchy, 100);
-													
-												}
-												
-											});
-		        
-		        deleteAlertDialog.show();
-        		try {
-					currentFolderPath = deleteFile.getParentFile().getCanonicalPath();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-        		
-        		break;
-    		}
-    		
-    	}
-
-        return super.onContextItemSelected(item);
+    /**
+     * Pastes the specified file into the current directory.
+     *
+     * @param file The file to paste into the current directory.
+     */
+    public void pasteIntoCurrentDir(File file) {
+        mIsPasteShown =  false;
+        AsyncCopyMoveTask task = new AsyncCopyMoveTask(mContext, file, new File(currentDir + "/" + file.getName()),
+                                                       this, shouldMoveCopiedFile);
+        task.execute();
     }
-	
+
+    /**
+     * Deletes the specified file.
+     *
+     * @param file The file to delete.
+     */
+    public void deleteFile(File file) {
+        int fileType;
+        if (file.isDirectory())
+            fileType = FOLDER;
+        else
+            fileType = FILE;
+
+        AsyncDeleteTask task = new AsyncDeleteTask(getActivity(), this, file, fileType);
+        task.execute();
+    }
+
     @Override
     public void onDestroyView() {
     	super.onDestroyView();

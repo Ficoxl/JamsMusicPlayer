@@ -185,7 +185,6 @@ public class ListViewCardsAdapter extends SimpleCursorAdapter implements Scrolla
 		return convertView;
 	}
 
-    
     /**
      * Click listener for overflow button.
      */

@@ -28,6 +28,7 @@ import android.view.animation.ScaleAnimation;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jams.music.player.Drawers.NavigationDrawerFragment;
 import com.jams.music.player.Drawers.QueueDrawerFragment;
@@ -55,6 +56,7 @@ public class MainActivity extends FragmentActivity {
 	private RelativeLayout mCurrentQueueDrawerLayout;
 	private ActionBarDrawerToggle mDrawerToggle;
     private QueueDrawerFragment mQueueDrawerFragment;
+    private Menu mMenu;
 	
 	//Current fragment params.
 	private Fragment mCurrentFragment;
@@ -356,6 +358,7 @@ public class MainActivity extends FragmentActivity {
      */
     private void showMainActivityActionItems(MenuInflater inflater, Menu menu) {
         //Inflate the menu.
+        getMenu().clear();
         inflater = getMenuInflater();
         inflater.inflate(R.menu.main_activity, menu);
 
@@ -365,6 +368,7 @@ public class MainActivity extends FragmentActivity {
         getActionBar().setDisplayShowTitleEnabled(false);
         getActionBar().setDisplayUseLogoEnabled(true);
         getActionBar().setDisplayShowCustomEnabled(false);
+        getActionBar().setHomeButtonEnabled(true);
         getActionBar().setLogo(R.drawable.text_logo);
     }
 
@@ -374,17 +378,45 @@ public class MainActivity extends FragmentActivity {
      * @param filePath The file path to set as the ActionBar's title text.
      * @param inflater The ActionBar's menu inflater.
      * @param menu The ActionBar menu to work with.
+     * @param showPaste Pass true if the ActionBar is being updated for a copy/move operation.
      */
-    public void showFolderFragmentActionItems(String filePath, MenuInflater inflater, Menu menu) {
+    public void showFolderFragmentActionItems(String filePath,
+                                              MenuInflater inflater,
+                                              Menu menu,
+                                              boolean showPaste) {
+        getMenu().clear();
         inflater.inflate(R.menu.files_folders_fragment, menu);
 
-        //Set the ActionBar background
-        getActionBar().setBackgroundDrawable(UIElementsHelper.getGeneralActionBarBackground(mContext));
+
         getActionBar().setDisplayShowTitleEnabled(false);
         getActionBar().setDisplayUseLogoEnabled(false);
         getActionBar().setDisplayShowCustomEnabled(true);
+        getActionBar().setHomeButtonEnabled(true);
         getActionBar().setLogo(0);
         getActionBar().setIcon(0);
+
+        if (showPaste) {
+            //Change the ActionBar's background and show the Paste Here option.
+            menu.findItem(R.id.action_paste).setVisible(true);
+            menu.findItem(R.id.action_cancel).setVisible(true);
+            getActionBar().setBackgroundDrawable(mContext.getResources()
+                                                         .getDrawable(R.drawable.cab_background_top_apptheme));
+
+            //Change the KitKat system bar color.
+            if (Build.VERSION.SDK_INT==Build.VERSION_CODES.KITKAT)
+                getWindow().setBackgroundDrawable(new ColorDrawable(0xFF002E3E));
+
+        } else {
+            //Hide the Paste Here option and set the default ActionBar background.
+            menu.findItem(R.id.action_paste).setVisible(false);
+            menu.findItem(R.id.action_cancel).setVisible(false);
+            getActionBar().setBackgroundDrawable(UIElementsHelper.getGeneralActionBarBackground(mContext));
+
+            //Change the KitKat system bar color.
+            if (Build.VERSION.SDK_INT==Build.VERSION_CODES.KITKAT)
+                getWindow().setBackgroundDrawable(UIElementsHelper.getGeneralActionBarBackground(mContext));
+
+        }
 
         LayoutInflater inflator = LayoutInflater.from(this);
         View view = inflator.inflate(R.layout.custom_actionbar_layout, null);
@@ -404,9 +436,10 @@ public class MainActivity extends FragmentActivity {
 	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-
+        mMenu = menu;
         if (mCurrentFragmentId==Common.FOLDERS_FRAGMENT)
-            showFolderFragmentActionItems(FilesFoldersFragment.currentDir, getMenuInflater(), menu);
+            showFolderFragmentActionItems(FilesFoldersFragment.currentDir,
+                                          getMenuInflater(), menu, false);
         else
             showMainActivityActionItems(getMenuInflater(), menu);
 
@@ -440,8 +473,16 @@ public class MainActivity extends FragmentActivity {
         case R.id.action_up:
             ((FilesFoldersFragment) mCurrentFragment).getParentDir();
             return true;
-        case R.id.action_add:
-            //TODO
+        case R.id.action_paste:
+            ((FilesFoldersFragment) mCurrentFragment).pasteIntoCurrentDir(((FilesFoldersFragment) mCurrentFragment).copyMoveSourceFile);
+            showMainActivityActionItems(getMenuInflater(), getMenu());
+            return true;
+        case R.id.action_cancel:
+            ((FilesFoldersFragment) mCurrentFragment).copyMoveSourceFile = null;
+            if (((FilesFoldersFragment) mCurrentFragment).shouldMoveCopiedFile)
+                Toast.makeText(mContext, R.string.move_canceled, Toast.LENGTH_LONG).show();
+            else
+                Toast.makeText(mContext, R.string.copy_canceled, Toast.LENGTH_LONG).show();
             return true;
 	    default:
 	        return super.onOptionsItemSelected(item);
@@ -478,5 +519,9 @@ public class MainActivity extends FragmentActivity {
 	public void setCurrentFragmentId(int id) {
 		mCurrentFragmentId = id;
 	}
+
+    public Menu getMenu() {
+        return mMenu;
+    }
 	
 }

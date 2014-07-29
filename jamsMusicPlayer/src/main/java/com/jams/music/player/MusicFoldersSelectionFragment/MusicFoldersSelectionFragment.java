@@ -36,12 +36,7 @@ public class MusicFoldersSelectionFragment extends Fragment {
 	private Context mContext;
 	private Common mApp;
 	private boolean mWelcomeSetup = false;
-	
-	private RelativeLayout mBackParentDirLayout;
-	private TextView mBackParentDirTextView;
-	private ImageView mBackParentDirImageView;
-	
-	private TextView mCurrentDirTextView;
+
 	private ListView mFoldersListView;
 	private Cursor mCursor;
 	
@@ -74,50 +69,9 @@ public class MusicFoldersSelectionFragment extends Fragment {
 		layoutParams.setMargins(0, 3, 0, 3);
 		mFoldersListView.setLayoutParams(layoutParams);
         
-        mBackParentDirLayout = (RelativeLayout) rootView.findViewById(R.id.back_to_parent_directory_view);
-        mBackParentDirImageView = (ImageView) mBackParentDirLayout.findViewById(R.id.back_to_parent_directory_icon);
-        mBackParentDirImageView.setImageResource(R.drawable.back_folders_view);
-        mBackParentDirLayout.setVisibility(View.GONE);
-        
-        mBackParentDirTextView = (TextView) mBackParentDirLayout.findViewById(R.id.back_to_parent_directory_text);
-        mBackParentDirTextView.setTypeface(TypefaceHelper.getTypeface(getActivity(), "Roboto-Light"));
-        mBackParentDirTextView.setTextColor(UIElementsHelper.getTextColor(mContext));
-        mBackParentDirTextView.setPaintFlags(mBackParentDirTextView.getPaintFlags() 
-											 | Paint.ANTI_ALIAS_FLAG
-											 | Paint.SUBPIXEL_TEXT_FLAG);
-        
-		mBackParentDirLayout.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				//Get the current folder's parent folder.
-				File currentFolder = new File(mCurrentDir);
-				String parentFolder = "";
-				try {
-					parentFolder = currentFolder.getParentFile().getCanonicalPath();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-				mCurrentDir = parentFolder;
-				getDir(parentFolder);
-				
-			}
-			
-		});
-        
 		mRootDir = Environment.getExternalStorageDirectory().getAbsolutePath().toString();
 		mCurrentDir = mRootDir;
-		
-		mCurrentDirTextView = (TextView) rootView.findViewById(R.id.current_directory_path);
-        mCurrentDirTextView.setTypeface(TypefaceHelper.getTypeface(getActivity(), "RobotoCondensed-Light"));
-        mCurrentDirTextView.setTextColor(UIElementsHelper.getTextColor(mContext));
-        mCurrentDirTextView.setPaintFlags(mCurrentDirTextView.getPaintFlags() 
-        								   | Paint.ANTI_ALIAS_FLAG
-        								   | Paint.FAKE_BOLD_TEXT_FLAG
-        								   | Paint.SUBPIXEL_TEXT_FLAG);
-        
+
         //Get a mCursor with a list of all the current folder paths (will be empty if this is the first run).
 		mCursor = mApp.getDBAccessHelper().getAllMusicFolderPaths();
         
@@ -162,8 +116,7 @@ public class MusicFoldersSelectionFragment extends Fragment {
 	 * folder's subfolders. 
 	 */
     private void getDir(String dirPath) {
-    	
-		mCurrentDirTextView.setText(dirPath);
+
 		mFileFolderNamesList = new ArrayList<String>();
 		mFileFolderPathsList = new ArrayList<String>();
 		mFileFolderSizesList = new ArrayList<String>();
@@ -214,13 +167,6 @@ public class MusicFoldersSelectionFragment extends Fragment {
 			
 			}
 			
-		}
-		
-		//Display the "Back to Parent Directory" view if the current directory isn't the root directory.
-		if (!mCurrentDir.equals("/")) {
-			mBackParentDirLayout.setVisibility(View.VISIBLE);
-		} else {
-			mBackParentDirLayout.setVisibility(View.GONE);
 		}
 		
 		boolean dirChecked = false;

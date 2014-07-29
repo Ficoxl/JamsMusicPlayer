@@ -548,9 +548,15 @@ public class AsyncBuildLibraryTask extends AsyncTask<String, String, Void> {
     private int getGenreSongsCount(String genre) {
         if (mGenresSongCountHashMap!=null)
             if (genre!=null)
-                return mGenresSongCountHashMap.get(genre);
+                if (mGenresSongCountHashMap.get(genre)!=null)
+                    return mGenresSongCountHashMap.get(genre);
+                else
+                    return 0;
             else
-                return mGenresSongCountHashMap.get(mContext.getResources().getString(R.string.unknown_genre));
+                if (mGenresSongCountHashMap.get(mContext.getResources().getString(R.string.unknown_genre))!=null)
+                    return mGenresSongCountHashMap.get(mContext.getResources().getString(R.string.unknown_genre));
+                else
+                    return 0;
         else
             return 0;
     }

@@ -1,35 +1,43 @@
 package com.jams.music.player.FoldersFragment;
 
-import java.util.List;
-
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.graphics.Paint;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
-import com.jams.music.player.R;
 import com.jams.music.player.Helpers.TypefaceHelper;
 import com.jams.music.player.Helpers.UIElementsHelper;
+import com.jams.music.player.R;
 import com.jams.music.player.Utils.Common;
+
+import java.io.File;
+import java.util.List;
 
 public class FoldersListViewAdapter extends ArrayAdapter<String> {
 
 	private Context mContext;
     private Common mApp;
+    private FilesFoldersFragment mFragment;
+
+    private int mItemType;
+    private String mItemPath;
+    private int mItemPosition;
+
 	private List<String> mFileFolderNameList;
 	private List<Integer> mFileFolderTypeList;
 	private List<String> mFileFolderSizeList;
 	private List<String> mFileFolderPathsList;
    
     public FoldersListViewAdapter(Context context,
+                                  FilesFoldersFragment fragment,
     							  List<String> nameList, 
     							  List<Integer> fileFolderTypeList,
     							  List<String> sizeList, 
@@ -39,6 +47,8 @@ public class FoldersListViewAdapter extends ArrayAdapter<String> {
     	
     	mContext = context;
         mApp = (Common) mContext.getApplicationContext();
+        mFragment = fragment;
+
     	mFileFolderNameList = nameList;
     	mFileFolderTypeList = fileFolderTypeList;
     	mFileFolderSizeList = sizeList;
@@ -76,7 +86,8 @@ public class FoldersListViewAdapter extends ArrayAdapter<String> {
             holder.overflowButton.setImageResource(UIElementsHelper.getIcon(mContext, "ic_action_overflow"));
             holder.overflowButton.setFocusable(false);
             holder.overflowButton.setFocusableInTouchMode(false);
-			
+			holder.overflowButton.setOnClickListener(overflowClickListener);
+
 			convertView.setTag(holder);
 		} else {
 		    holder = (FoldersViewHolder) convertView.getTag();
@@ -90,32 +101,102 @@ public class FoldersListViewAdapter extends ArrayAdapter<String> {
 			holder.fileFolderIcon.setImageResource(R.drawable.icon_folderblue);
 			convertView.setTag(R.string.folder_list_item_type, FilesFoldersFragment.FOLDER);
 			convertView.setTag(R.string.folder_path, mFileFolderPathsList.get(position));
+            convertView.setTag(R.string.position, position);
 
 		} else if (mFileFolderTypeList.get(position)==FilesFoldersFragment.AUDIO_FILE) {
 			holder.fileFolderIcon.setImageResource(R.drawable.icon_mp3);
 			convertView.setTag(R.string.folder_list_item_type, FilesFoldersFragment.AUDIO_FILE);
 			convertView.setTag(R.string.folder_path, mFileFolderPathsList.get(position));
+            convertView.setTag(R.string.position, position);
 
 		} else if (mFileFolderTypeList.get(position)==FilesFoldersFragment.PICTURE_FILE) {
 			holder.fileFolderIcon.setImageResource(R.drawable.icon_png);
 			convertView.setTag(R.string.folder_list_item_type, FilesFoldersFragment.PICTURE_FILE);
 			convertView.setTag(R.string.folder_path, mFileFolderPathsList.get(position));
+            convertView.setTag(R.string.position, position);
 
 		} else if (mFileFolderTypeList.get(position)==FilesFoldersFragment.VIDEO_FILE) {
 			holder.fileFolderIcon.setImageResource(R.drawable.icon_avi);
 			convertView.setTag(R.string.folder_list_item_type, FilesFoldersFragment.VIDEO_FILE);
 			convertView.setTag(R.string.folder_path, mFileFolderPathsList.get(position));
+            convertView.setTag(R.string.position, position);
 
 		} else {
 			holder.fileFolderIcon.setImageResource(R.drawable.icon_default);
 			convertView.setTag(R.string.folder_list_item_type, FilesFoldersFragment.FILE);
 			convertView.setTag(R.string.folder_path, mFileFolderPathsList.get(position));
+            convertView.setTag(R.string.position, position);
 
 		}
     	
     	return convertView;
 	}
-    
+
+    /**
+     * Click listener for overflow button.
+     */
+    private View.OnClickListener overflowClickListener = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            PopupMenu menu = new PopupMenu(mContext, v);
+            menu.inflate(R.menu.file_folder_overflow_menu);
+            menu.setOnMenuItemClickListener(popupMenuItemClickListener);
+            mItemType = (Integer) ((View) v.getParent()).getTag(R.string.folder_list_item_type);
+            mItemPath = (String) ((View) v.getParent()).getTag(R.string.folder_path);
+            mItemPosition = (Integer) ((View) v.getParent()).getTag(R.string.position);
+            menu.show();
+
+        }
+
+    };
+
+    /**
+     * Menu item click listener for the pop up menu.
+     */
+    private PopupMenu.OnMenuItemClickListener popupMenuItemClickListener = new PopupMenu.OnMenuItemClickListener() {
+
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+
+            switch(item.getItemId()) {
+                case R.id.play:
+                    int fileIndex;
+                    String folderPath;
+                    if (mItemType==FilesFoldersFragment.AUDIO_FILE) {
+                        fileIndex = 0;
+                        folderPath = FilesFoldersFragment.currentDir;
+                        for (int i=0; i < mItemPosition; i++) {
+                            if (mFileFolderTypeList.get(i)==FilesFoldersFragment.AUDIO_FILE)
+                                fileIndex++;
+                        }
+
+                    } else {
+                        fileIndex = 0;
+                        folderPath = mItemPath;
+                    }
+
+                    mFragment.play(mItemType, fileIndex, folderPath);
+                    break;
+                case R.id.rename:
+                    mFragment.rename(mItemPath);
+                    break;
+                case R.id.copy:
+                    mFragment.copyMove(mItemPath, false);
+                    break;
+                case R.id.move:
+                    mFragment.copyMove(mItemPath, true);
+                    break;
+                case R.id.delete:
+                    mFragment.deleteFile(new File(mItemPath));
+                    break;
+            }
+
+            return false;
+        }
+
+    };
+
     static class FoldersViewHolder {
     	public TextView fileFolderNameText;
     	public TextView fileFolderSizeText;

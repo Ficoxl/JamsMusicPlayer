@@ -147,30 +147,24 @@ public class PlaybackKickstarter implements NowPlayingActivityListener, PrepareS
 		@Override
 		protected Cursor doInBackground(Boolean... params) {
 			
-			try {
-                if (mPlaybackRouteId==Common.PLAY_ALL_IN_FOLDER) {
-                    //Return a cursor directly from MediaStore.
-                    Log.e("DEBUG", ">>>>>>" + mQuerySelection);
-                    try {
-                        Cursor cursor = MediaStoreAccessHelper.getAllSongsWithSelection(mContext,
-                                                                                        mQuerySelection,
-                                                                                        null,
-                                                                                        MediaStore.Audio.Media.DATA + " ASC");
-                        Log.e("DEBUG", ">>>>CURSOR COUNT: " + cursor.getCount());
-                        return cursor;
-                    } catch (Exception e) {
-                        return null;
-                    }
+/*			try {
 
-                } else {
-                    Log.e("DEBUG", ">>>>NOOOOOOOOOOO");
-                    return mApp.getDBAccessHelper().getPlaybackCursor(mContext, mQuerySelection, mPlaybackRouteId);
-                }
 			} catch (Exception exception) {
 				exception.printStackTrace();
 				publishProgress(new String[] { exception.getMessage() });
 				return null;
-			}
+			}*/
+
+            if (mPlaybackRouteId==Common.PLAY_ALL_IN_FOLDER)
+                //Return a cursor directly from MediaStore.
+                return MediaStoreAccessHelper.getAllSongsWithSelection(mContext,
+                                                                       mQuerySelection,
+                                                                       null,
+                                                                       MediaStore.Audio.Media.DATA + " ASC");
+
+            else
+                return mApp.getDBAccessHelper().getPlaybackCursor(mContext, mQuerySelection, mPlaybackRouteId);
+
 			
 		}
 

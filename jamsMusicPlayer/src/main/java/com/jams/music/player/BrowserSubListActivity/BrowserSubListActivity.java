@@ -228,47 +228,34 @@ public class BrowserSubListActivity extends FragmentActivity {
         public void run() {
 
             //Slide down the header image.
-            mApp.getPicasso().load(mHeaderImagePath).into(mHeaderImage, new Callback() {
+            mApp.getPicasso().load(mHeaderImagePath).into(mHeaderImage);
+            TranslateAnimation slideDown = new TranslateAnimation(mHeaderLayout, 400, new DecelerateInterpolator(2.0f),
+                                                                  View.VISIBLE, Animation.RELATIVE_TO_SELF,
+                                                                  0.0f, Animation.RELATIVE_TO_SELF, 0.0f,
+                                                                  Animation.RELATIVE_TO_SELF, -2.0f,
+                                                                  Animation.RELATIVE_TO_SELF, 0.0f);
+
+            slideDown.setAnimationListener(new Animation.AnimationListener() {
 
                 @Override
-                public void onSuccess() {
-                    TranslateAnimation slideDown = new TranslateAnimation(mHeaderLayout, 400, new DecelerateInterpolator(2.0f),
-                            View.VISIBLE, Animation.RELATIVE_TO_SELF,
-                            0.0f, Animation.RELATIVE_TO_SELF, 0.0f,
-                            Animation.RELATIVE_TO_SELF, -2.0f,
-                            Animation.RELATIVE_TO_SELF, 0.0f);
+                public void onAnimationStart(Animation animation) {
+                    mHeaderLayout.setVisibility(View.VISIBLE);
 
-                    slideDown.setAnimationListener(new Animation.AnimationListener() {
-
-                        @Override
-                        public void onAnimationStart(Animation animation) {
-                            mHeaderLayout.setVisibility(View.VISIBLE);
-
-                        }
-
-                        @Override
-                        public void onAnimationEnd(Animation animation) {
-
-                        }
-
-                        @Override
-                        public void onAnimationRepeat(Animation animation) {
-
-                        }
-
-                    });
-
-                    slideDown.animate();
                 }
 
                 @Override
-                public void onError() {
-                    //Load the default album art.
+                public void onAnimationEnd(Animation animation) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
 
                 }
 
             });
 
+            slideDown.animate();
         }
 
     };
@@ -335,6 +322,7 @@ public class BrowserSubListActivity extends FragmentActivity {
                                     + mHeaderText.replace("'", "''") + "'" + " AND "
                                     + DBAccessHelper.SONG_ARTIST + "=" + "'"
                                     + mHeaderSubText.replace("'", "''") + "'";
+                    break;
                 case Common.GENRES_FLIPPED_SONGS_FRAGMENT:
                     mQuerySelection = " AND " + DBAccessHelper.SONG_ALBUM + "=" + "'"
                                     + mHeaderText.replace("'", "''") + "'" + " AND "

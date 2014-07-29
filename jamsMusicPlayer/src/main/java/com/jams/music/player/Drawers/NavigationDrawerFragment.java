@@ -13,6 +13,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -80,6 +81,17 @@ public class NavigationDrawerFragment extends Fragment {
         mLibraryPickerSpinner.setOnItemSelectedListener(librariesItemSelectedListener);
 
         browsersListView.setDividerHeight(0);
+
+        //KitKat translucent navigation/status bar.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            int navBarHeight = Common.getNavigationBarHeight(mContext);
+            if (browsersListView!=null) {
+                browsersListView.setPadding(0, 0, 0, navBarHeight);
+                browsersListView.setClipToPadding(false);
+            }
+
+        }
+
 		return rootView;
 	}
 

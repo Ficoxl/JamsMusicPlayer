@@ -108,6 +108,16 @@ public class QueueDrawerFragment extends Fragment {
 
         });
 
+        //KitKat translucent navigation/status bar.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            int navBarHeight = Common.getNavigationBarHeight(mContext);
+            if (mListView!=null) {
+                mListView.setPadding(0, 0, 0, navBarHeight);
+                mListView.setClipToPadding(false);
+            }
+
+        }
+
 		return rootView;
 	}
 

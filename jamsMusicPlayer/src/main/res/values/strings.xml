@@ -355,6 +355,7 @@
         <item>Delete</item>
         <item>Set as Default Folder</item>
     </string-array>
+
     <string-array name="folder_view_move_active_context_menu_items">
         <item>Play Folder</item>
         <item>Play Folder Recursively</item>
@@ -400,8 +401,10 @@
     <string name="moving_file">Moving file.</string>
     <string name="move_instructions">To finish this move operation, long press the destination folder and tap \"Move Here\".</string>
     <string name="deleting_files">Deleting file(s).</string>
-    <string name="file_deleted">Done deleting file(s).</string>
-    <string name="file_could_not_be_deleted">The file(s) could not be deleted.</string>
+    <string name="file_deleted">File deleted.</string>
+    <string name="file_could_not_be_deleted">The file could not be deleted.</string>
+    <string name="folder_deleted">Folder deleted.</string>
+    <string name="folder_could_not_be_deleted">The folder could not be deleted.</string>
     <string name="could_not_play_file">Could not play audio file. Try rescanning your library.</string>
     <string name="rename">Rename</string>
     <string name="file_name">File Name</string>
@@ -810,7 +813,7 @@
     <string name="field_5">field5</string>
     <string name="title_activity_horizontal_list_sub">HorizontalListSubActivity</string>
     <string name="horiz_list_sub_activity">HorizListSubActivity</string>
-    <string name="queue_empty_info">Your current songs queue will appear here when you\'re playing music.</string>
+    <string name="queue_empty_info">Your queue is empty.</string>
     <string name="play_all_caps">PLAY ALL</string>
     <string name="a_b_repeat">A-B Repeat</string>
     <string name="music_library_colon">Music Library: </string>
@@ -825,5 +828,9 @@
     <string name="up">Up</string>
     <string name="add">Add</string>
     <string name="cant_play_this_file">Can\'t play this file.</string>
+    <string name="cant_copy_this_file_folder">Can\'t copy this file/folder.</string>
+    <string name="paste_here">Paste Here</string>
+    <string name="copy_canceled">Copy operation cancelled.</string>
+    <string name="move_canceled">Move operation cancelled.</string>
 
 </resources>

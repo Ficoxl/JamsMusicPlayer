@@ -1650,15 +1650,14 @@ public class AudioPlaybackService extends Service {
 	    		 * by mCurrentSongIndex.
 	    		 */
 	    		songHelper.populateSongData(mContext, songIndex);
-	    		setMediaPlayerSongHelper(songHelper);
-	    		
+                setMediaPlayerSongHelper(songHelper);
+
 	    		//Set this service as a foreground service.
 	    		startForeground(mNotificationId, buildNotification(songHelper));
-	    		
+
 	    	} else {
 	    		songHelper.populateSongData(mContext, songIndex);
-	    		setMediaPlayerSongHelper(songHelper);
-	    		
+                setMediaPlayerSongHelper(songHelper);
 	    	}
 
     		/*
@@ -1667,27 +1666,28 @@ public class AudioPlaybackService extends Service {
     		 */
 	    	getMediaPlayer().setDataSource(mContext, getSongDataSource(getMediaPlayerSongHelper()));
 			getMediaPlayer().setOnPreparedListener(mediaPlayerPrepared);
-			getMediaPlayer().setOnErrorListener(onErrorListener);
-			getMediaPlayer().prepareAsync();
+            getMediaPlayer().setOnErrorListener(onErrorListener);
+            getMediaPlayer().prepareAsync();
 
-		} catch (Exception e) {
-			e.printStackTrace();
+        } catch (Exception e) {
+            Log.e("DEBUG", "MESSAGE", e);
+            e.printStackTrace();
 
             //Display an error toast to the user.
             showErrorToast();
 
-			//Add the current song index to the list of failed indeces.
-			getFailedIndecesList().add(songIndex);
-			
-			//Start preparing the next song.
-			if (!isAtEndOfQueue() || mFirstRun)
-				prepareMediaPlayer(songIndex+1);
-			else
-				return false;
+            //Add the current song index to the list of failed indeces.
+            getFailedIndecesList().add(songIndex);
 
-			return false;
-		}
-		
+            //Start preparing the next song.
+            if (!isAtEndOfQueue() || mFirstRun)
+                prepareMediaPlayer(songIndex+1);
+            else
+                return false;
+
+            return false;
+        }
+
 		return true;
 	}
 	
@@ -1759,7 +1759,7 @@ public class AudioPlaybackService extends Service {
 	 * (URI_BEING_LOADED) is returned.
 	 */
 	private Uri getSongDataSource(SongHelper songHelper) {
-		
+
 		if (songHelper.getSource().equals(DBAccessHelper.GMUSIC)) {
 			
 			//Check if a local copy of the song exists.
@@ -3002,6 +3002,15 @@ public class AudioPlaybackService extends Service {
 
         @Override
         public void onServiceCursorReady(Cursor cursor, int currentSongIndex, boolean playAll) {
+
+            if (cursor.getCount()==0) {
+                Toast.makeText(mContext, R.string.no_audio_files_found, Toast.LENGTH_SHORT).show();
+                if (mApp.getNowPlayingActivity()!=null)
+                    mApp.getNowPlayingActivity().finish();
+
+                return;
+            }
+
             setCursor(cursor);
             setCurrentSongIndex(currentSongIndex);
             getFailedIndecesList().clear();

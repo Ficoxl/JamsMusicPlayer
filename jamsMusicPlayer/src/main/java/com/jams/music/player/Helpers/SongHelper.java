@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -91,7 +92,7 @@ public class SongHelper {
             this.setFilePath(mApp.getService().getCursor().getString(getFilePathColumnIndex()));
             this.setAlbumArtPath(determineAlbumArtPath());
             this.setSource(determineSongSource());
-            this.setLocalCopyPath(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.LOCAL_COPY_PATH)));
+            this.setLocalCopyPath(determineLocalCopyPath());
             this.setSavedPosition(determineSavedPosition());
 
             mApp.getPicasso()
@@ -130,7 +131,7 @@ public class SongHelper {
             this.setFilePath(mApp.getService().getCursor().getString(getFilePathColumnIndex()));
             this.setAlbumArtPath(determineAlbumArtPath());
             this.setSource(determineSongSource());
-            this.setLocalCopyPath(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.LOCAL_COPY_PATH)));
+            this.setLocalCopyPath(determineLocalCopyPath());
             this.setSavedPosition(determineSavedPosition());
 
             mApp.getPicasso()
@@ -170,7 +171,7 @@ public class SongHelper {
             this.setFilePath(mApp.getService().getCursor().getString(getFilePathColumnIndex()));
             this.setAlbumArtPath(determineAlbumArtPath());
             this.setSource(determineSongSource());
-            this.setLocalCopyPath(mApp.getService().getCursor().getString(mApp.getService().getCursor().getColumnIndex(DBAccessHelper.LOCAL_COPY_PATH)));
+            this.setLocalCopyPath(determineLocalCopyPath());
             this.setSavedPosition(determineSavedPosition());
 
         }
@@ -221,9 +222,7 @@ public class SongHelper {
 
         @Override
         public void onBitmapFailed(Drawable errorDrawable) {
-            Drawable defaultAlbumArtDrawable = mApp.getResources().getDrawable(R.drawable.default_album_art);
-            Bitmap defaultAlbumArt = ((BitmapDrawable) defaultAlbumArtDrawable).getBitmap();
-            setAlbumArt(defaultAlbumArt);
+            setAlbumArt(null);
             onBitmapLoaded(mAlbumArt, null);
 
         }
@@ -291,7 +290,6 @@ public class SongHelper {
             else
                 //The current row is from MediaStore's DB schema.
                 return mApp.getService().getCursor().getColumnIndex(MediaStore.Audio.Media.TITLE);
-
         }
 
     }
@@ -459,6 +457,32 @@ public class SongHelper {
             } else {
                 //The current row is from MediaStore's DB schema.
                 return DBAccessHelper.LOCAL;
+
+            }
+
+        }
+
+    }
+
+    private String determineLocalCopyPath() {
+        if (mApp.getService().getCursor().getColumnIndex(MediaStore.Audio.Media.IS_MUSIC)==-1) {
+            //We're dealing with Jams' internal DB schema.
+            int colIndex = mApp.getService().getCursor().getColumnIndex(DBAccessHelper.LOCAL_COPY_PATH);
+            return mApp.getService().getCursor().getString(colIndex);
+        } else {
+            String isMusicColName = MediaStore.Audio.Media.IS_MUSIC;
+            int isMusicColumnIndex = mApp.getService().getCursor().getColumnIndex(isMusicColName);
+
+            //Check if the current row is from Jams' internal DB schema or MediaStore.
+            if (mApp.getService().getCursor().getString(isMusicColumnIndex).isEmpty()) {
+                //We're dealing with Jams' internal DB schema.
+                int colIndex = mApp.getService().getCursor().getColumnIndex(DBAccessHelper.LOCAL_COPY_PATH);
+                return mApp.getService().getCursor().getString(colIndex);
+
+            } else {
+                //The current row is from MediaStore's DB schema.
+                int filePathColumnIndex = mApp.getService().getCursor().getColumnIndex(MediaStore.Audio.Media.DATA);
+                return mApp.getService().getCursor().getString(filePathColumnIndex);
 
             }
 
