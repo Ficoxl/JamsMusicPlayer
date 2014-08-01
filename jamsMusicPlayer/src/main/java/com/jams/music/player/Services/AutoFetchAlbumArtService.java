@@ -10,7 +10,7 @@ import android.support.v4.app.NotificationCompat;
 
 import com.jams.music.player.R;
 import com.jams.music.player.AsyncTasks.AsyncAutoGetAlbumArtTask;
-import com.jams.music.player.SettingsActivity.SettingsActivity;
+import com.jams.music.player.SettingsActivity.SettingsActivity____;
 
 public class AutoFetchAlbumArtService extends Service {
 	
@@ -50,7 +50,7 @@ public class AutoFetchAlbumArtService extends Service {
         startForeground(NOTIFICATION_ID, notification);
 		
         //Call the AsyncTask that checks for missing art and downloads them.
-        AsyncAutoGetAlbumArtTask task = new AsyncAutoGetAlbumArtTask(mContext, SettingsActivity.mSettingsActivity);
+        AsyncAutoGetAlbumArtTask task = new AsyncAutoGetAlbumArtTask(mContext, SettingsActivity____.mSettingsActivity);
         task.execute();
         
         return START_STICKY;

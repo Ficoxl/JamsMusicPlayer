@@ -229,7 +229,7 @@ public class AudioPlaybackService extends Service {
 	    mMediaButtonReceiverComponent = new ComponentName(this.getPackageName(), HeadsetButtonsReceiver.class.getName());
 	    mAudioManager.registerMediaButtonEventReceiver(mMediaButtonReceiverComponent);
 	    
-	    if (mApp.getSharedPreferences().getInt("LOCKSCREEN_CONTROLS_ENABLED", 0)==0) {
+	    if (mApp.getSharedPreferences().getBoolean(Common.SHOW_LOCKSCREEN_CONTROLS, true)==true) {
 	    	initRemoteControlClient();
 	    }
 	    

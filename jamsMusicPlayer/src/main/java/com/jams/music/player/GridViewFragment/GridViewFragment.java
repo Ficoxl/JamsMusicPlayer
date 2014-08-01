@@ -1,5 +1,6 @@
 package com.jams.music.player.GridViewFragment;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -381,6 +382,16 @@ public class GridViewFragment extends Fragment {
         mGridViewAdapter = null;
         mContext = null;
         mHandler = null;
+
+    }
+
+    @SuppressLint("NewApi")
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (Build.VERSION.SDK_INT==Build.VERSION_CODES.KITKAT) {
+            mActionBarBleed.setBackground(UIElementsHelper.getGeneralActionBarBackground(mContext));
+        }
 
     }
 

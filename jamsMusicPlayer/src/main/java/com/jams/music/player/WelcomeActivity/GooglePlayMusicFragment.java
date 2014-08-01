@@ -38,23 +38,14 @@ public class GooglePlayMusicFragment extends Fragment {
 		View rootView = (View) inflater.inflate(R.layout.fragment_welcome_screen_5, null);
 		
 		welcomeHeader = (TextView) rootView.findViewById(R.id.welcome_header);
-		welcomeHeader.setTypeface(TypefaceHelper.getTypeface(getActivity(), "Roboto-Thin"));
-        welcomeHeader.setPaintFlags(welcomeHeader.getPaintFlags() 
-        						   | Paint.ANTI_ALIAS_FLAG
-        						   | Paint.SUBPIXEL_TEXT_FLAG);
+		welcomeHeader.setTypeface(TypefaceHelper.getTypeface(getActivity(), "Roboto-Light"));
 		
 		welcomeText1 = (TextView) rootView.findViewById(R.id.welcome_text_1);
-		welcomeText1.setTypeface(TypefaceHelper.getTypeface(getActivity(), "Roboto-Light"));
-        welcomeText1.setPaintFlags(welcomeText1.getPaintFlags() 
-        						   | Paint.ANTI_ALIAS_FLAG
-        						   | Paint.SUBPIXEL_TEXT_FLAG);
+		welcomeText1.setTypeface(TypefaceHelper.getTypeface(getActivity(), "Roboto-Regular"));
         
 		googlePlayMusicDisclaimer = (TextView) rootView.findViewById(R.id.google_play_music_disclaimer);
-		googlePlayMusicDisclaimer.setTypeface(TypefaceHelper.getTypeface(getActivity(), "Roboto-Light"));
-        googlePlayMusicDisclaimer.setPaintFlags(googlePlayMusicDisclaimer.getPaintFlags() 
-        						   | Paint.ANTI_ALIAS_FLAG
-        						   | Paint.SUBPIXEL_TEXT_FLAG);
-        
+		googlePlayMusicDisclaimer.setTypeface(TypefaceHelper.getTypeface(getActivity(), "Roboto-Regular"));
+
         radioGroup = (RadioGroup) rootView.findViewById(R.id.google_play_music_radio_group);
         
         final AccountManager accountManager = AccountManager.get(getActivity().getApplicationContext());
@@ -77,11 +68,7 @@ public class GooglePlayMusicFragment extends Fragment {
         	}
         	
         	radioButton[i].setTag(i);
-        	radioButton[i].setTextColor(UIElementsHelper.getTextColor(mContext));
-        	radioButton[i].setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Light"));
-        	radioButton[i].setPaintFlags(radioButton[i].getPaintFlags()
-        								 | Paint.ANTI_ALIAS_FLAG
-        								 | Paint.SUBPIXEL_TEXT_FLAG);
+        	radioButton[i].setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
         	
         }
         

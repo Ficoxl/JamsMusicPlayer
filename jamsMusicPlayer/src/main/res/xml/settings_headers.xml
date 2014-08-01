@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
+    <header
+        android:fragment="com.jams.music.player.SettingsActivity.SettingsAppearanceFragment"
+        android:icon="@drawable/color_palette"
+        android:summary="@string/appearance_description"
+        android:title="@string/appearance" />
+
+    <header
+        android:fragment="com.jams.music.player.SettingsActivity.SettingsLayoutsFragment"
+        android:icon="@drawable/default_screen"
+        android:summary="@string/layouts_description"
+        android:title="@string/layouts" />
+
+    <header
+        android:fragment="com.jams.music.player.SettingsActivity.SettingsAlbumArtFragment"
+        android:icon="@drawable/cover_art_icon"
+        android:summary="@string/album_art_description"
+        android:title="@string/album_art" />
+
+    <header
+        android:fragment="com.jams.music.player.SettingsActivity.SettingsAudioFragment"
+        android:icon="@drawable/ic_action_volume_on"
+        android:summary="@string/audio_settings_description"
+        android:title="@string/audio_settings" />
+
+    <header
+        android:fragment="com.jams.music.player.SettingsActivity.SettingsMusicLibraryFragment"
+        android:icon="@drawable/playlists_folders"
+        android:summary="@string/music_folders_description"
+        android:title="@string/music_library" />
+
+    <header
+        android:fragment="com.jams.music.player.SettingsActivity.SettingsGMusicFragment"
+        android:icon="@drawable/cloud"
+        android:summary="@string/gmusic_description"
+        android:title="@string/google_play_music_no_asterisk" />
+
+    <header
+        android:fragment="com.jams.music.player.SettingsActivity.SettingsLabelsFragment"
+        android:icon="@drawable/libraries"
+        android:summary="@string/labels_description"
+        android:title="@string/labels" />
+
+    <header
+        android:fragment="com.jams.music.player.SettingsActivity.SettingsFoldersFragment"
+        android:icon="@drawable/folders_settings"
+        android:summary="@string/folders_description"
+        android:title="@string/folders" />
+
+    <header
+        android:fragment="com.jams.music.player.SettingsActivity.SettingsBlacklistsFragment"
+        android:icon="@drawable/manage_blacklists"
+        android:summary="@string/blacklists_description"
+        android:title="@string/blacklists" />
+
+    <header
+        android:fragment="com.jams.music.player.SettingsActivity.SettingsScrobblingFragment"
+        android:icon="@drawable/scrobbling"
+        android:summary="@string/scrobbling_description"
+        android:title="@string/scrobbling" />
+
+    <header
+        android:fragment="com.jams.music.player.SettingsActivity.SettingsAboutFragment"
+        android:icon="@drawable/ic_action_about"
+        android:summary="@string/about_description"
+        android:title="@string/licenses_and_about" />
+
+</preference-headers>

@@ -1,9 +1,7 @@
-package com.jams.music.player.MusicFoldersSelectionFragment;
+package com.jams.music.player.SettingsActivity;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,26 +12,26 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.jams.music.player.R;
 import com.jams.music.player.Helpers.TypefaceHelper;
 import com.jams.music.player.Helpers.UIElementsHelper;
+import com.jams.music.player.MusicFoldersSelectionFragment.MusicFoldersSelectionFragment;
+import com.jams.music.player.R;
 import com.jams.music.player.Utils.Common;
 
-import java.util.ArrayList;
 import java.util.Set;
 
-public class MultiselectListViewAdapter extends ArrayAdapter<String> {
+public class SettingsMultiselectAdapter extends ArrayAdapter<String> {
 
 	private Context mContext;
 	private Common mApp;
-	private MusicFoldersSelectionFragment mFragment;
+	private SettingsMusicFoldersDialog mFragment;
 	private boolean mDirChecked;
 	private boolean mWelcomeSetup;
    
-    public MultiselectListViewAdapter(Context context, 
-    								  MusicFoldersSelectionFragment fragment, 
-    								  boolean welcomeSetup,
-    								  boolean dirChecked) {
+    public SettingsMultiselectAdapter(Context context,
+                                      SettingsMusicFoldersDialog fragment,
+                                      boolean welcomeSetup,
+                                      boolean dirChecked) {
     	
     	super(context, -1, fragment.getFileFolderNamesList());
     	
@@ -58,17 +56,9 @@ public class MultiselectListViewAdapter extends ArrayAdapter<String> {
 			holder.fileFoldersImage = (ImageView) convertView.findViewById(R.id.file_folder_icon);
 			holder.fileFolderSizeText = (TextView) convertView.findViewById(R.id.file_folder_size_multiselect);
 
-			//Apply the card layout's background based on the color theme.
-			if (mWelcomeSetup==true || mApp.getCurrentTheme()==Common.LIGHT_THEME) {
-				holder.fileFolderNameText.setTextColor(Color.parseColor("#2F2F2F"));
-                holder.fileFolderSizeText.setTextColor(UIElementsHelper.getSmallTextColor(mContext));
+            holder.fileFolderNameText.setTextColor(Color.parseColor("#2F2F2F"));
+            holder.fileFolderSizeText.setTextColor(UIElementsHelper.getSmallTextColor(mContext));
 
-			} else if (mApp.getCurrentTheme()==Common.DARK_THEME) {
-				holder.fileFolderNameText.setTextColor(UIElementsHelper.getThemeBasedTextColor(mContext));
-                holder.fileFolderSizeText.setTextColor(UIElementsHelper.getSmallTextColor(mContext));
-
-			}
-			
 			holder.fileFolderNameText.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
 			holder.fileFolderSizeText.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
 			

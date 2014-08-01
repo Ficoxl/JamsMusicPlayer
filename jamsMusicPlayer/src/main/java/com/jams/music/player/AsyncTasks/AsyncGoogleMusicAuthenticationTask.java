@@ -17,7 +17,7 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.jams.music.player.R;
 import com.jams.music.player.GMusicHelpers.GMusicClientCalls;
 import com.jams.music.player.LauncherActivity.LauncherActivity;
-import com.jams.music.player.SettingsActivity.SettingsActivity;
+import com.jams.music.player.SettingsActivity.SettingsActivity____;
 import com.jams.music.player.Utils.Common;
 
 public class AsyncGoogleMusicAuthenticationTask extends AsyncTask<String, String, String> {
@@ -56,7 +56,7 @@ public class AsyncGoogleMusicAuthenticationTask extends AsyncTask<String, String
 		mApp = (Common) mContext.getApplicationContext();
     }
     
-    public AsyncGoogleMusicAuthenticationTask(Context context, SettingsActivity activity, boolean firstRun, String accountName) {
+    public AsyncGoogleMusicAuthenticationTask(Context context, SettingsActivity____ activity, boolean firstRun, String accountName) {
     	mContext = context;
     	mActivity = activity;
     	mAccountName = accountName;
@@ -143,7 +143,7 @@ public class AsyncGoogleMusicAuthenticationTask extends AsyncTask<String, String
     	} else if (result.equals("USER_RECOVERABLE_AUTH_EXCEPTION")) {
     		//45 is an arbitrary value that identifies this activity's result.
     		LauncherActivity.mAccountName = mAccountName;
-    		SettingsActivity.mAccountName = mAccountName;
+    		SettingsActivity____.mAccountName = mAccountName;
     		
     		if (mActivity!=null) {
     			mActivity.startActivityForResult(userRecoverableExceptionIntent, 45);

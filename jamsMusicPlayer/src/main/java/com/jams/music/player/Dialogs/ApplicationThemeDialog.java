@@ -3,13 +3,11 @@ package com.jams.music.player.Dialogs;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
+import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 
 import com.jams.music.player.R;
 import com.jams.music.player.SettingsActivity.PreferenceDialogLauncherActivity;
@@ -81,21 +79,5 @@ public class ApplicationThemeDialog extends DialogFragment {
 
         return builder.create();
     }
-	
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		
-		getActivity().finish();
-		
-	}
-	
-	@Override
-	public void onPause() {
-		super.onPause();
-		
-		getActivity().finish();
-		
-	}
 	
 }

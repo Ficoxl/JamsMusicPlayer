@@ -53,11 +53,11 @@ public class PreferenceDialogLauncherActivity extends FragmentActivity {
 		if (index==0) {
 			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 	        ApplicationThemeDialog appThemeDialog = new ApplicationThemeDialog();
-	        appThemeDialog.show(ft, "appThemeDialog");
+	        //appThemeDialog.show(ft, "appThemeDialog");
 		} else if (index==1) {
 			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 	        NowPlayingColorSchemesDialog appThemeDialog = new NowPlayingColorSchemesDialog();
-	        appThemeDialog.show(ft, "colorSchemesDialog");
+	        //appThemeDialog.show(ft, "colorSchemesDialog");
 		} else if (index==2) {
 			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 	        CustomizeScreensDialog screensDialog = new CustomizeScreensDialog();
@@ -71,12 +71,7 @@ public class PreferenceDialogLauncherActivity extends FragmentActivity {
 	        AlbumArtSourceDialog albumArtSourceDialog = new AlbumArtSourceDialog();
 	        albumArtSourceDialog.show(ft, "albumArtSourceDialog");
 		} else if (index==5) {
-			/*FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-			Bundle bundle = new Bundle();
-			bundle.putBoolean("CALLED_FROM_WELCOME", false);
-	        MusicFoldersSelectionDialog foldersDialog = new MusicFoldersSelectionDialog();
-	        foldersDialog.setArguments(bundle);
-	        foldersDialog.show(ft, "foldersDialog");*/
+
 			
 		} else if (index==6) {	
 			//Seting the "REBUILD_LIBRARY" flag to true will force MainActivity to rescan the folders.

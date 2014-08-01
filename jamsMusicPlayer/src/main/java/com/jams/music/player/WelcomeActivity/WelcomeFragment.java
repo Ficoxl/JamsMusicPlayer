@@ -25,16 +25,10 @@ public class WelcomeFragment extends Fragment {
 		View rootView = (View) getActivity().getLayoutInflater().inflate(R.layout.fragment_welcome_screen, null);		
 		
 		welcomeHeader = (TextView) rootView.findViewById(R.id.welcome_header);
-		welcomeHeader.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Thin"));
-        welcomeHeader.setPaintFlags(welcomeHeader.getPaintFlags() 
-        						    | Paint.ANTI_ALIAS_FLAG
-        						    | Paint.SUBPIXEL_TEXT_FLAG);
+		welcomeHeader.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Light"));
 		
 		welcomeText1 = (TextView) rootView.findViewById(R.id.welcome_text_1);
-		welcomeText1.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Light"));
-        welcomeText1.setPaintFlags(welcomeText1.getPaintFlags() 
-        						   | Paint.ANTI_ALIAS_FLAG
-        						   | Paint.SUBPIXEL_TEXT_FLAG);
+		welcomeText1.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
 
         return rootView;
     }

@@ -74,24 +74,14 @@ public class MusicFoldersFragment extends Fragment {
 	 	 					 .commit();
 		
 		mWelcomeHeader = (TextView) rootView.findViewById(R.id.welcome_header);
-		mWelcomeHeader.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Thin"));
-        mWelcomeHeader.setPaintFlags(mWelcomeHeader.getPaintFlags() 
-        						     | Paint.ANTI_ALIAS_FLAG
-        						     | Paint.SUBPIXEL_TEXT_FLAG);
+		mWelcomeHeader.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Light"));
 		
         mMusicFoldersOptions = (RadioGroup) rootView.findViewById(R.id.music_library_welcome_radio_group);
         RadioButton getAllSongsRadioButton = (RadioButton) mMusicFoldersOptions.findViewById(R.id.get_all_songs_radio);
         RadioButton letMePickFoldersRadioButton = (RadioButton) mMusicFoldersOptions.findViewById(R.id.pick_folders_radio);
         
-        getAllSongsRadioButton.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Light"));
-        getAllSongsRadioButton.setPaintFlags(getAllSongsRadioButton.getPaintFlags() 
-			     				 	 		 | Paint.ANTI_ALIAS_FLAG
-			     				 	 		 | Paint.SUBPIXEL_TEXT_FLAG);
-        
-        letMePickFoldersRadioButton.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Light"));
-        letMePickFoldersRadioButton.setPaintFlags(letMePickFoldersRadioButton.getPaintFlags() 
-			     				 	 		 	  | Paint.ANTI_ALIAS_FLAG
-			     				 	 		 	  | Paint.SUBPIXEL_TEXT_FLAG);
+        getAllSongsRadioButton.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
+        letMePickFoldersRadioButton.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
         
         mMusicFoldersOptions.setOnCheckedChangeListener(onCheckedChangeListener);
         return rootView;

@@ -190,6 +190,14 @@ public class Common extends Application {
     public static final String CURRENT_LIBRARY_POSITION = "CurrentLibraryPosition";
     public static final String SHUFFLE_ON = "ShuffleOn";
     public static final String FIRST_RUN = "FirstRun";
+    public static final String STARTUP_BROWSER = "StartupBrowser";
+    public static final String SHOW_LOCKSCREEN_CONTROLS = "ShowLockscreenControls";
+    public static final String ARTISTS_LAYOUT = "ArtistsLayout";
+    public static final String ALBUM_ARTISTS_LAYOUT = "AlbumArtistsLayout";
+    public static final String ALBUMS_LAYOUT = "AlbumsLayout";
+    public static final String PLAYLISTS_LAYOUT = "PlaylistsLayout";
+    public static final String GENRES_LAYOUT = "GenresLayout";
+    public static final String FOLDERS_LAYOUT = "FoldersLayout";
 
     //Repeat mode constants.
     public static final int REPEAT_OFF = 0;

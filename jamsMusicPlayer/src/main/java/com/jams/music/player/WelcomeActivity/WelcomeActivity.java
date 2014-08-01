@@ -24,7 +24,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
 import com.jams.music.player.R;
-import com.jams.music.player.AsyncTasks.AsyncBuildLibraryTask;
 import com.jams.music.player.AsyncTasks.AsyncSaveMusicFoldersTask;
 import com.jams.music.player.MiscFragments.BuildingLibraryProgressFragment;
 import com.jams.music.player.Services.BuildMusicLibraryService;
@@ -54,7 +53,7 @@ public class WelcomeActivity extends FragmentActivity {
 		
 		if (getActionBar()!=null)
 			getActionBar().hide();
-		
+
 		welcomeViewPager = (ViewPager) findViewById(R.id.welcome_pager);	
 		
 		FragmentManager fm = getSupportFragmentManager();
@@ -70,7 +69,11 @@ public class WelcomeActivity extends FragmentActivity {
         indicator.setStrokeWidth(2 * density);
         indicator.setLineWidth(30 * density);
         indicator.setOnPageChangeListener(pageChangeListener);
-		
+
+        //Check if the library needs to be rebuilt and this isn't the first run.
+        if (getIntent().hasExtra("REFRESH_MUSIC_LIBRARY"))
+            showBuildingLibraryProgress();
+
 	}
 	
 	/**
@@ -131,32 +134,33 @@ public class WelcomeActivity extends FragmentActivity {
 			}
 			
 			//Launch the scanning AsyncTask.
-			if (page==5) {
-                Intent intent = new Intent(mContext, BuildMusicLibraryService.class);
-                startService(intent);
-				
-				//Disables swiping events on the pager.
-				welcomeViewPager.setCurrentItem(5);
-				welcomeViewPager.setOnTouchListener(new OnTouchListener() {
-
-					@Override
-					public boolean onTouch(View arg0, MotionEvent arg1) {
-						return true;
-					}
-					
-				});
-				
-				//Fade out the ViewPager indicator.
-				Animation fadeOutAnim = AnimationUtils.loadAnimation(mContext, R.anim.fade_out);
-				fadeOutAnim.setDuration(600);
-				fadeOutAnim.setAnimationListener(fadeOutListener);
-				indicator.startAnimation(fadeOutAnim);
-				
-			}
+			if (page==5)
+                showBuildingLibraryProgress();
 			
 		}
     	
     };
+
+    private void showBuildingLibraryProgress() {
+
+        //Disables swiping events on the pager.
+        welcomeViewPager.setCurrentItem(5);
+        welcomeViewPager.setOnTouchListener(new OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View arg0, MotionEvent arg1) {
+                return true;
+            }
+
+        });
+
+        //Fade out the ViewPager indicator.
+        Animation fadeOutAnim = AnimationUtils.loadAnimation(mContext, R.anim.fade_out);
+        fadeOutAnim.setDuration(600);
+        fadeOutAnim.setAnimationListener(fadeOutListener);
+        indicator.startAnimation(fadeOutAnim);
+
+    }
     
     /**
      * Fade out animation listener.
@@ -166,6 +170,9 @@ public class WelcomeActivity extends FragmentActivity {
 		@Override
 		public void onAnimationEnd(Animation arg0) {
 			indicator.setVisibility(View.INVISIBLE);
+
+            Intent intent = new Intent(mContext, BuildMusicLibraryService.class);
+            startService(intent);
 			
 		}
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
-    <PreferenceCategory
+   <!-- <PreferenceCategory
         android:key="upgrade_pref_category"
         android:summary="@string/upgrade"
         android:title="@string/upgrade" >
@@ -147,22 +147,6 @@
 			android:icon="@drawable/auto_cover_fetch" />
 		
 	</PreferenceCategory>
-	
-<!-- 	<PreferenceCategory
-		android:summary="@string/bluetooth_headphones"
-		android:title="@string/bluetooth_headphones" >
-		
-	    <Preference
-			android:key="preference_key_headphones_unplug_action"
-			android:title="@string/headphones_unplug_action"
-			android:icon="@drawable/headphones" />
-	    
-		<Preference
-			android:key="preference_key_bluetooth_controls"
-			android:title="@string/bluetooth_controls"
-			android:icon="@drawable/bluetooth" />
-		
-	</PreferenceCategory> -->
 
 	<PreferenceCategory
 		android:summary="@string/blacklists"
@@ -232,5 +216,5 @@
 			android:icon="@drawable/contact_us" />
 		
 	</PreferenceCategory>
-	
+	-->
 </PreferenceScreen>

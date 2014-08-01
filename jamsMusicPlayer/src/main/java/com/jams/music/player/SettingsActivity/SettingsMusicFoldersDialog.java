@@ -1,20 +1,19 @@
-package com.jams.music.player.MusicFoldersSelectionFragment;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+package com.jams.music.player.SettingsActivity;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Paint;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,13 +24,22 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.jams.music.player.R;
+import com.jams.music.player.AsyncTasks.AsyncSaveMusicFoldersTask;
 import com.jams.music.player.DBHelpers.DBAccessHelper;
 import com.jams.music.player.Helpers.TypefaceHelper;
 import com.jams.music.player.Helpers.UIElementsHelper;
+import com.jams.music.player.MusicFoldersSelectionFragment.MultiselectListViewAdapter;
+import com.jams.music.player.R;
 import com.jams.music.player.Utils.Common;
+import com.jams.music.player.WelcomeActivity.WelcomeActivity;
 
-public class MusicFoldersSelectionFragment extends Fragment {
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+
+public class SettingsMusicFoldersDialog extends DialogFragment {
 	
 	private Context mContext;
 	private Common mApp;
@@ -52,16 +60,15 @@ public class MusicFoldersSelectionFragment extends Fragment {
 	private List<String> mFileFolderPathsList;
 	private List<String> mFileFolderSizesList;
 	private HashMap<String, Boolean> mMusicFolders;
-	
-	private static boolean CALLED_FROM_WELCOME = false;
-	
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		
-		mContext = getActivity().getApplicationContext();
-		mApp = (Common) mContext;
-		View rootView = getActivity().getLayoutInflater().inflate(R.layout.fragment_folders_selection, null);
-		mMusicFolders = new HashMap<String, Boolean>();
+
+    @Override
+    public Dialog onCreateDialog(Bundle onSavedInstanceState) {
+        AlertDialog.Builder builder =  new  AlertDialog.Builder(getActivity());
+
+        mContext = getActivity().getApplicationContext();
+        mApp = (Common) mContext;
+        View rootView = getActivity().getLayoutInflater().inflate(R.layout.fragment_folders_selection, null);
+        mMusicFolders = new HashMap<String, Boolean>();
 
         mFoldersListView = (ListView) rootView.findViewById(R.id.folders_list_view);
         mFoldersListView.setFastScrollEnabled(true);
@@ -103,45 +110,72 @@ public class MusicFoldersSelectionFragment extends Fragment {
 
         }
 
-		mFoldersListView.setDividerHeight(1);
-		mRootDir = Environment.getExternalStorageDirectory().getAbsolutePath().toString();
-		mCurrentDir = mRootDir;
+        mFoldersListView.setDividerHeight(1);
+        mRootDir = Environment.getExternalStorageDirectory().getAbsolutePath().toString();
+        mCurrentDir = mRootDir;
 
         //Get a mCursor with a list of all the current folder paths (will be empty if this is the first run).
-		mCursor = mApp.getDBAccessHelper().getAllMusicFolderPaths();
-        
-		//Get a list of all the paths that are currently stored in the DB.
-		for (int i=0; i < mCursor.getCount(); i++) {
-			mCursor.moveToPosition(i);
-			
-			//Filter out any double slashes.
-			String path = mCursor.getString(mCursor.getColumnIndex(DBAccessHelper.FOLDER_PATH));
-			if (path.contains("//")) {
-				path.replace("//", "/");
-			}
+        mCursor = mApp.getDBAccessHelper().getAllMusicFolderPaths();
 
-			mMusicFolders.put(path, true);
-		}
-		
-		//Close the cursor.
+        //Get a list of all the paths that are currently stored in the DB.
+        for (int i=0; i < mCursor.getCount(); i++) {
+            mCursor.moveToPosition(i);
+
+            //Filter out any double slashes.
+            String path = mCursor.getString(mCursor.getColumnIndex(DBAccessHelper.FOLDER_PATH));
+            if (path.contains("//")) {
+                path.replace("//", "/");
+            }
+
+            mMusicFolders.put(path, true);
+        }
+
+        //Close the cursor.
         if (mCursor!=null)
-		    mCursor.close();
-		
-		//Get the folder hierarchy of the selected folder.
+            mCursor.close();
+
+        //Get the folder hierarchy of the selected folder.
         getDir(mRootDir);
-        
+
         mFoldersListView.setOnItemClickListener(new OnItemClickListener() {
 
-			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, int index, long arg3) {
-				String newPath = mFileFolderPathsList.get(index);
-				getDir(newPath);
-				
-			}
-        	
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int index, long arg3) {
+                String newPath = mFileFolderPathsList.get(index);
+                getDir(newPath);
+
+            }
+
         });
-        
-        return rootView;
+
+        builder.setTitle(R.string.select_music_folders);
+        builder.setView(rootView);
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                getActivity().finish();
+
+                Intent intent = new Intent(mContext, WelcomeActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.putExtra("REFRESH_MUSIC_LIBRARY", true);
+                mContext.startActivity(intent);
+
+            }
+
+        });
+
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+
+            }
+
+        });
+
+        return builder.create();
     }
 
     /**
@@ -211,10 +245,17 @@ public class MusicFoldersSelectionFragment extends Fragment {
 		}
 		
 		boolean dirChecked = false;
-		if (getMusicFoldersHashMap().get(dirPath)!=null)
-			dirChecked = getMusicFoldersHashMap().get(dirPath);
-		
-		MultiselectListViewAdapter mFoldersListViewAdapter = new MultiselectListViewAdapter(getActivity(), 
+
+        //Get the directory and the parent dir.
+        String concatatedString = "";
+        int secondSlashIndex = dirPath.lastIndexOf("/", dirPath.lastIndexOf("/")-1);
+        if ((secondSlashIndex < dirPath.length()) && secondSlashIndex!=-1)
+            concatatedString = dirPath.substring(secondSlashIndex, dirPath.length());
+
+		if (getMusicFoldersHashMap().get(concatatedString)!=null)
+			dirChecked = getMusicFoldersHashMap().get(concatatedString);
+
+		SettingsMultiselectAdapter mFoldersListViewAdapter = new SettingsMultiselectAdapter(getActivity(),
 																							this, 
 																							mWelcomeSetup,
 																							dirChecked);
@@ -251,27 +292,7 @@ public class MusicFoldersSelectionFragment extends Fragment {
 
     	return filePath;
     }
-    
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		
-		if (CALLED_FROM_WELCOME==false) {
-			getActivity().finish();
-		}
-		
-	}
-	
-	@Override
-	public void onPause() {
-		super.onPause();
-		
-		if (CALLED_FROM_WELCOME==false) {
-			getActivity().finish();
-		}
-		
-	}
-	
+
 	@Override
 	public void onDestroyView() {
 		super.onDestroyView();
@@ -279,6 +300,38 @@ public class MusicFoldersSelectionFragment extends Fragment {
 		if (isRemoving()) {
 			mCursor.close();
 			mCursor = null;
+
+            //Clear the DB and insert the new selections (along with the old ones).
+            mApp.getDBAccessHelper().deleteAllMusicFolderPaths();
+            try {
+                mApp.getDBAccessHelper().getWritableDatabase().beginTransaction();
+
+                //Retrieve a list of all keys in the hash map (key = music folder path).
+                ArrayList<String> mPathsList = new ArrayList<String>(mMusicFolders.keySet());
+
+                for (int i=0; i < mMusicFolders.size(); i++) {
+                    String path = mPathsList.get(i);
+                    boolean include = mMusicFolders.get(path);
+
+                    //Trim down the folder path to include only the folder and its parent.
+                    int secondSlashIndex = path.lastIndexOf("/", path.lastIndexOf("/")-1);
+                    if ((secondSlashIndex < path.length()) && secondSlashIndex!=-1)
+                        path = path.substring(secondSlashIndex, path.length());
+
+                    ContentValues values = new ContentValues();
+                    values.put(DBAccessHelper.FOLDER_PATH, path);
+                    values.put(DBAccessHelper.INCLUDE, include);
+
+                    mApp.getDBAccessHelper().getWritableDatabase().insert(DBAccessHelper.MUSIC_FOLDERS_TABLE, null, values);
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                mApp.getDBAccessHelper().getWritableDatabase().setTransactionSuccessful();
+                mApp.getDBAccessHelper().getWritableDatabase().endTransaction();
+            }
+
 		}
 		
 	}

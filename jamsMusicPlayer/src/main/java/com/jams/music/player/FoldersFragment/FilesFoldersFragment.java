@@ -45,6 +45,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -89,6 +90,9 @@ public class FilesFoldersFragment extends Fragment {
     public boolean shouldMoveCopiedFile = false;
     public boolean mIsPasteShown = false;
 
+    //HashMap to store the each folder's previous scroll/position state.
+    private HashMap<String, Parcelable> mFolderStateMap;
+
 	//Handler.
 	private Handler mHandler = new Handler();
 
@@ -104,6 +108,7 @@ public class FilesFoldersFragment extends Fragment {
         mContext = getActivity().getApplicationContext();
         mFilesFoldersFragment = this;
         mApp = (Common) mContext;
+        mFolderStateMap = new HashMap<String, Parcelable>();
         
         //Set the hidden files flag.
         SHOW_HIDDEN_FILES = mApp.getSharedPreferences().getBoolean("SHOW_HIDDEN_FILES", false);
@@ -126,7 +131,7 @@ public class FilesFoldersFragment extends Fragment {
         listView.setDividerHeight(1);
 
 		//KitKat translucent navigation/status bar.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        if (Build.VERSION.SDK_INT==Build.VERSION_CODES.KITKAT) {
         	int topPadding = Common.getStatusBarHeight(mContext);
 
             //Calculate navigation bar height.
@@ -144,7 +149,7 @@ public class FilesFoldersFragment extends Fragment {
             listView.setPadding(0, 0, 0, navigationBarHeight);
         }
 
-        rootDir = mApp.getSharedPreferences().getString("DEFAULT_FOLDER", "/");
+        rootDir = mApp.getSharedPreferences().getString("DEFAULT_FOLDER", Environment.getExternalStorageDirectory().getPath());
         currentDir = rootDir;
         mHandler.postDelayed(new Runnable() {
 
@@ -350,12 +355,22 @@ public class FilesFoldersFragment extends Fragment {
         //Restore the ListView's previous state.
         if (restoreState!=null) {
             listView.onRestoreInstanceState(restoreState);
+        } else if (mFolderStateMap.containsKey(dirPath)) {
+            listView.onRestoreInstanceState(mFolderStateMap.get(dirPath));
         }
 
         listView.setOnItemClickListener(new OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> arg0, View view, int index, long arg3) {
+
+                //Store the current folder's state in the HashMap.
+                if (mFolderStateMap.size()==3) {
+                    mFolderStateMap.clear();
+                }
+
+                mFolderStateMap.put(currentDir, listView.onSaveInstanceState());
+
                 String newPath = fileFolderPathList.get(index);
                 if ((Integer) view.getTag(R.string.folder_list_item_type)==FOLDER)
                     currentDir = newPath;
@@ -370,7 +385,7 @@ public class FilesFoldersFragment extends Fragment {
                             fileIndex++;
                     }
 
-                    play(AUDIO_FILE, fileIndex, currentDir);
+                    play(fileFolderTypeList.get(index), fileIndex, currentDir);
                 }
 
             }
@@ -515,23 +530,33 @@ public class FilesFoldersFragment extends Fragment {
     public void play(int itemType, int index, String folderPath) {
         //Build the query's selection clause.
         String querySelection = MediaStore.Audio.Media.DATA + " LIKE "
-                              + "'" + folderPath.replace("'", "''") + "/%'";
+                + "'" + folderPath.replace("'", "''") + "/%'";
 
         //Exclude all subfolders from this playback sequence if we're playing a file.
-        if (itemType==AUDIO_FILE)
-            for (int i=0; i < fileFolderPathList.size(); i++) {
-                if (fileFolderTypeList.get(i)==FOLDER)
+        if (itemType==AUDIO_FILE) {
+            for (int i = 0; i < fileFolderPathList.size(); i++) {
+                if (fileFolderTypeList.get(i) == FOLDER)
                     querySelection += " AND " + MediaStore.Audio.Media.DATA + " NOT LIKE "
-                                   + "'" + fileFolderPathList.get(i).replace("'", "''") + "/%'";
+                            + "'" + fileFolderPathList.get(i).replace("'", "''") + "/%'";
 
             }
 
-        mApp.getPlaybackKickstarter().initPlayback(mContext,
-                                                   querySelection,
-                                                   Common.PLAY_ALL_IN_FOLDER,
-                                                   index,
-                                                   true, false);
-		
+            mApp.getPlaybackKickstarter().initPlayback(mContext,
+                                                       querySelection,
+                                                       Common.PLAY_ALL_IN_FOLDER,
+                                                       index,
+                                                       true, false);
+
+        } else if (itemType==FOLDER) {
+            mApp.getPlaybackKickstarter().initPlayback(mContext,
+                                                       querySelection,
+                                                       Common.PLAY_ALL_IN_FOLDER,
+                                                       index,
+                                                       true, false);
+        } else {
+            Toast.makeText(mContext, R.string.cant_play_this_file, Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     /**

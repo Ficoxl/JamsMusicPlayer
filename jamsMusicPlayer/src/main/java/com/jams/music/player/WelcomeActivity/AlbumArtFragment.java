@@ -37,36 +37,19 @@ public class AlbumArtFragment extends Fragment {
 		View rootView = (View) getActivity().getLayoutInflater().inflate(R.layout.fragment_welcome_screen_4, null);	
 		
 		welcomeHeader = (TextView) rootView.findViewById(R.id.welcome_header);
-		welcomeHeader.setTypeface(TypefaceHelper.getTypeface(getActivity(), "Roboto-Thin"));
-        welcomeHeader.setPaintFlags(welcomeHeader.getPaintFlags() 
-        						   | Paint.ANTI_ALIAS_FLAG
-        						   | Paint.SUBPIXEL_TEXT_FLAG);
+		welcomeHeader.setTypeface(TypefaceHelper.getTypeface(getActivity(), "Roboto-Light"));
 		
 		welcomeText1 = (TextView) rootView.findViewById(R.id.welcome_text_1);
-		welcomeText1.setTypeface(TypefaceHelper.getTypeface(getActivity(), "Roboto-Light"));
-        welcomeText1.setPaintFlags(welcomeText1.getPaintFlags() 
-        						   | Paint.ANTI_ALIAS_FLAG
-        						   | Paint.SUBPIXEL_TEXT_FLAG);
+		welcomeText1.setTypeface(TypefaceHelper.getTypeface(getActivity(), "Roboto-Regular"));
         
         radioGroup = (RadioGroup) rootView.findViewById(R.id.album_art_radio_group);
         mPickWhatsBestRadioButton = (RadioButton) rootView.findViewById(R.id.pick_whats_best_for_me);
         mUseEmbeddedArtOnlyRadioButton = (RadioButton) rootView.findViewById(R.id.use_embedded_art_only);
         mUseFolderArtOnlyRadioButton = (RadioButton) rootView.findViewById(R.id.use_folder_art_only);
         
-		mPickWhatsBestRadioButton.setTypeface(TypefaceHelper.getTypeface(getActivity(), "Roboto-Light"));
-        mPickWhatsBestRadioButton.setPaintFlags(mPickWhatsBestRadioButton.getPaintFlags() 
-        						   | Paint.ANTI_ALIAS_FLAG
-        						   | Paint.SUBPIXEL_TEXT_FLAG);
-        
-		mUseEmbeddedArtOnlyRadioButton.setTypeface(TypefaceHelper.getTypeface(getActivity(), "Roboto-Light"));
-        mUseEmbeddedArtOnlyRadioButton.setPaintFlags(mUseEmbeddedArtOnlyRadioButton.getPaintFlags() 
-        						   | Paint.ANTI_ALIAS_FLAG
-        						   | Paint.SUBPIXEL_TEXT_FLAG);
-        
-		mUseFolderArtOnlyRadioButton.setTypeface(TypefaceHelper.getTypeface(getActivity(), "Roboto-Light"));
-        mUseFolderArtOnlyRadioButton.setPaintFlags(mUseFolderArtOnlyRadioButton.getPaintFlags() 
-        						   | Paint.ANTI_ALIAS_FLAG
-        						   | Paint.SUBPIXEL_TEXT_FLAG);
+		mPickWhatsBestRadioButton.setTypeface(TypefaceHelper.getTypeface(getActivity(), "Roboto-Regular"));
+		mUseEmbeddedArtOnlyRadioButton.setTypeface(TypefaceHelper.getTypeface(getActivity(), "Roboto-Regular"));
+		mUseFolderArtOnlyRadioButton.setTypeface(TypefaceHelper.getTypeface(getActivity(), "Roboto-Regular"));
         
         //Check which album art source is selected and set the appropriate flag.
         if (mApp.getSharedPreferences().getInt("ALBUM_ART_SOURCE", 0)==0) {
