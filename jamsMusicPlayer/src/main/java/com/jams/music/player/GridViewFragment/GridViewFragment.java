@@ -1,5 +1,21 @@
+/*
+ * Copyright (C) 2014 Saravan Pantham
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.jams.music.player.GridViewFragment;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -50,10 +66,7 @@ public class GridViewFragment extends Fragment {
 	private GridViewFragment mFragment;
 	private Common mApp;
 	private View mRootView;
-    private RelativeLayout mActionBarBleed;
     private RelativeLayout mGridViewContainer;
-    private TextView mHeaderText;
-    private TextView mPlayAllText;
 	private int mFragmentId;
 	
 	private QuickScrollGridView mQuickScroll;
@@ -64,6 +77,7 @@ public class GridViewFragment extends Fragment {
 	
 	public Handler mHandler = new Handler();
 	private Cursor mCursor;
+    private String mFragmentTitle;
 	private String mQuerySelection = "";
 	
     @Override
@@ -75,28 +89,10 @@ public class GridViewFragment extends Fragment {
 
         //Set the background color and the partial color bleed.
         mRootView.setBackgroundColor(UIElementsHelper.getBackgroundColor(mContext));
-        mActionBarBleed = (RelativeLayout) mRootView.findViewById(R.id.actionbar_bleed);
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN)
-            mActionBarBleed.setBackgroundDrawable(UIElementsHelper.getGeneralActionBarBackground(mContext));
-        else
-            mActionBarBleed.setBackground(UIElementsHelper.getGeneralActionBarBackground(mContext));
-
-        //Set the header text.
-        mHeaderText = (TextView) mRootView.findViewById(R.id.fragment_grid_view_header_text);
-        mHeaderText.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
-        mHeaderText.setText(getArguments().getString(MainActivity.FRAGMENT_HEADER));
-
-        /* Style the "PLAY ALL" text.
-        *
-        * NOTE: The "PLAY ALL" text should be replaced by a floating action
-        * button in Android L (API 21). */
-        mPlayAllText = (TextView) mRootView.findViewById(R.id.fragment_grid_view_play_all);
-        mPlayAllText.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Medium"));
-        mPlayAllText.setOnClickListener(playAllClickListener);
 
         //Grab the fragment. This will determine which data to load into the cursor.
         mFragmentId = getArguments().getInt(Common.FRAGMENT_ID);
+        mFragmentTitle = getArguments().getString(MainActivity.FRAGMENT_HEADER);
         mDBColumnsMap = new HashMap<Integer, String>();
 	    
         mQuickScroll = (QuickScrollGridView) mRootView.findViewById(R.id.quickscrollgrid);
@@ -125,11 +121,10 @@ public class GridViewFragment extends Fragment {
             if (resourceId > 0) {
                 navigationBarHeight = getResources().getDimensionPixelSize(resourceId);
             }
-            
+
+            mGridViewContainer.setPadding(0, topPadding, 0, 0);
             mGridView.setClipToPadding(false);
-            mGridView.setPadding(0, 0, 0, navigationBarHeight);
-            mHeaderText.setPadding(0, topPadding, 0, 0);
-            mPlayAllText.setPadding(0, topPadding, 0, 0);
+            mGridView.setPadding(0, mGridView.getPaddingTop(), 0, navigationBarHeight);
             mQuickScroll.setPadding(0, 0, 0, navigationBarHeight);
             
         }
@@ -381,6 +376,16 @@ public class GridViewFragment extends Fragment {
         mGridViewAdapter = null;
         mContext = null;
         mHandler = null;
+
+    }
+
+    @SuppressLint("NewApi")
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        //Apply the ActionBar title.
+        getActivity().getActionBar().setTitle(mFragmentTitle);
 
     }
 

@@ -1,6 +1,20 @@
+/*
+ * Copyright (C) 2014 Saravan Pantham
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.jams.music.player.BrowserSubGridActivity;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -10,12 +24,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
-import android.view.DragEvent;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -33,7 +48,6 @@ import com.jams.music.player.Helpers.UIElementsHelper;
 import com.jams.music.player.R;
 import com.jams.music.player.Utils.Common;
 import com.nhaarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
-import com.squareup.picasso.Callback;
 
 import java.util.HashMap;
 
@@ -408,10 +422,11 @@ public class BrowserSubGridActivity extends FragmentActivity {
             animationAdapter.setShouldAnimate(true);
             animationAdapter.setShouldAnimateFromPosition(0);
             animationAdapter.setAbsListView(mGridView);
+
             mGridView.setAdapter(animationAdapter);
             mGridView.setOnItemClickListener(onItemClickListener);
 
-            PauseOnScrollHelper scrollHelper = new PauseOnScrollHelper(mApp.getPicasso(), null, false, true);
+            PauseOnScrollHelper scrollHelper = new PauseOnScrollHelper(mApp.getPicasso(), onScrollListener, false, true);
             mGridView.setOnScrollListener(scrollHelper);
 
             animation.setAnimationListener(new Animation.AnimationListener() {
@@ -439,6 +454,11 @@ public class BrowserSubGridActivity extends FragmentActivity {
         }
 
     };
+
+    /**
+     *
+     */
+
 
     /**
      * Slides away the header layout.
@@ -510,6 +530,37 @@ public class BrowserSubGridActivity extends FragmentActivity {
 
         mGridView.startAnimation(animation);
     }
+
+    /**
+     * Scroll listener to calculate the GridView's scroll offset and adjust
+     * the header view accordingly.
+     */
+    private AbsListView.OnScrollListener onScrollListener = new AbsListView.OnScrollListener() {
+
+        @Override
+        public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+        }
+
+        @Override
+        public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+            try {
+                View topChild = view.getChildAt(0);
+                int scrollY = -(topChild.getTop()) + view.getFirstVisiblePosition() * topChild.getHeight();
+                int adjustedScrollY = (int) ((-scrollY)-mApp.convertDpToPixels(280.0f, mContext));
+
+                RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mHeaderLayout.getLayoutParams();
+                params.topMargin = adjustedScrollY/3;
+                mHeaderLayout.setLayoutParams(params);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+
+    };
 
     public Cursor getCursor() {
         return mCursor;

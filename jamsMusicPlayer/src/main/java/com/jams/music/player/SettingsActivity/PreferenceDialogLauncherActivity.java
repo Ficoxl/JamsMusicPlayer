@@ -1,3 +1,18 @@
+/*
+ * Copyright (C) 2014 Saravan Pantham
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.jams.music.player.SettingsActivity;
 
 
@@ -53,11 +68,11 @@ public class PreferenceDialogLauncherActivity extends FragmentActivity {
 		if (index==0) {
 			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 	        ApplicationThemeDialog appThemeDialog = new ApplicationThemeDialog();
-	        appThemeDialog.show(ft, "appThemeDialog");
+	        //appThemeDialog.show(ft, "appThemeDialog");
 		} else if (index==1) {
 			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 	        NowPlayingColorSchemesDialog appThemeDialog = new NowPlayingColorSchemesDialog();
-	        appThemeDialog.show(ft, "colorSchemesDialog");
+	        //appThemeDialog.show(ft, "colorSchemesDialog");
 		} else if (index==2) {
 			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 	        CustomizeScreensDialog screensDialog = new CustomizeScreensDialog();
@@ -71,12 +86,7 @@ public class PreferenceDialogLauncherActivity extends FragmentActivity {
 	        AlbumArtSourceDialog albumArtSourceDialog = new AlbumArtSourceDialog();
 	        albumArtSourceDialog.show(ft, "albumArtSourceDialog");
 		} else if (index==5) {
-			/*FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-			Bundle bundle = new Bundle();
-			bundle.putBoolean("CALLED_FROM_WELCOME", false);
-	        MusicFoldersSelectionDialog foldersDialog = new MusicFoldersSelectionDialog();
-	        foldersDialog.setArguments(bundle);
-	        foldersDialog.show(ft, "foldersDialog");*/
+
 			
 		} else if (index==6) {	
 			//Seting the "REBUILD_LIBRARY" flag to true will force MainActivity to rescan the folders.

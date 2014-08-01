@@ -14,7 +14,7 @@
         android:text="12 songs"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
-    <com.jams.music.player.Utils.RoundedImageView
+    <com.jams.music.player.Views.RoundedImageView
         android:id="@+id/artistsFlippedAlbumThumbnail"
         android:layout_width="75dp"
         android:layout_height="75dp"

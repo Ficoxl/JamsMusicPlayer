@@ -106,12 +106,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:layout_marginTop="280dp"
                 android:layout_alignParentBottom="true"
+                android:paddingTop="280dp"
                 android:drawSelectorOnTop="true"
-                android:verticalSpacing="3dp"
-                android:horizontalSpacing="3dp"
-                android:padding="6dp" />
+                android:verticalSpacing="3.5dp"
+                android:horizontalSpacing="3.5dp"
+                android:paddingRight="6dp"
+                android:paddingLeft="6dp"
+                android:paddingBottom="6dp" />
 
         </RelativeLayout>
 

@@ -1,3 +1,18 @@
+/*
+ * Copyright (C) 2014 Saravan Pantham
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.jams.music.player.Dialogs;
 
 import android.app.AlertDialog;
@@ -9,11 +24,9 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
@@ -21,12 +34,9 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.jams.music.player.R;
-import com.jams.music.player.DBHelpers.DBAccessHelper;
-import com.jams.music.player.Helpers.TypefaceHelper;
-import com.jams.music.player.Services.AudioPlaybackService;
 import com.jams.music.player.Utils.Common;
-import com.jams.music.player.Utils.RangeSeekBar;
-import com.jams.music.player.Utils.RangeSeekBar.OnRangeSeekBarChangeListener;
+import com.jams.music.player.Views.RangeSeekBar;
+import com.jams.music.player.Views.RangeSeekBar.OnRangeSeekBarChangeListener;
 
 public class ABRepeatDialog extends DialogFragment {
 	

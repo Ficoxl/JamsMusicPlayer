@@ -85,32 +85,6 @@
             android:theme="@style/AppTheme" >
         </activity>
 
-        <!-- Artists Flipped Activity -->
-
-        <activity
-            android:name=".ArtistsFlippedActivity.ArtistsFlippedActivity"
-            android:label="@string/title_activity_artists_flipped" >
-        </activity>
-
-        <!-- Artists Flipped Songs Activity -->
-
-        <activity
-            android:name=".ArtistsFlippedSongsActivity.ArtistsFlippedSongsActivity"
-            android:label="@string/title_activity_artists_flipped_songs" >
-        </activity>
-
-        <!-- Album Artists Flipped Activity -->
-        <activity
-            android:name=".AlbumArtistsFlippedActivity.AlbumArtistsFlippedActivity"
-            android:label="@string/title_activity_artists_flipped" >
-        </activity>
-
-        <!-- Album Artists Flipped Songs Activity -->
-        <activity
-            android:name=".AlbumArtistsFlippedSongsActivity.AlbumArtistsFlippedSongsActivity"
-            android:label="@string/title_activity_artists_flipped" >
-        </activity>
-
         <!-- Services -->
 
         <service android:name=".Services.AudioPlaybackService" />
@@ -142,13 +116,6 @@
                 android:name="description"
                 android:value="@string/dashclock_description" />
         </service>
-
-        <!-- Albums Flipped Activity -->
-
-        <activity
-            android:name=".AlbumsFlippedActivity.AlbumsFlippedActivity"
-            android:label="@string/title_activity_albums_flipped" >
-        </activity>
 
         <!-- Large Widget -->
 
@@ -289,27 +256,6 @@
             android:name=".SettingsActivity.PreferenceDialogLauncherActivity"
             android:label="@string/app_name"
             android:theme="@style/AppThemeTransparent" >
-        </activity>
-
-        <!-- PlaylistsFlipped Activity -->
-
-        <activity
-            android:name=".PlaylistsFlippedActivity.PlaylistsFlippedActivity"
-            android:label="@string/title_activity_playlists_flipped" >
-        </activity>
-
-        <!-- GenresFlipped Activity -->
-
-        <activity
-            android:name=".GenresFlippedActivity.GenresFlippedActivity"
-            android:label="@string/genre" >
-        </activity>
-
-        <!-- Genres Flipped Songs Activity -->
-
-        <activity
-            android:name=".GenresFlippedSongsActivity.GenresFlippedSongsActivity"
-            android:label="@string/genre" >
         </activity>
 
         <!-- Now Playing Queue Activity -->

@@ -1,3 +1,18 @@
+/*
+ * Copyright (C) 2014 Saravan Pantham
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.jams.music.player.ListViewFragment;
 
 import android.content.Context;
@@ -8,6 +23,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -28,9 +44,11 @@ import android.widget.TextView;
 
 import com.andraskindler.quickscroll.QuickScroll;
 import com.jams.music.player.DBHelpers.DBAccessHelper;
+import com.jams.music.player.DBHelpers.MediaStoreAccessHelper;
 import com.jams.music.player.Helpers.PauseOnScrollHelper;
 import com.jams.music.player.Helpers.TypefaceHelper;
 import com.jams.music.player.Helpers.UIElementsHelper;
+import com.jams.music.player.MainActivity.MainActivity;
 import com.jams.music.player.R;
 import com.jams.music.player.Utils.Common;
 
@@ -48,6 +66,7 @@ public class ListViewFragment extends Fragment {
 	private Common mApp;
 	private View mRootView;
 	private int mFragmentId;
+    private String mFragmentTitle;
 	
 	private QuickScroll mQuickScroll;
 	private ListViewCardsAdapter mListViewAdapter;
@@ -74,6 +93,7 @@ public class ListViewFragment extends Fragment {
         
         //Grab the fragment. This will determine which data to load into the cursor.
         mFragmentId = getArguments().getInt(Common.FRAGMENT_ID);
+        mFragmentTitle = getArguments().getString(MainActivity.FRAGMENT_HEADER);
         mDBColumnsMap = new HashMap<Integer, String>();
         
 	    //Init the search fields.
@@ -240,6 +260,9 @@ public class ListViewFragment extends Fragment {
                                       true,
                                       false);
                     break;
+                case Common.PLAYLISTS_FRAGMENT:
+                    
+                    break;
             }
 			
 		}
@@ -275,9 +298,12 @@ public class ListViewFragment extends Fragment {
 
 		@Override
 		protected Void doInBackground(Void... params) {
-	        mCursor = mApp.getDBAccessHelper().getFragmentCursor(mContext, mQuerySelection, mFragmentId);
-	        loadDBColumnNames();
-	        
+            if (mFragmentId==Common.PLAYLISTS_FRAGMENT)
+                mCursor = MediaStoreAccessHelper.getAllUniquePlaylists(mContext);
+            else
+                mCursor = mApp.getDBAccessHelper().getFragmentCursor(mContext, mQuerySelection, mFragmentId);
+
+            loadDBColumnNames();
 	        return null;
 		}
 		
@@ -314,6 +340,8 @@ public class ListViewFragment extends Fragment {
 				mDBColumnsMap.put(ListViewCardsAdapter.FIELD_2, DBAccessHelper.SONG_ARTIST);
 				break;
 			case Common.PLAYLISTS_FRAGMENT:
+                mDBColumnsMap.put(ListViewCardsAdapter.TITLE_TEXT, MediaStore.Audio.Playlists.NAME);
+                mDBColumnsMap.put(ListViewCardsAdapter.FIELD_1, MediaStore.Audio.Playlists._COUNT);
 				break;
 			case Common.GENRES_FRAGMENT:
 				break;
@@ -388,6 +416,15 @@ public class ListViewFragment extends Fragment {
 		
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        //Set the ActionBar title.
+        getActivity().getActionBar().setTitle(mFragmentTitle);
+
+    }
+
     /*
      * Getter methods.
      */
@@ -403,6 +440,10 @@ public class ListViewFragment extends Fragment {
 	public Cursor getCursor() {
 		return mCursor;
 	}
+
+    public int getFragmentId() {
+        return mFragmentId;
+    }
 
 	/*
 	 * Setter methods.

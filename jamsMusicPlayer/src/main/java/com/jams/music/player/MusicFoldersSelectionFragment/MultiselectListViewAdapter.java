@@ -1,3 +1,18 @@
+/*
+ * Copyright (C) 2014 Saravan Pantham
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.jams.music.player.MusicFoldersSelectionFragment;
 
 import android.content.Context;
@@ -59,26 +74,20 @@ public class MultiselectListViewAdapter extends ArrayAdapter<String> {
 			holder.fileFolderSizeText = (TextView) convertView.findViewById(R.id.file_folder_size_multiselect);
 
 			//Apply the card layout's background based on the color theme.
-			if (mApp.getCurrentTheme()==Common.LIGHT_THEME ||
-				mWelcomeSetup==true) {
-				convertView.setBackgroundResource(R.drawable.card_light);
+			if (mWelcomeSetup==true || mApp.getCurrentTheme()==Common.LIGHT_THEME) {
 				holder.fileFolderNameText.setTextColor(Color.parseColor("#2F2F2F"));
+                holder.fileFolderSizeText.setTextColor(UIElementsHelper.getSmallTextColor(mContext));
+
 			} else if (mApp.getCurrentTheme()==Common.DARK_THEME) {
-				convertView.setBackgroundResource(R.drawable.card_dark);
 				holder.fileFolderNameText.setTextColor(UIElementsHelper.getThemeBasedTextColor(mContext));
+                holder.fileFolderSizeText.setTextColor(UIElementsHelper.getSmallTextColor(mContext));
+
 			}
 			
-			holder.fileFolderNameText.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Light"));
-			holder.fileFolderNameText.setPaintFlags(holder.fileFolderNameText.getPaintFlags()
-											 		| Paint.ANTI_ALIAS_FLAG
-											 		| Paint.SUBPIXEL_TEXT_FLAG);		
+			holder.fileFolderNameText.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
+			holder.fileFolderSizeText.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
 			
-			holder.fileFolderSizeText.setTypeface(TypefaceHelper.getTypeface(mContext, "RobotoCondensed-Regular"));
-			holder.fileFolderSizeText.setPaintFlags(holder.fileFolderSizeText.getPaintFlags()
-											 		| Paint.ANTI_ALIAS_FLAG
-											 		| Paint.SUBPIXEL_TEXT_FLAG);
-			
-			holder.fileFoldersImage.setImageResource(R.drawable.folder);
+			holder.fileFoldersImage.setImageResource(R.drawable.icon_folderblue);
 			convertView.setTag(holder);
 			
 		} else {

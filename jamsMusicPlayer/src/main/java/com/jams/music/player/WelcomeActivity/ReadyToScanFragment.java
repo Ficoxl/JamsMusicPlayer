@@ -1,3 +1,18 @@
+/*
+ * Copyright (C) 2014 Saravan Pantham
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.jams.music.player.WelcomeActivity;
 
 import android.content.Context;
@@ -26,22 +41,13 @@ public class ReadyToScanFragment extends Fragment {
 		View rootView = (View) getActivity().getLayoutInflater().inflate(R.layout.fragment_welcome_screen_6, null);		
 		
 		welcomeHeader = (TextView) rootView.findViewById(R.id.welcome_header);
-		welcomeHeader.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Thin"));
-        welcomeHeader.setPaintFlags(welcomeHeader.getPaintFlags() 
-        						    | Paint.ANTI_ALIAS_FLAG
-        						    | Paint.SUBPIXEL_TEXT_FLAG);
+		welcomeHeader.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Light"));
 		
 		welcomeText1 = (TextView) rootView.findViewById(R.id.welcome_text_1);
-		welcomeText1.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Light"));
-        welcomeText1.setPaintFlags(welcomeText1.getPaintFlags() 
-        						   | Paint.ANTI_ALIAS_FLAG
-        						   | Paint.SUBPIXEL_TEXT_FLAG);
+		welcomeText1.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
         
 		swipeLeftToContinue = (TextView) rootView.findViewById(R.id.swipe_left_to_continue);
-		swipeLeftToContinue.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Light"));
-        swipeLeftToContinue.setPaintFlags(swipeLeftToContinue.getPaintFlags() 
-        								  | Paint.ANTI_ALIAS_FLAG
-        								  | Paint.SUBPIXEL_TEXT_FLAG);
+		swipeLeftToContinue.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
 
         return rootView;
     }

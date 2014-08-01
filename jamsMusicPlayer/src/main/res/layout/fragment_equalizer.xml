@@ -24,7 +24,7 @@
 	            android:layout_weight="0.2"
 	            android:paddingLeft="5dp" >
 
-	            <com.jams.music.player.Utils.VerticalSeekBar
+	            <com.jams.music.player.Views.VerticalSeekBar
 	                android:id="@+id/equalizer50Hz"
 	                android:layout_width="wrap_content"
 	                android:layout_height="150dp"
@@ -64,7 +64,7 @@
 	            android:layout_height="match_parent"
 	            android:layout_weight="0.2" >
 
-	            <com.jams.music.player.Utils.VerticalSeekBar
+	            <com.jams.music.player.Views.VerticalSeekBar
 	                android:id="@+id/equalizer130Hz"
 	                android:layout_width="wrap_content"
 	                android:layout_height="150dp"
@@ -105,7 +105,7 @@
 	            android:layout_height="match_parent"
 	            android:layout_weight="0.2" >
 
-	            <com.jams.music.player.Utils.VerticalSeekBar
+	            <com.jams.music.player.Views.VerticalSeekBar
 	                android:id="@+id/equalizer320Hz"
 	                android:layout_width="wrap_content"
 	                android:layout_height="150dp"
@@ -146,7 +146,7 @@
 	            android:layout_height="match_parent"
 	            android:layout_weight="0.2" >
 
-	            <com.jams.music.player.Utils.VerticalSeekBar
+	            <com.jams.music.player.Views.VerticalSeekBar
 	                android:id="@+id/equalizer800Hz"
 	                android:layout_width="wrap_content"
 	                android:layout_height="150dp"
@@ -187,7 +187,7 @@
 	            android:layout_height="match_parent"
 	            android:layout_weight="0.2" >
 
-	            <com.jams.music.player.Utils.VerticalSeekBar
+	            <com.jams.music.player.Views.VerticalSeekBar
 	                android:id="@+id/equalizer2kHz"
 	                android:layout_width="wrap_content"
 	                android:layout_height="150dp"
@@ -228,7 +228,7 @@
 	            android:layout_height="match_parent"
 	            android:layout_weight="0.2" >
 
-	            <com.jams.music.player.Utils.VerticalSeekBar
+	            <com.jams.music.player.Views.VerticalSeekBar
 	                android:id="@+id/equalizer5kHz"
 	                android:layout_width="wrap_content"
 	                android:layout_height="150dp"
@@ -270,7 +270,7 @@
 	            android:layout_weight="0.2"
 	            android:paddingRight="5dp" >
 
-	            <com.jams.music.player.Utils.VerticalSeekBar
+	            <com.jams.music.player.Views.VerticalSeekBar
 	                android:id="@+id/equalizer12_5kHz"
 	                android:layout_width="wrap_content"
 	                android:layout_height="150dp"

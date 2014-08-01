@@ -1,3 +1,18 @@
+/*
+ * Copyright (C) 2014 Saravan Pantham
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.jams.music.player.WelcomeActivity;
 
 import android.content.Context;
@@ -74,24 +89,14 @@ public class MusicFoldersFragment extends Fragment {
 	 	 					 .commit();
 		
 		mWelcomeHeader = (TextView) rootView.findViewById(R.id.welcome_header);
-		mWelcomeHeader.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Thin"));
-        mWelcomeHeader.setPaintFlags(mWelcomeHeader.getPaintFlags() 
-        						     | Paint.ANTI_ALIAS_FLAG
-        						     | Paint.SUBPIXEL_TEXT_FLAG);
+		mWelcomeHeader.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Light"));
 		
         mMusicFoldersOptions = (RadioGroup) rootView.findViewById(R.id.music_library_welcome_radio_group);
         RadioButton getAllSongsRadioButton = (RadioButton) mMusicFoldersOptions.findViewById(R.id.get_all_songs_radio);
         RadioButton letMePickFoldersRadioButton = (RadioButton) mMusicFoldersOptions.findViewById(R.id.pick_folders_radio);
         
-        getAllSongsRadioButton.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Light"));
-        getAllSongsRadioButton.setPaintFlags(getAllSongsRadioButton.getPaintFlags() 
-			     				 	 		 | Paint.ANTI_ALIAS_FLAG
-			     				 	 		 | Paint.SUBPIXEL_TEXT_FLAG);
-        
-        letMePickFoldersRadioButton.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Light"));
-        letMePickFoldersRadioButton.setPaintFlags(letMePickFoldersRadioButton.getPaintFlags() 
-			     				 	 		 	  | Paint.ANTI_ALIAS_FLAG
-			     				 	 		 	  | Paint.SUBPIXEL_TEXT_FLAG);
+        getAllSongsRadioButton.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
+        letMePickFoldersRadioButton.setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
         
         mMusicFoldersOptions.setOnCheckedChangeListener(onCheckedChangeListener);
         return rootView;

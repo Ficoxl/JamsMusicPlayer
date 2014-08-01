@@ -1,3 +1,18 @@
+/*
+ * Copyright (C) 2014 Saravan Pantham
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.jams.music.player.WelcomeActivity;
 
 import android.accounts.Account;
@@ -38,23 +53,14 @@ public class GooglePlayMusicFragment extends Fragment {
 		View rootView = (View) inflater.inflate(R.layout.fragment_welcome_screen_5, null);
 		
 		welcomeHeader = (TextView) rootView.findViewById(R.id.welcome_header);
-		welcomeHeader.setTypeface(TypefaceHelper.getTypeface(getActivity(), "Roboto-Thin"));
-        welcomeHeader.setPaintFlags(welcomeHeader.getPaintFlags() 
-        						   | Paint.ANTI_ALIAS_FLAG
-        						   | Paint.SUBPIXEL_TEXT_FLAG);
+		welcomeHeader.setTypeface(TypefaceHelper.getTypeface(getActivity(), "Roboto-Light"));
 		
 		welcomeText1 = (TextView) rootView.findViewById(R.id.welcome_text_1);
-		welcomeText1.setTypeface(TypefaceHelper.getTypeface(getActivity(), "Roboto-Light"));
-        welcomeText1.setPaintFlags(welcomeText1.getPaintFlags() 
-        						   | Paint.ANTI_ALIAS_FLAG
-        						   | Paint.SUBPIXEL_TEXT_FLAG);
+		welcomeText1.setTypeface(TypefaceHelper.getTypeface(getActivity(), "Roboto-Regular"));
         
 		googlePlayMusicDisclaimer = (TextView) rootView.findViewById(R.id.google_play_music_disclaimer);
-		googlePlayMusicDisclaimer.setTypeface(TypefaceHelper.getTypeface(getActivity(), "Roboto-Light"));
-        googlePlayMusicDisclaimer.setPaintFlags(googlePlayMusicDisclaimer.getPaintFlags() 
-        						   | Paint.ANTI_ALIAS_FLAG
-        						   | Paint.SUBPIXEL_TEXT_FLAG);
-        
+		googlePlayMusicDisclaimer.setTypeface(TypefaceHelper.getTypeface(getActivity(), "Roboto-Regular"));
+
         radioGroup = (RadioGroup) rootView.findViewById(R.id.google_play_music_radio_group);
         
         final AccountManager accountManager = AccountManager.get(getActivity().getApplicationContext());
@@ -77,11 +83,7 @@ public class GooglePlayMusicFragment extends Fragment {
         	}
         	
         	radioButton[i].setTag(i);
-        	radioButton[i].setTextColor(UIElementsHelper.getTextColor(mContext));
-        	radioButton[i].setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Light"));
-        	radioButton[i].setPaintFlags(radioButton[i].getPaintFlags()
-        								 | Paint.ANTI_ALIAS_FLAG
-        								 | Paint.SUBPIXEL_TEXT_FLAG);
+        	radioButton[i].setTypeface(TypefaceHelper.getTypeface(mContext, "Roboto-Regular"));
         	
         }
         

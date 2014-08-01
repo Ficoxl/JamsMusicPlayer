@@ -31,7 +31,7 @@
         <item name="android:actionModeBackground">@drawable/cab_background_top_apptheme</item>
         <item name="android:actionModeSplitBackground">@drawable/cab_background_bottom_apptheme</item>
         <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Apptheme</item>
-        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowContentOverlay">@drawable/ab_solid_shadow_holo</item>
     </style>
 
 
@@ -45,7 +45,7 @@
         <item name="android:actionModeBackground">@drawable/cab_background_top_apptheme</item>
         <item name="android:actionModeSplitBackground">@drawable/cab_background_bottom_apptheme</item>
         <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Apptheme</item>
-        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowContentOverlay">@drawable/ab_solid_shadow_holo</item>
     </style>
 
     <style name="ActionBar.Solid.Apptheme" parent="@android:style/Widget.Holo.ActionBar.Solid">
@@ -95,7 +95,7 @@
 	<style name="AppThemeTransparentLight" parent="android:Theme.Holo.Light">
     	<item name="android:windowIsTranslucent">true</item>
     	<item name="android:windowBackground">@android:color/transparent</item>
-    	<item name="android:windowContentOverlay">@null</item>
+    	<item name="android:windowContentOverlay">@drawable/ab_solid_shadow_holo</item>
     	<item name="android:windowNoTitle">true</item>
     	<item name="android:windowIsFloating">true</item>
     	<item name="android:backgroundDimEnabled">false</item>
@@ -104,7 +104,7 @@
 	<style name="AppThemeTransparent" parent="android:Theme.Holo">
     	<item name="android:windowIsTranslucent">true</item>
     	<item name="android:windowBackground">@android:color/transparent</item>
-    	<item name="android:windowContentOverlay">@null</item>
+    	<item name="android:windowContentOverlay">@drawable/ab_solid_shadow_holo</item>
     	<item name="android:windowNoTitle">true</item>
     	<item name="android:windowIsFloating">true</item>
     	<item name="android:backgroundDimEnabled">false</item>
@@ -120,8 +120,24 @@
         <item name="android:actionModeBackground">@drawable/cab_background_top_appthemelight</item>
         <item name="android:actionModeSplitBackground">@drawable/cab_background_bottom_appthemelight</item>
         <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Appthemelight</item>
-        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowContentOverlay">@drawable/ab_solid_shadow_holo</item>
                 <!-- Light.DarkActionBar specific -->
+        <item name="android:actionBarWidgetTheme">@style/Theme.Appthemelight.Widget</item>
+
+    </style>
+
+    <!-- Settings theme -->
+    <style name="SettingsThemeLight" parent="@android:style/Theme.Holo.Light.DarkActionBar">
+        <item name="android:actionBarItemBackground">@drawable/selectable_background_appthemelight</item>
+        <item name="android:dropDownListViewStyle">@style/DropDownListView.Appthemelight</item>
+        <item name="android:actionBarTabStyle">@style/ActionBarTabStyle.Appthemelight</item>
+        <item name="android:actionDropDownStyle">@style/DropDownNav.Appthemelight</item>
+        <item name="android:actionBarStyle">@style/ActionBar.Solid.Appthemelight</item>
+        <item name="android:actionModeBackground">@drawable/cab_background_top_appthemelight</item>
+        <item name="android:actionModeSplitBackground">@drawable/cab_background_bottom_appthemelight</item>
+        <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Appthemelight</item>
+        <item name="android:windowContentOverlay">@drawable/ab_solid_shadow_holo</item>
+        <!-- Light.DarkActionBar specific -->
         <item name="android:actionBarWidgetTheme">@style/Theme.Appthemelight.Widget</item>
 
     </style>
@@ -135,7 +151,7 @@
         <item name="android:actionModeBackground">@drawable/cab_background_top_appthemelight</item>
         <item name="android:actionModeSplitBackground">@drawable/cab_background_bottom_appthemelight</item>
         <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Appthemelight</item>
-        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowContentOverlay">@drawable/ab_solid_shadow_holo</item>
 
     </style>
 

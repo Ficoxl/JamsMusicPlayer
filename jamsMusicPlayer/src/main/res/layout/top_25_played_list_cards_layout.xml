@@ -23,14 +23,14 @@
 		android:layout_centerVertical="true"
 		android:padding="3dp" >
         
-        <com.jams.music.player.Utils.RoundedImageView
+        <com.jams.music.player.Views.RoundedImageView
 	        android:id="@+id/songsListAlbumThumbnail"
 	        android:layout_width="75dp"
 	        android:layout_height="75dp"
 	        android:layout_alignParentLeft="true"
 	        android:layout_centerVertical="true" />
 
-        <com.jams.music.player.Utils.RoundedImageView
+        <com.jams.music.player.Views.RoundedImageView
             android:id="@+id/dimmer"
             android:layout_width="fill_parent"
             android:alpha="1.0"
