@@ -7,8 +7,8 @@ I will still occasionally update this app based on my free time, but it will pro
 
 Screenshots
 ============
-<img src="http://github.com/psaravan/JamsMusicPlayer/blob/master/images/jams_screen_1.png">
-<img src="http://github.com/psaravan/JamsMusicPlayer/blob/master/images/jams_screen_2.png">
+<img src="http://github.com/psaravan/JamsMusicPlayer/blob/master/images/jams_screens_small_1.png">
+<img src="http://github.com/psaravan/JamsMusicPlayer/blob/master/images/jams_screens_small_2.png">
 
 Legacy Changelogs (until 2/24/2014)
 ======================================
