@@ -5,16 +5,16 @@ Jams is a free, powerful and elegant music player for Android. Jams used to be a
 
 I will still occasionally update this app based on my free time, but it will probably be beta quality code. If you are a developer who's interested in using Jams' current codebase, I encourage you to fork this repository and/or directly contribute to it. If you decide to launch your own fork of Jams on the Play Store, feel free to drop me a line so I can feature it on this GitHub page.
 
-Previous Changelogs (until 2/24/2014)
+Screenshots
+============
+<img src="http://github.com/psaravan/JamsMusicPlayer/blob/master/images/jams_screen_1.png">
+<img src="http://github.com/psaravan/JamsMusicPlayer/blob/master/images/jams_screen_2.png">
+
+Legacy Changelogs (until 2/24/2014)
 ======================================
 Check out the <a href="https://github.com/psaravan/JamsMusicPlayer/blob/master/CHANGELOGS.md">CHANGELOGS</a> file. 
 
 <b>Note: </b> Changelogs will no longer be updated in the <a href="http://github.com/psaravan/JamsMusicPlayer/blob/master/CHANGELOGS.md">CHANGELOGS</a> file. Check the individual commit comments for all further update descriptions.
-
-Screenshots
-============
-<img src="http://github.com/psaravan/JamsMusicPlayer/blob/master/images/jams_screen_1.png" height="360" width="571">
-<img src="http://github.com/psaravan/JamsMusicPlayer/blob/master/images/jams_screen_2.png" height="360" width="571">
 
 Forked Projects
 ================
