@@ -1160,7 +1160,7 @@ public class SettingsActivity____ extends PreferenceActivity {
     	
     }
 	
-	private void initInAppBilling() {
+	/*private void initInAppBilling() {
 		
 		String base64EncodedPublicKey = "";
 		base64EncodedPublicKey = Common.uid4 + 
@@ -1193,7 +1193,7 @@ public class SettingsActivity____ extends PreferenceActivity {
     		
     	});
     	
-	}
+	}*/
 	
 	IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
 		

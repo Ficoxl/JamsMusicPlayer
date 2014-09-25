@@ -1,5 +1,7 @@
 /*
- * Copyright (C) 2014 Saravan Pantham
+ * Copyright (C) Stephan Tittel, Peter Sinnott, Thomas Barrasso
+ *
+ * https://code.google.com/p/range-seek-bar/
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.

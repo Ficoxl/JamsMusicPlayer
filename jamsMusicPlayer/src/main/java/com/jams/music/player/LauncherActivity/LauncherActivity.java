@@ -105,18 +105,6 @@ public class LauncherActivity extends FragmentActivity {
     	int startCount = mApp.getSharedPreferences().getInt("START_COUNT", 1);
     	mApp.getSharedPreferences().edit().putInt("START_COUNT", startCount+1).commit();
 		
-		//Set the GAnalytics enable/disable flag based.
-		final AccountManager accountManager = AccountManager.get(this);
-        final Account[] accounts = accountManager.getAccountsByType("com.google");
-        
-        for (int i=0; i < accounts.length; i++) {
-        	if (accounts[i].name.equals("jamsmusicplayer@gmail.com")) {
-        		mApp.setIsGoogleAnalyticsEnabled(false);
-        		break;
-        	}
-        	
-        }
-		
 		//Save the dimensions of the layout for later use on KitKat devices.
 		final RelativeLayout launcherRootView = (RelativeLayout) findViewById(R.id.launcher_root_view);
 		launcherRootView.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
@@ -264,8 +252,9 @@ public class LauncherActivity extends FragmentActivity {
 				}
 				
 			}
-			
-			initInAppBilling();
+
+			//initInAppBilling();
+            launchMainActivity();
 		}
 
 		//Fire away a report to Google Analytics.
@@ -347,7 +336,7 @@ public class LauncherActivity extends FragmentActivity {
 		
 	};
 	
-	private void initInAppBilling() {
+	/*private void initInAppBilling() {
 		String base64EncodedPublicKey = "";
 		
 		base64EncodedPublicKey = Common.uid4 + 
@@ -382,7 +371,7 @@ public class LauncherActivity extends FragmentActivity {
     		checkTrialStatus();
     	}
     	
-	}
+	}*/
 	
 	IabHelper.QueryInventoryFinishedListener mGotInventoryListener = new IabHelper.QueryInventoryFinishedListener() {
 		

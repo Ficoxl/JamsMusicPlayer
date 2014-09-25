@@ -1,5 +1,7 @@
 /*
- * Copyright (C) 2014 Saravan Pantham
+ * Copyright (C) Hackskrieg
+ *
+ * http://hackskrieg.wordpress.com/2012/04/20/working-vertical-seekbar-for-android/
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.

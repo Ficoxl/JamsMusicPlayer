@@ -133,22 +133,6 @@
 
     </style>
 
-    <!-- Settings theme -->
-    <style name="SettingsThemeLight" parent="@android:style/Theme.Holo.Light.DarkActionBar">
-        <item name="android:actionBarItemBackground">@drawable/selectable_background_appthemelight</item>
-        <item name="android:dropDownListViewStyle">@style/DropDownListView.Appthemelight</item>
-        <item name="android:actionBarTabStyle">@style/ActionBarTabStyle.Appthemelight</item>
-        <item name="android:actionDropDownStyle">@style/DropDownNav.Appthemelight</item>
-        <item name="android:actionBarStyle">@style/ActionBar.Solid.Appthemelight</item>
-        <item name="android:actionModeBackground">@drawable/cab_background_top_appthemelight</item>
-        <item name="android:actionModeSplitBackground">@drawable/cab_background_bottom_appthemelight</item>
-        <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Appthemelight</item>
-        <item name="android:windowContentOverlay">@drawable/ab_solid_shadow_holo</item>
-        <!-- Light.DarkActionBar specific -->
-        <item name="android:actionBarWidgetTheme">@style/Theme.Appthemelight.Widget</item>
-
-    </style>
-
     <style name="NowPlayingThemeLight" parent="@android:style/Theme.Holo.Light.NoActionBar">
         <item name="android:actionBarItemBackground">@drawable/selectable_background_appthemelight</item>
         <item name="android:actionBarTabStyle">@style/ActionBarTabStyle.Appthemelight</item>
