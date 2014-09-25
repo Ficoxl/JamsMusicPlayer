@@ -7,9 +7,9 @@ I will still occasionally update this app based on my free time, but it will pro
 
 Previous Changelogs (until 2/24/2014)
 ======================================
-Check out the <a href="http://github.com/psaravan/JamsMusicPlayer/master/CHANGELOG.md">CHANGELOG</a> file. 
+Check out the <a href="https://github.com/psaravan/JamsMusicPlayer/blob/master/CHANGELOGS.md">CHANGELOG</a> file. 
 
-<b>Note: </b> Changelogs will no longer be updated in the <a href="http://github.com/psaravan/JamsMusicPlayer/master/CHANGELOG.md">CHANGELOG</a> file. Check the individual commit comments for all further update descriptions.
+<b>Note: </b> Changelogs will no longer be updated in the <a href="http://github.com/psaravan/JamsMusicPlayer/blob/master/CHANGELOGS.md">CHANGELOG</a> file. Check the individual commit comments for all further update descriptions.
 
 
 
