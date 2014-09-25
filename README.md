@@ -7,10 +7,40 @@ I will still occasionally update this app based on my free time, but it will pro
 
 Previous Changelogs (until 2/24/2014)
 ======================================
-Check out the <a href="https://github.com/psaravan/JamsMusicPlayer/blob/master/CHANGELOGS.md">CHANGELOG</a> file. 
+Check out the <a href="https://github.com/psaravan/JamsMusicPlayer/blob/master/CHANGELOGS.md">CHANGELOGS</a> file. 
 
-<b>Note: </b> Changelogs will no longer be updated in the <a href="http://github.com/psaravan/JamsMusicPlayer/blob/master/CHANGELOGS.md">CHANGELOG</a> file. Check the individual commit comments for all further update descriptions.
+<b>Note: </b> Changelogs will no longer be updated in the <a href="http://github.com/psaravan/JamsMusicPlayer/blob/master/CHANGELOGS.md">CHANGELOGS</a> file. Check the individual commit comments for all further update descriptions.
 
+Screenshots
+============
+<img src="http://github.com/psaravan/JamsMusicPlayer/blob/master/images/jams_screen_1.png" height="360" width="571">
+<img src="http://github.com/psaravan/JamsMusicPlayer/blob/master/images/jams_screen_2.png" height="360" width="571">
+
+Forked Projects
+================
+If you're using Jams' codebase in your current project/app and would like to have it featured here, email me at saravan.pantham@gmail.com.
+
+Developed By
+============
+
+Saravan Pantham - saravan.pantham@gmail.com
+
+License
+========
+
+Copyright 2014 - Saravan Pantham
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
 
 
 
