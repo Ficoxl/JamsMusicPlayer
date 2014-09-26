@@ -64,8 +64,14 @@ public class TrialFragment extends Fragment {
 		
 		numDaysRemaining = getArguments().getInt("NUM_DAYS_REMAINING");
 		expired = getArguments().getBoolean("EXPIRED");
-		
-		daysRemaining = (TextView) rootView.findViewById(R.id.trial_days_remaining);
+
+        //Circumvent the trial check since the app is no longer paid.
+        getActivity().finish();
+        Intent intent = new Intent(mContext, MainActivity.class);
+        startActivity(intent);
+        return rootView;
+
+		/*daysRemaining = (TextView) rootView.findViewById(R.id.trial_days_remaining);
 		infoText = (TextView) rootView.findViewById(R.id.trial_message);
 		laterButton = (Button) rootView.findViewById(R.id.upgrade_later);
 		upgradeNowButton = (Button) rootView.findViewById(R.id.upgrade_now);
@@ -143,7 +149,7 @@ public class TrialFragment extends Fragment {
             rootView.setPadding(0, topPadding + actionBarHeight, 0, navigationBarHeight);
         }
 		
-		return rootView;
+		return rootView;*/
 	}
 	
 	private void initUpgradeProcessWithPromo() {

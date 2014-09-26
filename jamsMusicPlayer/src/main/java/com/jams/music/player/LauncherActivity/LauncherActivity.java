@@ -373,7 +373,7 @@ public class LauncherActivity extends FragmentActivity {
     	
 	}*/
 	
-	IabHelper.QueryInventoryFinishedListener mGotInventoryListener = new IabHelper.QueryInventoryFinishedListener() {
+	/*IabHelper.QueryInventoryFinishedListener mGotInventoryListener = new IabHelper.QueryInventoryFinishedListener() {
 		
 		public void onQueryInventoryFinished(IabResult result, Inventory inventory) {
 			if (result.isFailure()) {
@@ -430,7 +430,7 @@ public class LauncherActivity extends FragmentActivity {
 	      
 		}
 	   
-	};
+	};*/
 	
 	/* Checks the trial version status of the app. The first install time of the app is 
 	 * retrieved and then compared against the current time. If the current time is more 
@@ -453,7 +453,7 @@ public class LauncherActivity extends FragmentActivity {
 	 * just been read in. If it is, the app will open up. If it isn't, the user will get the 
 	 * trial expiry dialog.
 	 */
-	public void checkTrialStatus() {
+	/*public void checkTrialStatus() {
 		
 		PackageManager pm = mContext.getPackageManager();
 		PackageInfo packageInfo = null;
@@ -517,7 +517,7 @@ public class LauncherActivity extends FragmentActivity {
 			
 		}
 		
-	}
+	}*/
 	
 	/* This method checks for the /sdcard/.jams_info file. If it exists, 
 	 * it tries to read the reactivation time from the file.
