@@ -1,4 +1,4 @@
-include ':circularImageView', ':picasso', ':fadingActionBar'
+include ':circularImageView', ':picasso'
 include ':quickScroll'
 include ':dragsortlistviewlibrary'
 include ':licensesdialoglibrary'

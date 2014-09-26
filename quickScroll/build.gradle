@@ -5,8 +5,8 @@ android {
 
     defaultConfig {
         applicationId "com.andraskindler.quickscroll"
-        minSdkVersion 8
-        targetSdkVersion 17
+        minSdkVersion 14
+        targetSdkVersion 19
     }
 
     buildTypes {

@@ -114,6 +114,13 @@ public class Common extends Application {
 	//Specifies whether the app is currently downloading pinned songs from the GMusic app.
 	private boolean mIsFetchingPinnedSongs = false;
 
+	public static final String uid4 = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvFlvWGADp9cW2LPuOIjDPB";
+	public static final String uid2 = "ormNR2mpS8HR8utvhNHKs2AJzV8GLPh35m3rE6GPND4GsOdrbySPETG4+0fvagBr5E";
+	public static final String uid6 = "QgMR7z76DJlRqy+VyVzmx7cly2JiXo+ZnISYKKn71oP+Xw+dO/eRKFy3EFCO7khMxc";
+	public static final String uid1 = "6QouPH11nHJPzXspzdkJbTcifIIGFtEkquXjA0y19Gouab7Gir8yLOA4V3m0URRivP";
+	public static final String uid3 = "QeOx8JsY766F6FgU8uJABWRDZbqHEYRwT7iGmn7ukt7h5z+DOsYWSRmZxwJh3cpkGo";
+	public static final String uid5 = "Vyqp4UZWnzGiiq/fWFKs5rrc+m3obsEpUxteGavKAhhXJZKgwAGFgkUQIDAQAB";
+
 	//GAnalytics flag.
 	private boolean mIsGAnalyticsEnabled = true;
 
